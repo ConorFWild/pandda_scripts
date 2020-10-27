@@ -10,3 +10,4 @@ mtz_regex="final.mtz"
 python $pandda --data_dirs=$data_dirs --cluster_cutoff_distance_multiplier=$cluster_cutoff_distance_multiplier --min_blob_volume=$min_blob_volume --out_dir=$out_dir --pdb_regex=$pdb_regex --mtz_regex=$mtz_regex
 
 
+
