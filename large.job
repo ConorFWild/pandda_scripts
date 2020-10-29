@@ -3,7 +3,10 @@
 # Example 1                                                            
 # Simple HTCondor submit description file                                    
 #                                                                       
-####################                                                    
+####################    
+
+Executable   = /data/share-2/conor/pandda/pandda_scripts/test_pandda.sh                                                    
+Log          = test_pandda_submit.log    
                                                                         
 request_memory = 120 GB
 
