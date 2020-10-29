@@ -7,6 +7,8 @@
 
 Executable   = /data/share-2/conor/pandda/pandda_scripts/test_pandda.sh                                                    
 Log          = test_pandda_submit.log    
+Output = test_pandda_submit_2.out
+Error = test_pandda_submit_2.err
                                                                         
 request_memory = 120 GB
 
