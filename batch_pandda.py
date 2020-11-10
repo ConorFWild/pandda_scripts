@@ -51,15 +51,18 @@ PANDDA_SCRIPT_FILE = "{system_name}.sh"
 class Args:
     data_dirs_dir: Path
     out_dirs_dir: Path
+    debug: bool
     
     @staticmethod
     def from_args(args: Any):
         data_dirs_dir = Path(args.data_dirs_dir)
         out_dirs_dir = Path(args.out_dirs_dir)
+        debug: bool = bool(args.debug)
         
         return Args(
             data_dirs_dir,
-            out_dirs_dir
+            out_dirs_dir,
+            debug,
         )
     
 
@@ -69,6 +72,8 @@ def main():
     parser.add_argument("--data_dirs_dir",
                         )
     parser.add_argument("--out_dirs_dir",
+                        )
+    parser.add_argument("--debug",
                         )
     args = Args.from_args(parser.parse_args())
 
@@ -86,6 +91,10 @@ def main():
             out_dir=out_dir,
         )
         commands[system_name] = command
+        
+        if args.debug:
+            print(command)
+            break
 
     # Make command scripts
     pandda_script_files = {}
@@ -96,18 +105,39 @@ def main():
         with open(pandda_script_file, "w") as f:
             f.write(command)
             
+        if args.debug:
+            print(system_name)
+            print(pandda_script_file)
+            break
+            
     # Make Submit commands
     submit_command_dict = {}
     for system_name, pandda_script_file in pandda_script_files.items():
         submit_command = SUBMIT_COMMAND.format(pandda_script_file=pandda_script_file)
         submit_command_dict[system_name] = submit_command
+        
+        if args.debug:
+            print(system_name)
+            print(submit_command)
+            break
+        
+
     
     #     Submit
     for system_name, command in submit_command_dict.items():
         p = subprocess.Popen(command,
                          shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE,
                          )
-        p.communicate()
+        stdout, stderr = p.communicate()
+        
+        if args.debug:
+            print(system_name)
+            print(stdout)
+            print(stderr)
+            break
+        
                 
 
 if __name__ == "__main__":
