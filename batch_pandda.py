@@ -33,9 +33,9 @@ source ~/.bashrc
 conda activate pandda
 
 pandda=\""/data/share-2/conor/pandda/code/pandda_gemmi/pandda_gemmi/analyse.py"\"
-data_dirs=\"{data_dirs\"
+data_dirs=\"{data_dirs}\"
 cluster_cutoff_distance_multiplier=1.1 
-out_dir=\"{}\"
+out_dir=\"{out_dir}\"
 pdb_regex=\"final.pdb\"
 mtz_regex=\"final.mtz\"
 
