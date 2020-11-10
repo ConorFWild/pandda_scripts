@@ -129,7 +129,7 @@ def main():
         
     # Add permissions
     for system_name, pandda_script_file in pandda_script_files.items():
-        command = CHANGE_PERMISSION_COMMAND.format(pandda_script_file)
+        command = CHANGE_PERMISSION_COMMAND.format(pandda_script_file=pandda_script_file)
         p = subprocess.Popen(command,
                          shell=True,
                          stdout=subprocess.PIPE,
