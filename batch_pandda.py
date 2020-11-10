@@ -54,7 +54,7 @@ python $pandda --data_dirs=$data_dirs --cluster_cutoff_distance_multiplier=$clus
 
 PANDDA_SCRIPT_FILE = "{system_name}.sh"
 
-SUBMIT_COMMAND = "condor_submit {job_file}"
+SUBMIT_COMMAND = "condor_submit {job_script_file}"
 
 @dataclasses.dataclass()
 class Args:
@@ -166,8 +166,8 @@ def main():
             
     # Make Submit commands
     submit_command_dict = {}
-    for system_name, pandda_script_file in pandda_script_files.items():
-        submit_command = SUBMIT_COMMAND.format(pandda_script_file=pandda_script_file)
+    for system_name, job_script_file in job_script_file_dict.items():
+        submit_command = SUBMIT_COMMAND.format(job_script_file=job_script_file)
         submit_command_dict[system_name] = submit_command
         
         if args.debug:
