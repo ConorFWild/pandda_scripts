@@ -31,8 +31,7 @@ OUTPUT_FILE = "{system_name}.out"
 ERROR_FILE = "{system_name}.err"
 
 
-PANDDA_SCRIPT = """
-#!/bin/bash
+PANDDA_SCRIPT = """#!/bin/bash
 
 source ~/.bashrc
 conda activate pandda
