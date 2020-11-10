@@ -41,12 +41,11 @@ conda activate pandda
 
 pandda=\""/data/share-2/conor/pandda/code/pandda_gemmi/pandda_gemmi/analyse.py"\"
 data_dirs=\"{data_dirs}\"
-cluster_cutoff_distance_multiplier=1.1 
 out_dir=\"{out_dir}\"
 pdb_regex=\"final.pdb\"
 mtz_regex=\"final.mtz\"
 
-python $pandda --data_dirs=$data_dirs --cluster_cutoff_distance_multiplier=$cluster_cutoff_distance_multiplier --min_blob_volume=$min_blob_volume --out_dir=$out_dir --pdb_regex=$pdb_regex --mtz_regex=$mtz_regex
+python $pandda --data_dirs=$data_dirs --out_dir=$out_dir --pdb_regex=$pdb_regex --mtz_regex=$mtz_regex
 
 
 """
