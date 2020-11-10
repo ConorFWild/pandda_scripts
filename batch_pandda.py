@@ -54,6 +54,8 @@ python $pandda --data_dirs=$data_dirs --cluster_cutoff_distance_multiplier=$clus
 
 PANDDA_SCRIPT_FILE = "{system_name}.sh"
 
+CHANGE_PERMISSION_COMMAND = "chmod 777 {pandda_script_file}"
+
 SUBMIT_COMMAND = "condor_submit {job_script_file}"
 
 @dataclasses.dataclass()
@@ -125,12 +127,28 @@ def main():
             print(pandda_script_file)
             break
         
+    # Add permissions
+    for system_name, pandda_script_file in pandda_script_files.items():
+        command = CHANGE_PERMISSION_COMMAND.format(pandda_script_file)
+        p = subprocess.Popen(command,
+                         shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE,
+                         )
+        stdout, stderr = p.communicate()
+        
+        if args.debug:
+            print(f"# # System: {system_name}: change permission stdout, stderr")
+            print(stdout)
+            print(stderr)
+            break        
+        
     # Make job scripts
     job_script_dict = {}
     for system_name, pandda_script_file in pandda_script_files.items():
-        log_file = LOG_FILE.format(system_name=system_name)
-        output_file = OUTPUT_FILE.format(system_name=system_name)
-        error_file = ERROR_FILE.format(system_name=system_name)
+        log_file = args.out_dirs_dir / LOG_FILE.format(system_name=system_name)
+        output_file = args.out_dirs_dir /OUTPUT_FILE.format(system_name=system_name)
+        error_file = args.out_dirs_dir / ERROR_FILE.format(system_name=system_name)
         
         job_script = JOB_SCRIPT.format(
             pandda_script_file=pandda_script_file,
