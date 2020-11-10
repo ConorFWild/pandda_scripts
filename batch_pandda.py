@@ -7,8 +7,7 @@ import subprocess
 
 SUBMIT_COMMAND = "qsub -pe smp 10 -l m_mem_free=15G,h_vmem=200G {pandda_script_file}"
 
-JOB_SCRIPT = """
-####################                                                    
+JOB_SCRIPT = """####################                                                    
 # 
 # Example 1                                                            
 # Simple HTCondor submit description file                                    
@@ -23,8 +22,7 @@ Error = {error_file}
 request_memory = {request_memory} GB
 
 
-Queue
-"""
+Queue"""
 
 JOB_SCRIPT_FILE = "{system_name}.job"
 
@@ -39,7 +37,7 @@ PANDDA_SCRIPT = """
 source ~/.bashrc
 conda activate pandda
 
-pandda=\""/data/share-2/conor/pandda/code/pandda_gemmi/pandda_gemmi/analyse.py"\"
+pandda=\"/data/share-2/conor/pandda/code/pandda_gemmi/pandda_gemmi/analyse.py\"
 data_dirs=\"{data_dirs}\"
 out_dir=\"{out_dir}\"
 pdb_regex=\"final.pdb\"
