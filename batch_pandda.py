@@ -1,4 +1,4 @@
-import typing
+from typing import *
 import dataclasses
 
 from pathlib import Path
