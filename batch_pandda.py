@@ -59,14 +59,14 @@ class Args:
     data_dirs_dir: Path
     out_dirs_dir: Path
     request_memory: int
-    debug: bool
+    debug: int
     
     @staticmethod
     def from_args(args: Any):
         data_dirs_dir = Path(args.data_dirs_dir)
         out_dirs_dir = Path(args.out_dirs_dir)
         request_memory= int(args.request_memory)
-        debug: bool = bool(args.debug)
+        debug: int = int(args.debug)
         
         return Args(
             data_dirs_dir,
@@ -86,7 +86,7 @@ def main():
     parser.add_argument("--request_memory",
                         )
     parser.add_argument("--debug",
-                        default=False,
+                        default=2,
                         )
     
     args = Args.from_args(parser.parse_args())
@@ -106,10 +106,14 @@ def main():
         )
         pandda_script_dict[system_name] = pandda_script
         
-        if args.debug:
+        if args.debug == 1:
             print(f"# # System: {system_name}: pandda script")
             print(pandda_script)
             break
+
+        if args.debug == 2:
+            print(f"# # Pandda script dict {len(pandda_script_dict)}")
+
 
     # Make command scripts
     pandda_script_files = {}
@@ -120,10 +124,13 @@ def main():
         with open(pandda_script_file, "w") as f:
             f.write(pandda_script)
             
-        if args.debug:
+        if args.debug == 1:
             print(f"# # System: {system_name}: pandda script file")
             print(pandda_script_file)
             break
+        
+        if args.debug == 2:
+            print(f"# # Pandda script files {len(pandda_script_files)}")
         
     # Add permissions
     for system_name, pandda_script_file in pandda_script_files.items():
@@ -135,11 +142,13 @@ def main():
                          )
         stdout, stderr = p.communicate()
         
-        if args.debug:
+        if args.debug ==1:
             print(f"# # System: {system_name}: change permission stdout, stderr")
             print(stdout)
             print(stderr)
             break        
+        
+
         
     # Make job scripts
     job_script_dict = {}
@@ -158,10 +167,13 @@ def main():
         
         job_script_dict[system_name] = job_script
         
-        if args.debug:
+        if args.debug ==1:
             print(f"# # System: {system_name}: Job script")
             print(job_script)
             break
+        
+        if args.debug == 2:
+            print(f"# # Job script dict {len(job_script_dict)}")
     
     
     # Writer job files
@@ -174,11 +186,13 @@ def main():
     
         job_script_file_dict[system_name] = job_script_file
         
-        if args.debug:
+        if args.debug ==1:
             print(f"# # System: {system_name}: job script file")
             print(job_script_file)
             break
         
+        if args.debug == 2:
+            print(f"# # Job script files {len(job_script_file_dict)}")
             
     # Make Submit commands
     submit_command_dict = {}
@@ -186,15 +200,17 @@ def main():
         submit_command = SUBMIT_COMMAND.format(job_script_file=job_script_file)
         submit_command_dict[system_name] = submit_command
         
-        if args.debug:
+        if args.debug == 1:
             print(f"# # System: {system_name}: submit command")
             print(submit_command)
             break
         
-
+        if args.debug == 2:
+            print(f"# # submit command {len(submit_command_dict)}")
     
     #     Submit
     for system_name, command in submit_command_dict.items():
+        print
         p = subprocess.Popen(command,
                          shell=True,
                          stdout=subprocess.PIPE,
