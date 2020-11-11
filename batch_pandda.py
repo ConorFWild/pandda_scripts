@@ -210,7 +210,7 @@ def main():
     
     #     Submit
     for system_name, command in submit_command_dict.items():
-        print
+        print(system_name)
         p = subprocess.Popen(command,
                          shell=True,
                          stdout=subprocess.PIPE,
@@ -218,7 +218,7 @@ def main():
                          )
         stdout, stderr = p.communicate()
         
-        if args.debug:
+        if args.debug == 1:
             print(f"# # System: {system_name}: submit stdout, stderr")
             print(stdout)
             print(stderr)
