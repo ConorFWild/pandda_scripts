@@ -36,13 +36,17 @@ PANDDA_SCRIPT = """#!/bin/bash
 source ~/.bashrc
 conda activate pandda
 
+which python | cat
+
+interp=\"/data/share-2/conor/anaconda3/envs/pandda/bin/python\"
+
 pandda=\"/data/share-2/conor/pandda/code/pandda_gemmi/pandda_gemmi/analyse.py\"
 data_dirs=\"{data_dirs}\"
 out_dir=\"{out_dir}\"
 pdb_regex=\"final.pdb\"
 mtz_regex=\"final.mtz\"
 
-python $pandda --data_dirs=$data_dirs --out_dir=$out_dir --pdb_regex=$pdb_regex --mtz_regex=$mtz_regex
+$interp $pandda --data_dirs=$data_dirs --out_dir=$out_dir --pdb_regex=$pdb_regex --mtz_regex=$mtz_regex
 
 
 """
