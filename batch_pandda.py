@@ -111,8 +111,8 @@ def main():
             print(pandda_script)
             break
 
-        if args.debug == 2:
-            print(f"# # Pandda script dict {len(pandda_script_dict)}")
+    if args.debug == 2:
+        print(f"# # Pandda script dict {len(pandda_script_dict)}")
 
 
     # Make command scripts
@@ -129,8 +129,8 @@ def main():
             print(pandda_script_file)
             break
         
-        if args.debug == 2:
-            print(f"# # Pandda script files {len(pandda_script_files)}")
+    if args.debug == 2:
+        print(f"# # Pandda script files {len(pandda_script_files)}")
         
     # Add permissions
     for system_name, pandda_script_file in pandda_script_files.items():
@@ -172,8 +172,8 @@ def main():
             print(job_script)
             break
         
-        if args.debug == 2:
-            print(f"# # Job script dict {len(job_script_dict)}")
+    if args.debug == 2:
+        print(f"# # Job script dict {len(job_script_dict)}")
     
     
     # Writer job files
@@ -191,8 +191,8 @@ def main():
             print(job_script_file)
             break
         
-        if args.debug == 2:
-            print(f"# # Job script files {len(job_script_file_dict)}")
+    if args.debug == 2:
+        print(f"# # Job script files {len(job_script_file_dict)}")
             
     # Make Submit commands
     submit_command_dict = {}
@@ -205,8 +205,8 @@ def main():
             print(submit_command)
             break
         
-        if args.debug == 2:
-            print(f"# # submit command {len(submit_command_dict)}")
+    if args.debug == 2:
+        print(f"# # submit command {len(submit_command_dict)}")
     
     #     Submit
     for system_name, command in submit_command_dict.items():
