@@ -211,6 +211,7 @@ def main():
     #     Submit
     for system_name, command in submit_command_dict.items():
         print(system_name)
+        print(command)
         p = subprocess.Popen(command,
                          shell=True,
                          stdout=subprocess.PIPE,
