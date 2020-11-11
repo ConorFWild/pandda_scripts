@@ -86,8 +86,9 @@ def main():
     parser.add_argument("--request_memory",
                         )
     parser.add_argument("--debug",
-                        fedault=False,
+                        default=False,
                         )
+    
     args = Args.from_args(parser.parse_args())
 
     # Get data dirs
