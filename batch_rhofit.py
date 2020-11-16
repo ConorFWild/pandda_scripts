@@ -908,7 +908,7 @@ def main():
         Constants.DEBUG = args.debug
 
     # Get pandda directories
-    system_path_list: List[Path] = list(args.pandda_dirs_dir.glob("*"))
+    system_path_list: List[Path] = list(path for path in args.pandda_dirs_dir.glob("*") if path.is_dir())
     if Constants.DEBUG > 0: print(f"Found {len(system_path_list)} systems")
 
     # Get events tables: List[Path] -> Dict[EventID, Event]
