@@ -1,4 +1,5 @@
 from __future__ import annotations
+from batch_pandda import OUTPUT_FILE
 
 from os import system, write, mkdir
 from sys import path, stderr, stdin
@@ -156,6 +157,10 @@ class Constants:
     
     MASKED_PDB_FILE = "masked.pdb"
     
+    RHOFIT_LOG_FILE = "rhofit.log"
+    RHOFIT_OUTPUT_FILE = "rhofit.out"
+    RHOFIT_ERROR_FILE = "rhofit.err"
+    
     RHOFIT_SCRIPT = """#!/bin/bash
     source ~/.bashrc
     conda activate pandda
@@ -216,7 +221,6 @@ class HKL:
 
     @staticmethod
     def from_list(hkl_list: List[int]):
-        print(hkl_list)
         return HKL(hkl_list[0],
                    hkl_list[1],
                    hkl_list[2],
@@ -536,7 +540,6 @@ def phase_graft(mtz: gemmi.Mtz, cut_out_event_mtz: gemmi.Mtz) -> gemmi.Mtz:
     print("\tBeginning graft...")
     new_reflections = {}
     for hkl in event_reflections:
-        print(hkl)
         event_reflection = event_reflections[hkl]
 
         asu_hkl_list, asu_hkl_value = initial_asu.to_asu(hkl.to_list(), operations, )
@@ -647,10 +650,22 @@ def get_rhofit_script_file(event: Event, rhofit_script: str) -> Path:
         
     return rhofit_script_file
 
-def get_job_script(rhofit_script_file: Path) -> str:
+def get_job_script(event: Event, rhofit_script_file: Path, request_memory: int = 15) -> str:
+    event_output_dir: Path = event.event_output_dir
+    executable_file: Path = rhofit_script_file
+    log_file = event_output_dir / Constants.RHOFIT_LOG_FILE
+    output_file = event_output_dir / Constants.RHOFIT_OUTPUT_FILE
+    error_file = event_output_dir / Constants.RHOFIT_ERROR_FILE
+    
     job_script: str = Constants.JOB_SCRIPT.format(
-        
+        executable_file=executable_file,
+        log_file=log_file,
+        output_file=output_file,
+        error_file=error_file,
+        request_memory=request_memory,
     )
+    
+    
     return job_script
     
 def get_job_script_file(job_script: str, event: Event) -> Path:
@@ -784,7 +799,7 @@ def build_event(event: Event):
     if Constants.DEBUG > 0: print(f"rhofit_script_file is: {rhofit_script_file}")
 
     # Make job script
-    job_script: str = get_job_script(rhofit_script_file)
+    job_script: str = get_job_script(event, rhofit_script_file)
     if Constants.DEBUG > 0: print(f"job_script is: {job_script}")
     
     # Write job script
