@@ -283,20 +283,37 @@ class ReflectionsDict:
 @dataclasses.dataclass()
 class System:
     system: str
+    
+    def __hash__(self) -> int:
+        return hash(self.system)
 
 @dataclasses.dataclass()
 class Dtag:
     dtag: str
+    
+    def __hash__(self) -> int:
+        return hash(self.dtag)
 
 @dataclasses.dataclass()
 class EventIDX:
     event_idx: str
+    
+    def __hash__(self) -> int:
+        return hash(self.event_idx)
 
 @dataclasses.dataclass()
 class EventID:
     system: System
     dtag: Dtag
     event_idx: EventIDX
+    
+    def __hash__(self) -> int:
+        return hash(
+            (self.system,
+                     self.dtag,
+                     self.event_idx,
+                     )
+                    )
     
 @dataclasses.dataclass()
 class Event:
