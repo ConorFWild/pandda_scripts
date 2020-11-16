@@ -211,11 +211,12 @@ class HKL:
     def __hash__(self):
         return hash((self.h, self.k, self.l))
 
-    def to_list(self):
+    def to_list(self) -> List[int]:
         return [self.h, self.k, self.l]
 
     @staticmethod
-    def from_list(hkl_list):
+    def from_list(hkl_list: List[int]):
+        print(hkl_list)
         return HKL(hkl_list[0],
                    hkl_list[1],
                    hkl_list[2],
