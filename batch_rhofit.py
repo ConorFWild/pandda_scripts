@@ -482,7 +482,7 @@ def get_cut_out_event_map(event: Event, event_map: gemmi.FloatGrid, radius:float
     return new_grid
 
 def get_cut_out_event_mtz(cut_out_event_map: gemmi.FloatGrid, mtz: gemmi.Mtz) -> gemmi.Mtz:
-        cut_out_event_map.spacegroup = mtz.reflections.spacegroup
+        cut_out_event_map.spacegroup = mtz.spacegroup
         cut_out_event_map.symmetrize_max()
 
         sf = gemmi.transform_map_to_f_phi(cut_out_event_map, half_l=False)
@@ -704,13 +704,16 @@ def build_event(event: Event):
     
     # Get pdb
     pdb: gemmi.Structure = get_pdb(pdb_file)
-    if Constants.DEBUG > 0: summarise_structure(pdb)
+    if Constants.DEBUG > 0: 
+        print("initial pdb")
+        summarise_structure(pdb)
     
     # Get cut pdb
     masked_pdb: gemmi.Structure = get_masked_pdb(pdb, event)
-    if Constants.DEBUG > 0: summarise_structure(masked_pdb) 
+    if Constants.DEBUG > 0: 
+        print("Masked pdb")
+        summarise_structure(masked_pdb) 
         
-
     
     # Write cut pdb
     masked_pdb_file: Path = get_masked_pdb_file(masked_pdb, event)
@@ -718,7 +721,9 @@ def build_event(event: Event):
     
     # Get event map 
     event_map: gemmi.FloatGrid = get_event_map(event_map_file)
-    if Constants.DEBUG > 0: summarise_grid(event_map)
+    if Constants.DEBUG > 0: 
+        print("Event map")
+        summarise_grid(event_map)
 
     # Get Mtz
     mtz: gemmi.Mtz = get_mtz(mtz_file)
