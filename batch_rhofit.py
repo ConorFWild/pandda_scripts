@@ -800,6 +800,7 @@ def get_event_table_dict(path_list: List[Path]) -> Dict[System, pd.DataFrame]:
                 event_table: pd.DataFrame = pd.read_csv(str(path))
                 event_table_dict[system] = event_table
             except:
+                print(f"event_table_file seems empty?")
                 continue
     
     return event_table_dict
@@ -815,7 +816,6 @@ def get_event_id(system: System, row: pd.Series) -> EventID:
     
 def get_event(system: System, row: pd.Series, pandda_dirs_dir: Path, autobuild_dirs_dir: Path) -> Event:
 
-    
     dtag: Dtag = Dtag(row["dtag"])
     event_idx: EventIDX = EventIDX(row["event_idx"])
     bdc = row["1-BDC"]
