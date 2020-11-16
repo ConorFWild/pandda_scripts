@@ -2,6 +2,7 @@ from __future__ import annotations
 from batch_pandda import OUTPUT_FILE
 
 from os import system, write, mkdir
+import shutil
 from sys import path, stderr, stdin
 from typing import *
 import dataclasses
@@ -578,6 +579,9 @@ def phase_graft(mtz: gemmi.Mtz, cut_out_event_mtz: gemmi.Mtz) -> gemmi.Mtz:
 
     return initial_mtz
 
+def write_mtz(mtz: gemmi.Mtz, path: Path):
+    mtz.write_to_file(str(path))
+
 def get_phase_grafted_mtz_file(event: Event, phase_grafted_mtz: gemmi.Mtz) -> Path:
     phase_grafted_mtz_file: Path = event.event_output_dir / Constants.PHASE_GRAFTED_MTZ_FILE
     phase_grafted_mtz.write_to_file(str(phase_grafted_mtz_file))
@@ -724,6 +728,17 @@ def build_event(event: Event):
     # Event map file
     event_map_file: Path = get_event_map_file(event)
     if Constants.DEBUG > 0: print(f"event_map_file is: {event_map_file}")
+    
+    # copy over if debug
+    if Constants.DEBUG > 0:
+        initial_pdb_file: Path = event.event_output_dir / "initial_pdb.pdb"
+        initial_mtz_file: Path = event.event_output_dir / "initial_mtz.mtz"
+        initial_event_map_file: Path = event.event_output_dir / "event_map.ccp4"
+        
+        shutil.copyfile(pdb_file, initial_pdb_file)
+        shutil.copyfile(mtz_file, initial_mtz_file)
+        shutil.copyfile(event_map_file, initial_event_map_file)
+        
 
     # ########
     # Make input files
@@ -756,12 +771,17 @@ def build_event(event: Event):
     if Constants.DEBUG > 0: 
         print("# Initial mtz")
         summarise_mtz(mtz)
+        
+    # # If debug, save
+    # if Constants.DEBUG > 0: 
+    #     path: Path = event.event_output_dir / "initial_mtz.mtz"
+    #     write_mtz(mtz, path)
 
     # Cut out events:
     cut_out_event_map: gemmi.FloatGrid = get_cut_out_event_map(event, event_map)
     if Constants.DEBUG > 0: 
         print("# Cut event map")
-        summarise_grid(event_map)
+        summarise_grid(cut_out_event_map)
     
     # FFT
     cut_out_event_mtz: gemmi.Mtz = get_cut_out_event_mtz(cut_out_event_map, mtz)
