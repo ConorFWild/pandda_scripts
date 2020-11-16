@@ -677,7 +677,7 @@ def get_job_script_file(job_script: str, event: Event) -> Path:
     return job_script_file
 
 def get_submit_command(job_script_file: Path) -> str:
-    submit_command: str = Constants.SUBMIT_COMMAND
+    submit_command: str = Constants.SUBMIT_COMMAND.format(job_script_file=job_script_file)
     return submit_command
 
 # ########
