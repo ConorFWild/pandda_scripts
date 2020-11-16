@@ -818,7 +818,7 @@ def get_event_id(system: System, row: pd.Series) -> EventID:
 def get_event(system: System, row: pd.Series, pandda_dirs_dir: Path, autobuild_dirs_dir: Path) -> Event:
 
     dtag: Dtag = Dtag(row["dtag"])
-    event_idx: EventIDX = EventIDX(row["event_idx"])
+    event_idx: EventIDX = EventIDX(str(row["event_idx"]))
     bdc = row["1-BDC"]
     x = row["x"]
     y = row["y"]
