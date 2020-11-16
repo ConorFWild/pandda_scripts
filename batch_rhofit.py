@@ -104,7 +104,7 @@ class Constants:
     OUTPUT_FILE = "{system_name}.out"
     ERROR_FILE = "{system_name}.err"
 
-    CHANGE_PERMISSION_COMMAND = "chmod 777 {pandda_script_file}"
+    CHANGE_PERMISSION_COMMAND = "chmod 777 {path}"
 
     SUBMIT_COMMAND = "condor_submit {job_script_file}"
         
@@ -625,6 +625,10 @@ def get_final_ligand_cif_file(
     
     else:
         raise Exception("No ligand!")
+    
+def change_permission(path: Path):
+    command: str = Constants.CHANGE_PERMISSION_COMMAND.format(path=path)
+    submit(command)
 
 # ########
 # Get run rhofit
@@ -800,6 +804,9 @@ def build_event(event: Event):
     # Rhofit script file
     rhofit_script_file: Path = get_rhofit_script_file(event, rhofit_script)
     if Constants.DEBUG > 0: print(f"rhofit_script_file is: {rhofit_script_file}")
+    
+    # Change permissions
+    change_permission(rhofit_script_file)
 
     # Make job script
     job_script: str = get_job_script(event, rhofit_script_file)
