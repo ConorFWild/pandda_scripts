@@ -705,15 +705,14 @@ def build_event(event: Event):
     # Get pdb
     pdb: gemmi.Structure = get_pdb(pdb_file)
     if Constants.DEBUG > 0: 
-        print("initial pdb")
+        print("# initial pdb")
         summarise_structure(pdb)
     
     # Get cut pdb
     masked_pdb: gemmi.Structure = get_masked_pdb(pdb, event)
     if Constants.DEBUG > 0: 
-        print("Masked pdb")
+        print("# Masked pdb")
         summarise_structure(masked_pdb) 
-        
     
     # Write cut pdb
     masked_pdb_file: Path = get_masked_pdb_file(masked_pdb, event)
@@ -722,24 +721,32 @@ def build_event(event: Event):
     # Get event map 
     event_map: gemmi.FloatGrid = get_event_map(event_map_file)
     if Constants.DEBUG > 0: 
-        print("Event map")
+        print("# Event map")
         summarise_grid(event_map)
 
     # Get Mtz
     mtz: gemmi.Mtz = get_mtz(mtz_file)
-    if Constants.DEBUG > 0: summarise_mtz(mtz)
+    if Constants.DEBUG > 0: 
+        print("# Initial mtz")
+        summarise_mtz(mtz)
 
     # Cut out events:
     cut_out_event_map: gemmi.FloatGrid = get_cut_out_event_map(event, event_map)
-    if Constants.DEBUG > 0: summarise_grid(event_map)
+    if Constants.DEBUG > 0: 
+        print("# Cut event map")
+        summarise_grid(event_map)
     
     # FFT
     cut_out_event_mtz: gemmi.Mtz = get_cut_out_event_mtz(cut_out_event_map, mtz)
-    if Constants.DEBUG > 0: summarise_mtz(mtz)
+    if Constants.DEBUG > 0: 
+        print("# Cut out event mtz")
+        summarise_mtz(mtz)
 
     # phase graft mtz
     phase_grafted_mtz: gemmi.Mtz = phase_graft(mtz, cut_out_event_mtz)
-    if Constants.DEBUG > 0: summarise_mtz(mtz)
+    if Constants.DEBUG > 0: 
+        print("# Phase grafted mtz")
+        summarise_mtz(mtz)
     
     # Write phase grafted mtz
     phase_grafted_mtz_file: Path = get_phase_grafted_mtz_file(event, phase_grafted_mtz)
