@@ -33,8 +33,8 @@ def summarise_mtz(mtz: gemmi.Mtz):
     mtz_array = np.array(mtz, copy=False)
     print(
         (
-            f"Mtz shape: {mtz_array.shape}"
-            f"Mtz spacegroup: {mtz.spacegroup}"
+            f"Mtz shape: {mtz_array.shape} \n"
+            f"Mtz spacegroup: {mtz.spacegroup} \n"
         )
     )
     
@@ -486,7 +486,7 @@ def get_cut_out_event_mtz(cut_out_event_map: gemmi.FloatGrid, mtz: gemmi.Mtz) ->
         cut_out_event_map.symmetrize_max()
 
         sf = gemmi.transform_map_to_f_phi(cut_out_event_map, half_l=False)
-        data = sf.prepare_asu_data(dmin=mtz.resolution(), with_000=True)
+        data = sf.prepare_asu_data(dmin=mtz.resolution_high(), with_000=True)
 
         cut_out_event_mtz = gemmi.Mtz(with_base=True)
         cut_out_event_mtz.spacegroup = sf.spacegroup
