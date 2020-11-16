@@ -799,7 +799,8 @@ def get_event_table_dict(path_list: List[Path]) -> Dict[System, pd.DataFrame]:
             try:
                 event_table: pd.DataFrame = pd.read_csv(str(path))
                 event_table_dict[system] = event_table
-            except:
+            except Exception as e:
+                print(e)
                 print(f"event_table_file seems empty?")
                 continue
     
