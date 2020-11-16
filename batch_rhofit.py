@@ -786,10 +786,16 @@ def build_event(event: Event):
     
     
 def get_event_table_dict(path_list: List[Path]) -> Dict[System, pd.DataFrame]:
-    event_table_dict = {System(path.name): pd.read_csv(str(path))
-                        for path 
-                        in path_list
-                        }
+    event_table_dict = {}
+    
+    for path in path_list:    
+        system: System = System(path.name)
+        
+        event_table_file: Path = path / Constants.PANDDA_ANALYSES_DIR / Constants.PANDDA_ANALYSE_EVENTS_FILE
+        
+        if event_table_file.exists():
+            event_table: pd.DataFrame = pd.read_csv(str(path))
+            event_table_dict[system] = event_table
     
     return event_table_dict
 
