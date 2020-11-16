@@ -1,5 +1,7 @@
-from os import write
-from sys import stderr, stdin
+from __future__ import annotations
+
+from os import system, write, mkdir
+from sys import path, stderr, stdin
 from typing import *
 import dataclasses
 
@@ -13,6 +15,66 @@ import pandas as pd
 import joblib
 
 import gemmi
+
+# ########
+# debug
+# #########
+def summarise_grid(grid: gemmi.FloatGrid):
+    grid_array = np.array(grid, copy=False)
+    print((
+        f"Grid size: {grid.nu} {grid.nv} {grid.nw} \n"
+        f"Grid spacegroup: {grid.spacegroup} \n"
+        f"Grid unit cell: {grid.unit_cell} \n"
+        f"Grid max: {np.max(grid_array)} \n"
+        f"Grid min: {np.min(grid_array)} \n"
+    ))
+    
+def summarise_mtz(mtz: gemmi.Mtz):
+    mtz_array = np.array(mtz, copy=False)
+    print(
+        (
+            f"Mtz shape: {mtz_array.shape}"
+            f"Mtz spacegroup: {mtz.spacegroup}"
+        )
+    )
+    
+def summarise_structure(structure: gemmi.Structure):
+    num_models: int = 0
+    num_chains: int = 0
+    num_residues: int = 0 
+    num_atoms: int = 0
+    
+    for model in structure:
+        num_models += 1
+        for chain in model:
+            num_chains += 1
+            for residue in chain:
+                num_residues += 1
+                for atom in residue:
+                    num_atoms += 1
+    
+    print(
+        (
+            f"Num models: {num_models}"
+            f"Num chains: {num_chains}"
+            f"Num residues: {num_residues}"
+            f"Num atoms: {num_atoms}"
+            )
+    )
+    
+def summarise_event(event: Event):
+    print(
+    (
+        f"Event system: {event.system}\n"
+        f"Event dtag: {event.dtag}\n"
+        f"Event xyz: {event.x} {event.y} {event.z}\n"
+    )
+)
+
+
+# ########
+# data types
+# #########
 
 class Constants:
     DEBUG: int = 0
@@ -104,33 +166,28 @@ class Constants:
 
 @dataclasses.dataclass()
 class Args:
-    data_dirs_dir: Path
-    out_dirs_dir: Path
-    request_memory: int
+    pandda_dirs_dir: Path
+    autobuild_dirs_dir: Path
     debug: int
     
     @staticmethod
     def from_args(args: Any):
-        data_dirs_dir = Path(args.data_dirs_dir)
-        out_dirs_dir = Path(args.out_dirs_dir)
-        request_memory= int(args.request_memory)
+        pandda_dirs_dir = Path(args.pandda_dirs_dir)
+        autobuild_dirs_dir = Path(args.autobuild_dirs_dir)
         debug: int = int(args.debug)
         
         return Args(
-            data_dirs_dir,
-            out_dirs_dir,
-            request_memory,
+            pandda_dirs_dir,
+            autobuild_dirs_dir,
             debug,
         )
     
     @staticmethod
     def from_cmd():
         parser = argparse.ArgumentParser()
-        parser.add_argument("--data_dirs_dir",
+        parser.add_argument("--pandda_dirs_dir",
                             )
-        parser.add_argument("--out_dirs_dir",
-                            )
-        parser.add_argument("--request_memory",
+        parser.add_argument("--autobuild_dirs_dir",
                             )
         parser.add_argument("--debug",
                             default=2,
@@ -221,9 +278,7 @@ class ReflectionsDict:
 
         return array
         
-# ########
-# data types
-# #########
+
 
 @dataclasses.dataclass()
 class System:
@@ -245,7 +300,8 @@ class EventID:
     
 @dataclasses.dataclass()
 class Event:
-    event_dir: Path
+    event_input_dir: Path
+    event_output_dir: Path
     system: System
     dtag: Dtag
     event_idx: EventIDX
@@ -257,14 +313,17 @@ class Event:
 # ########
 # Get Files functions
 # #########
+
+def get_event_input_dir(system: System, dtag: Dtag, event_idx: EventIDX, pandda_dirs_dir: Path) -> Path:
+    return pandda_dirs_dir / system.system / dtag.dtag / event_idx.event_idx
     
 def get_pdb_file(event: Event) -> Path:
-    event_dir: Path = event.event_dir
+    event_dir: Path = event.event_input_dir
     pdb_file: Path = event_dir / Constants.PANDDA_PDB_FILE.format(event.dtag.dtag)
     return pdb_file
     
 def get_ligand_cif_file(event: Event) -> Union[Path, None]:
-    event_dir: Path = event.event_dir
+    event_dir: Path = event.event_input_dir
     ligand_cif_file = event_dir/ Constants.PANDDA_LIGAND_CIF_FILE
     if ligand_cif_file.exists():
         return ligand_cif_file
@@ -272,7 +331,7 @@ def get_ligand_cif_file(event: Event) -> Union[Path, None]:
         return None
         
 def get_ligand_smiles_file(event: Event) -> Union[Path, None]:
-    event_dir: Path = event.event_dir
+    event_dir: Path = event.event_input_dir
     compound_dir: Path = event_dir / Constants.PANDDA_LIGAND_FILES_DIR
     ligand_smiles_file = compound_dir / Constants.PANDDA_LIGAND_SMILES_FILE
     if ligand_smiles_file.exists():
@@ -281,7 +340,7 @@ def get_ligand_smiles_file(event: Event) -> Union[Path, None]:
         return None
         
 def get_ligand_pdb_file(event: Event) -> Union[Path, None]:
-    event_dir: Path = event.event_dir
+    event_dir: Path = event.event_input_dir
     compound_dir: Path = event_dir / Constants.PANDDA_LIGAND_FILES_DIR
     ligand_pdb_file = compound_dir / Constants.PANDDA_LIGAND_PDB_FILE
     if ligand_pdb_file.exists():
@@ -290,12 +349,12 @@ def get_ligand_pdb_file(event: Event) -> Union[Path, None]:
         return None
         
 def get_mtz_file(event: Event) -> Path:
-    event_dir: Path = event.event_dir
+    event_dir: Path = event.event_input_dir
     mtz_file: Path = event_dir / Constants.PANDDA_MTZ_FILE.format(event.dtag.dtag)
     return mtz_file
         
 def get_event_map_file(event: Event) -> Path:
-    event_dir: Path = event.event_dir
+    event_dir: Path = event.event_input_dir
     event_map_file: Path = event_dir / Constants.PANDDA_EVENT_MAP_FILE.format(
         dtag=event.dtag.dtag,
         event_idx=event.event_idx.event_idx,
@@ -307,8 +366,9 @@ def get_event_map_file(event: Event) -> Path:
 # Make inpuit files
 # #########
 
-def get_event_output_dir(event: Event) -> Path:
-    ...
+def get_event_output_dir(system: System, dtag: Dtag, event_idx: EventIDX, autobuild_dirs_dir: Path) -> Path:
+    return autobuild_dirs_dir / system.system / dtag.dtag / event_idx.event_idx
+
 
 def get_pdb(pdb_file: Path) -> gemmi.Structure:
     structure: gemmi.Structure = gemmi.read_structure(str(pdb_file))
@@ -371,7 +431,7 @@ def get_masked_pdb(pdb: gemmi.Structure, event: Event, radius: float = 7.0) -> g
     return pdb
 
 def get_masked_pdb_file(masked_pdb: gemmi.Structure, event: Event) -> Path:
-    masked_pdb_file: Path = get_event_output_dir(event) / Constants.MASKED_PDB_FILE
+    masked_pdb_file: Path = event.event_output_dir / Constants.MASKED_PDB_FILE
     masked_pdb.write_minimal_pdb(str(masked_pdb_file))
     
     return masked_pdb_file
@@ -491,7 +551,7 @@ def phase_graft(mtz: gemmi.Mtz, cut_out_event_mtz: gemmi.Mtz) -> gemmi.Mtz:
     return initial_mtz
 
 def get_phase_grafted_mtz_file(event: Event, phase_grafted_mtz: gemmi.Mtz) -> Path:
-    phase_grafted_mtz_file: Path = get_event_output_dir(event) / Constants.PHASE_GRAFTED_MTZ_FILE
+    phase_grafted_mtz_file: Path = event.event_output_dir / Constants.PHASE_GRAFTED_MTZ_FILE
     phase_grafted_mtz.write_to_file(str(phase_grafted_mtz_file))
     return phase_grafted_mtz_file
     
@@ -517,7 +577,7 @@ def get_final_ligand_cif_file(
     ligand_smiles_file: Union[Path, None],
     ligand_pdb_file: Union[Path, None],
     ) -> Path:
-    event_output_dir: Path = get_event_output_dir(event)
+    event_output_dir: Path = event.event_output_dir
     final_ligand_cif_file: Path = event_output_dir / Constants.FINAL_LIGAND_CIF_FILE
 
     if ligand_pdb_file:
@@ -548,7 +608,7 @@ def get_rhofit_script(
         masked_pdb_file: Path,
         ligand_cif_file: Path,
         ) -> str:
-    event_output_dir: Path = get_event_output_dir(event)
+    event_output_dir: Path = event.event_output_dir
     rhofit_dir: Path = event_output_dir / Constants.RHOFIT_DIR 
     rhofit_command: str = Constants.RHOFIT_SCRIPT.format(
         mtz=phase_grafted_mtz_file,
@@ -559,7 +619,7 @@ def get_rhofit_script(
     return rhofit_command
 
 def get_rhofit_script_file(event: Event, rhofit_script: str) -> Path:
-    rhofit_script_file: Path = get_event_output_dir(event) / Constants.RHOFIT_SCRIPT_FILE
+    rhofit_script_file: Path = event.event_output_dir / Constants.RHOFIT_SCRIPT_FILE
     with open(str(rhofit_script_file), "w") as f:
         f.write(rhofit_script)
         
@@ -572,7 +632,7 @@ def get_job_script(rhofit_script_file: Path) -> str:
     return job_script
     
 def get_job_script_file(job_script: str, event: Event) -> Path:
-    event_output_dir: Path = get_event_output_dir(event)
+    event_output_dir: Path = event.event_output_dir
     job_script_file: Path = event_output_dir / Constants.JOB_SCRIPT_FILE
     with open(job_script_file, "w") as f:
         f.write(job_script)
@@ -591,15 +651,7 @@ def build_event(event: Event):
     # ########
     # Debug event info
     # #########    
-    if Constants.DEBUG > 0:
-        print(
-            (
-                f"Event path: {event.event_dir}\n"
-                f"Event system: {event.system}\n"
-                f"Event dtag: {event.dtag}\n"
-                f"Event xyz: {event.x} {event.y} {event.z}\n"
-            )
-        )
+    if Constants.DEBUG > 0: summarise_event(event)
     
     # ########
     # Get Files
@@ -635,15 +687,12 @@ def build_event(event: Event):
     
     # Get pdb
     pdb: gemmi.Structure = get_pdb(pdb_file)
+    if Constants.DEBUG > 0: summarise_structure(pdb)
     
     # Get cut pdb
     masked_pdb: gemmi.Structure = get_masked_pdb(pdb, event)
-    if Constants.DEBUG > 0: print(
-        (
-            f"Original pdb num atoms: {pdb_file}"
-            f"New pdb num atoms: {}"
-            )
-    )
+    if Constants.DEBUG > 0: summarise_structure(masked_pdb) 
+        
 
     
     # Write cut pdb
@@ -652,18 +701,23 @@ def build_event(event: Event):
     
     # Get event map 
     event_map: gemmi.FloatGrid = get_event_map(event_map_file)
+    if Constants.DEBUG > 0: summarise_grid(event_map)
 
     # Get Mtz
     mtz: gemmi.Mtz = get_mtz(mtz_file)
+    if Constants.DEBUG > 0: summarise_mtz(mtz)
 
     # Cut out events:
     cut_out_event_map: gemmi.FloatGrid = get_cut_out_event_map(event, event_map)
+    if Constants.DEBUG > 0: summarise_grid(event_map)
     
     # FFT
     cut_out_event_mtz: gemmi.Mtz = get_cut_out_event_mtz(cut_out_event_map, mtz)
+    if Constants.DEBUG > 0: summarise_mtz(mtz)
 
     # phase graft mtz
     phase_grafted_mtz: gemmi.Mtz = phase_graft(mtz, cut_out_event_mtz)
+    if Constants.DEBUG > 0: summarise_mtz(mtz)
     
     # Write phase grafted mtz
     phase_grafted_mtz_file: Path = get_phase_grafted_mtz_file(event, phase_grafted_mtz)
@@ -723,24 +777,91 @@ def get_event_table_dict(path_list: List[Path]) -> Dict[System, pd.DataFrame]:
     return event_table_dict
 
 def get_event_id(system: System, row: pd.Series) -> EventID:
-    ...
+    dtag: Dtag = Dtag(row["dtag"])
+    event_idx: EventIDX = EventIDX(row["event_idx"])
+    return EventID(
+        system=system,
+        dtag=dtag,
+        event_idx=event_idx,
+        )
     
-def get_event(system: System, row: pd.Series) -> Event:
-    ...
+def get_event(system: System, row: pd.Series, pandda_dirs_dir: Path, autobuild_dirs_dir: Path) -> Event:
+
+    
+    dtag: Dtag = Dtag(row["dtag"])
+    event_idx: EventIDX = EventIDX(row["event_idx"])
+    bdc = row["1-BDC"]
+    x = row["x"]
+    y = row["y"]
+    z = row["z"]
+    
+    event_input_dir: Path = get_event_input_dir(system, dtag, event_idx, pandda_dirs_dir)
+    event_output_dir: Path = get_event_output_dir(system, dtag, event_idx, autobuild_dirs_dir)
+    
+    return Event(
+        event_input_dir,
+        event_output_dir,
+        system=system,
+        dtag=dtag,
+        event_idx=event_idx,
+        bdc=bdc,
+        x=x,
+        y=y,
+        z=z,
+    )
     
 
-def get_event_dict(event_table_dict: Dict[System, pd.DataFrame]) -> Dict[EventID, Event]:
+def get_event_dict(event_table_dict: Dict[System, pd.DataFrame], pandda_dirs_dir: Path, autobuild_dirs_dir: Path) -> Dict[EventID, Event]:
     event_dict: Dict[EventID, Event] = {}
     
     for system, event_table in event_table_dict.items():
         for index, row in event_table.iterrows():
             event_id: EventID = get_event_id(system, row)
-            event: Event = get_event(system, row)
+            event: Event = get_event(system, row, pandda_dirs_dir, autobuild_dirs_dir)
             
             event_dict[event_id] = event
             
     return event_dict
     
+
+def make_system_dir(autobuild_dirs_dir: Path, event: Event):
+    system_dir = autobuild_dirs_dir / event.system.system 
+    
+    if system_dir.exists():
+        return
+    
+    else:
+        mkdir(str(system_dir))
+    
+    
+def make_dtag_dir(autobuild_dirs_dir: Path, event: Event):
+    dtag_dir = autobuild_dirs_dir / event.system.system / event.dtag.dtag 
+    
+    if dtag_dir.exists():
+        return
+    
+    else:
+        mkdir(str(dtag_dir))
+
+    
+def make_event_idx_dir(autobuild_dirs_dir: Path, event: Event):
+    event_idx_dir = autobuild_dirs_dir / event.system.system / event.dtag.dtag / event.event_idx.event_idx
+    
+    if event_idx_dir.exists():
+        return
+    
+    else:
+        mkdir(str(event_idx_dir))
+
+def make_event_output_dir(event: Event, autobuild_dirs_dir: Path):
+    make_system_dir(autobuild_dirs_dir, event)
+    make_dtag_dir(autobuild_dirs_dir, event)
+    make_event_idx_dir(autobuild_dirs_dir, event)
+    
+    
+def make_autobuild_output_dir(event_dict: Dict[EventID, Event], autobuild_dirs_dir: Path):
+    for event_id, event in event_dict.items():
+        make_event_output_dir(event, autobuild_dirs_dir)
 
 def map_dict(func: Callable, dictionary: Dict[EventID, Event]):
     if Constants.DEBUG > 0:
@@ -770,13 +891,19 @@ def main():
         Constants.DEBUG = args.debug
 
     # Get pandda directories
-    system_path_list: List[Path] = list(args.data_dirs_dir.glob("*"))
+    system_path_list: List[Path] = list(args.pandda_dirs_dir.glob("*"))
+    if Constants.DEBUG > 0: print(f"Found {len(system_path_list)} systems")
 
     # Get events tables: List[Path] -> Dict[EventID, Event]
     event_table_dict: Dict[System, pd.DataFrame] = get_event_table_dict(system_path_list)
-
+    if Constants.DEBUG > 0: print(f"Found {len(event_table_dict)} system tables")
+    
     # Get events
-    event_dict: Dict[EventID, Event] = get_event_dict(event_table_dict)
+    event_dict: Dict[EventID, Event] = get_event_dict(event_table_dict, args.pandda_dirs_dir, args.autobuild_dirs_dir)
+    if Constants.DEBUG > 0: print(f"Found {len(event_dict)} events")
+
+    # Make output directory
+    make_autobuild_output_dir(event_dict, args.autobuild_dirs_dir)
 
     # Map over all events
     map_dict(
