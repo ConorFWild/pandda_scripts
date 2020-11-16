@@ -332,7 +332,7 @@ class Event:
 # #########
 
 def get_event_input_dir(system: System, dtag: Dtag, event_idx: EventIDX, pandda_dirs_dir: Path) -> Path:
-    return pandda_dirs_dir / system.system / dtag.dtag / event_idx.event_idx
+    return pandda_dirs_dir / system.system / dtag.dtag
     
 def get_pdb_file(event: Event) -> Path:
     event_dir: Path = event.event_input_dir
