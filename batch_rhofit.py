@@ -27,6 +27,7 @@ def summarise_grid(grid: gemmi.FloatGrid):
         f"Grid unit cell: {grid.unit_cell} \n"
         f"Grid max: {np.max(grid_array)} \n"
         f"Grid min: {np.min(grid_array)} \n"
+        f"Grid mean: {np.mean(grid_array)} \n"
     ))
     
 def summarise_mtz(mtz: gemmi.Mtz):
@@ -534,6 +535,7 @@ def phase_graft(mtz: gemmi.Mtz, cut_out_event_mtz: gemmi.Mtz) -> gemmi.Mtz:
     print("\tBeginning graft...")
     new_reflections = {}
     for hkl in event_reflections:
+        print(hkl)
         event_reflection = event_reflections[hkl]
 
         asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
