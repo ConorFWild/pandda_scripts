@@ -80,22 +80,23 @@ def summarise_event(event: Event):
 
 class Constants:
     DEBUG: int = 0
-    JOB_SCRIPT = """####################                                                    
-    # 
-    # Example 1                                                            
-    # Simple HTCondor submit description file                                    
-    #                                                                       
-    ####################    
+    JOB_SCRIPT = (
+        "#################### \n"                                                    
+        "# \n"
+        "# Example 1                                   \n"                          
+        "# Simple HTCondor submit description file \n"                                    
+        "#                          \n"                                             
+        "####################    \n"
 
-    Executable   = {executable_file}                                                    
-    Log          = {log_file}    
-    Output = {output_file}
-    Error = {error_file}
-                                                                            
-    request_memory = {request_memory} GB
+        "Executable   = {executable_file} \n"                                                    
+        "Log          = {log_file} \n"   
+        "Output = {output_file} \n"
+        "Error = {error_file} \n"
+                                                                                
+        "request_memory = {request_memory} GB \n"
 
-
-    Queue"""
+        "Queue"
+    )
 
     JOB_SCRIPT_FILE = "{system_name}.job"
 
@@ -162,11 +163,12 @@ class Constants:
     RHOFIT_ERROR_FILE = "rhofit.err"
     RHOFIT_JOB_SCRIPT_FILE = "rhofit.job"
     
-    RHOFIT_SCRIPT = """#!/bin/bash
-    source ~/.bashrc
-    conda activate pandda
-    rhofit "-m {mtz} -p {pdb} -l {ligand} -d {out_dir_path} -allclusters -use_2fofc -thorough"
-    """
+    RHOFIT_SCRIPT = (
+        "#!/bin/bash \n"
+        "source ~/.bashrc \n"
+        "conda activate pandda \n"
+        "rhofit -m {mtz} -p {pdb} -l {ligand} -d {out_dir_path} -allclusters -use_2fofc -thorough"
+    )
     RHOFIT_SCRIPT_FILE = "run_rhofit.sh"
     
     PHASE_GRAFTED_MTZ_FILE = "phase_grafted_mtz.mtz"
