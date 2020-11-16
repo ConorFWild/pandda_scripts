@@ -160,6 +160,7 @@ class Constants:
     RHOFIT_LOG_FILE = "rhofit.log"
     RHOFIT_OUTPUT_FILE = "rhofit.out"
     RHOFIT_ERROR_FILE = "rhofit.err"
+    RHOFIT_JOB_SCRIPT_FILE = "rhofit.job"
     
     RHOFIT_SCRIPT = """#!/bin/bash
     source ~/.bashrc
@@ -242,9 +243,9 @@ class Reflection:
 
     @staticmethod
     def from_row(row: np.array):
-        h = row[0]
-        k = row[1]
-        l = row[2]
+        h = int(row[0])
+        k = int(row[1])
+        l = int(row[2])
         hkl = HKL(h, k, l)
         data = row[3:]
         return Reflection(hkl,
@@ -670,7 +671,7 @@ def get_job_script(event: Event, rhofit_script_file: Path, request_memory: int =
     
 def get_job_script_file(job_script: str, event: Event) -> Path:
     event_output_dir: Path = event.event_output_dir
-    job_script_file: Path = event_output_dir / Constants.JOB_SCRIPT_FILE
+    job_script_file: Path = event_output_dir / Constants.RHOFIT_JOB_SCRIPT_FILE
     with open(job_script_file, "w") as f:
         f.write(job_script)
 
@@ -828,13 +829,13 @@ def get_event_table_dict(path_list: List[Path]) -> Dict[System, pd.DataFrame]:
         if Constants.DEBUG >0: print(event_table_file)
         
         if event_table_file.exists():
-            try:
-                event_table: pd.DataFrame = pd.read_csv(str(event_table_file))
-                event_table_dict[system] = event_table
-            except Exception as e:
-                print(e)
-                print(f"event_table_file seems empty?")
-                continue
+            # try:
+            event_table: pd.DataFrame = pd.read_csv(str(event_table_file))
+            event_table_dict[system] = event_table
+            # except Exception as e:
+            #     print(e)
+            #     print(f"event_table_file seems empty?")
+            #     continue
     
     return event_table_dict
 
