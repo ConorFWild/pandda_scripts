@@ -539,7 +539,9 @@ def phase_graft(mtz: gemmi.Mtz, cut_out_event_mtz: gemmi.Mtz) -> gemmi.Mtz:
         print(hkl)
         event_reflection = event_reflections[hkl]
 
-        asu_hkl = HKL.from_list(initial_asu.to_asu(hkl.to_list(), operations, ))
+        asu_hkl_list, asu_hkl_value = initial_asu.to_asu(hkl.to_list(), operations, )
+
+        asu_hkl = HKL.from_list(asu_hkl_list)
         if asu_hkl.is_000():
             data = np.zeros(len(list(initial_reflections.reflections_dict.values())[0].data))
             new_reflection = Reflection(hkl, data)
