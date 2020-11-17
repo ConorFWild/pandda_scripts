@@ -354,7 +354,8 @@ def make_resolution_graph(
         ):
     resolution_list: List[float] = [dataset.resolution for dataset in dataset_dict.values()]
     plot = sns.displot(resolution_list)
-    fig = plot.get_figure()
+    # fig = plot.get_figure()
+    fig = plot.fig
     fig.savefig(str(dataset_resolution_graph_file))
     
 def make_event_size_graph(
@@ -363,7 +364,8 @@ def make_event_size_graph(
         ):
     size_list: List[int] = [event.size for event in event_dict.values()]
     plot = sns.displot(size_list)
-    fig = plot.get_figure()
+    # fig = plot.get_figure()
+    fig = plot.fig
     fig.savefig(str(dataset_resolution_graph_file))
     
 
