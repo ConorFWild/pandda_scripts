@@ -492,7 +492,9 @@ def get_cut_out_event_map(event: Event, event_map: gemmi.FloatGrid, radius:float
     return new_grid
 
 def get_cut_out_event_mtz(cut_out_event_map: gemmi.FloatGrid, mtz: gemmi.Mtz) -> gemmi.Mtz:
+        # cut_out_event_map.spacegroup = mtz.spacegroup
         cut_out_event_map.spacegroup = mtz.spacegroup
+
         cut_out_event_map.symmetrize_max()
 
         sf = gemmi.transform_map_to_f_phi(cut_out_event_map, half_l=False)
