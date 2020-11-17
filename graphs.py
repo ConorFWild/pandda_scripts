@@ -327,6 +327,13 @@ def get_dataset_dict(system_path_list: List[Path]) -> Dict[DatasetID, Dataset]:
             dataset_pdb_file: Path = dataset_dir / Constants.DATASET_PDB_FILE
             dataset_mtz_file: Path = dataset_dir / Constants.DATASET_MTZ_FILE
             
+            if not dataset_pdb_file.exists():
+                continue
+            
+            if not dataset_mtz_file.exists():
+                continue
+            
+            
             dataset_mtz: gemmi.Mtz = gemmi.read_mtz_file(str(dataset_mtz_file))
             dataset_resolution: float = dataset_mtz.resolution_high()
             
@@ -354,7 +361,7 @@ def make_event_size_graph(
         event_dict: Dict[EventID, Event],
         dataset_resolution_graph_file: Path,
         ):
-    size_list: List[int] = [event.size for dataset in event_dict.values()]
+    size_list: List[int] = [event.size for event in event_dict.values()]
     plot = sns.displot(size_list)
     fig = plot.get_figure()
     fig.savefig(str(dataset_resolution_graph_file))
