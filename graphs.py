@@ -350,6 +350,15 @@ def make_resolution_graph(
     fig = plot.get_figure()
     fig.savefig(str(dataset_resolution_graph_file))
     
+def make_event_size_graph(
+        event_dict: Dict[EventID, Event],
+        dataset_resolution_graph_file: Path,
+        ):
+    size_list: List[int] = [event.size for dataset in event_dict.values()]
+    plot = sns.displot(size_list)
+    fig = plot.get_figure()
+    fig.savefig(str(dataset_resolution_graph_file))
+    
 
 # ###########
 # Script
