@@ -934,7 +934,8 @@ def build_event(event: Event):
         summarise_structure(pdb)
     
     # Get cut pdb
-    masked_pdb: gemmi.Structure = get_masked_pdb(pdb, event)
+    # masked_pdb: gemmi.Structure = get_masked_pdb(pdb, event)
+    masked_pdb: gemmi.Structure = pdb
     if Constants.DEBUG > 0: 
         print("# Masked pdb")
         summarise_structure(masked_pdb) 
