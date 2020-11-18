@@ -1,15 +1,19 @@
 from __future__ import annotations
+from re import match
 from batch_pandda import OUTPUT_FILE
 
 from os import system, write, mkdir
 import shutil
-from sys import path, stderr, stdin
+from sys import path, stderr, stdin, stdout
 from typing import *
 import dataclasses
 
 from pathlib import Path
 import argparse
 import subprocess
+import re
+import json
+import time
 
 import numpy as np
 import pandas as pd
@@ -173,6 +177,15 @@ class Constants:
     RHOFIT_SCRIPT_FILE = "run_rhofit.sh"
     
     PHASE_GRAFTED_MTZ_FILE = "phase_grafted_mtz.mtz"
+    
+    RHOFIT_HIT_REGEX = "(Hit_[^\s]+)[\s]+[^\s]+[\s]+[^\s]+[\s]+([^\s]+)"
+    RHOFIT_CLUSTER_BUILD_REGEX = "Hit_([^_]+)_[^_]+_([^_]+).pdb"
+    
+    RHOFIT_EVENT_BUILD_RESULT_FILE = "result.json"
+    
+    CLUSTER = "CONDOR"
+    CONDOR_JOB_ID_REGEX = r"[0-9]+\."
+    CONDOR_STATUS_COMMAND = r"condor_q"
 
 @dataclasses.dataclass()
 class Args:
@@ -336,6 +349,120 @@ class Event:
     x: float
     y: float
     z: float
+
+@dataclasses.dataclass()    
+class BuildNumberID:
+    build_number_id: int
+
+    def __hash__(self):
+        return hash(self.build_number_id)
+
+
+@dataclasses.dataclass()
+class BuildClusterID:
+    build_cluster_id: int
+
+    def __hash__(self):
+        return hash(self.build_cluster_id)
+
+
+@dataclasses.dataclass()
+class Build:
+    build_file: Path
+    build_rscc: float
+
+
+    
+
+@dataclasses.dataclass()
+class ClusterBuildResults:
+    cluster_build_results: Dict[BuildNumberID, Build]
+
+    def __iter__(self):
+        for build_number_id in self.cluster_build_results:
+            yield build_number_id
+
+    def __getitem__(self, item):
+        return self.cluster_build_results[item]
+
+
+@dataclasses.dataclass()
+class EventBuildResults:
+    build_results: Dict[BuildClusterID, ClusterBuildResults]
+
+    def __iter__(self):
+        for build_cluster_id in self.build_results:
+            yield build_cluster_id
+
+    def __getitem__(self, item):
+        return self.build_results[item]
+
+    @classmethod
+    def from_event(cls, event: Event):
+            
+        rhofit_dir:Path = event.event_output_dir / Constants.RHOFIT_DIR
+        
+        rhofit_results_file: Path = rhofit_dir / Constants.RHOFIT_RESULTS_FILE
+
+        with open(str(rhofit_dir / Constants.RHOFIT_RESULTS_FILE), "r") as f:
+            results_string = f.read()
+
+        build_matches = re.findall(Constants.RHOFIT_HIT_REGEX,
+                                   results_string,
+                                   )
+
+        cluster_builds = {}
+        for build_match in build_matches:
+            build_file = build_match[0]
+            rscc = build_match[1]
+
+            cluster_build_matches = re.findall(Constants.RHOFIT_CLUSTER_BUILD_REGEX,
+                                               build_file,
+                                               )
+            cluster = BuildClusterID(int(cluster_build_matches[0][0]))
+            build_number = BuildNumberID(int(cluster_build_matches[0][1]))
+
+            if cluster not in cluster_builds:
+                cluster_builds[cluster] = {}
+
+            cluster_builds[cluster][build_number] = Build(build_file=rhofit_dir / build_file,
+                                                          build_rscc=rscc,
+                                                          )
+
+        return EventBuildResults.from_dict(cluster_builds)
+
+    @classmethod
+    def from_dict(cls, cluster_builds_dict: Dict[BuildClusterID, Dict[BuildNumberID, Build]]):
+        event_clusters = {}
+        for cluster_id in cluster_builds_dict:
+            cluster_builds = cluster_builds_dict[cluster_id]
+            event_clusters[cluster_id] = ClusterBuildResults(cluster_builds)
+
+        return EventBuildResults(event_clusters)
+    
+    def to_json_file(self, event: Event):
+        builds = {}
+        clusters = self.build_results
+        for cluster_id in clusters:
+            if cluster_id.build_cluster_id not in builds:
+                builds[cluster_id.build_cluster_id] = {}
+
+            build_results = clusters[cluster_id]
+            for build_number in build_results:
+                builds[cluster_id.build_cluster_id][
+                    build_number.build_number_id] = {
+                    "build_file": str(build_results[build_number].build_file),
+                    "build_rscc": float(build_results[build_number].build_rscc),
+                        }
+                    
+        result_json_file: Path = event.event_output_dir / Constants.RHOFIT_RESULT_JSON_FILE
+        
+        with open(result_json_file, "w") as f:
+            json.dump(builds, f)
+
+        return result_json_file
+        
+    
     
 # ########
 # Get Files functions
@@ -693,6 +820,46 @@ def get_submit_command(job_script_file: Path) -> str:
     submit_command: str = Constants.SUBMIT_COMMAND.format(job_script_file=job_script_file)
     return submit_command
 
+def get_condor_jobid(stdout: str) -> str:
+    pattern: Pattern = re.compile(Constants.CONDOR_JOB_ID_REGEX)
+    job_id_match_list: List[str] = pattern.findall(stdout)
+    return job_id_match_list[0]
+    
+def get_condor_cluster_status()->str:
+    command:str = Constants.CONDOR_STATUS_COMMAND
+    stdout, stderr = submit(command)
+    
+    return stdout
+
+def get_job_running(jobid_str:str, cluster_status_str:str) -> bool:
+    pattern: Pattern = re.compile(jobid_str)
+    matches: List[str] = pattern.findall(cluster_status_str)
+    
+    if len(matches) == 0:
+        return False
+    
+    else: 
+        return True
+    
+
+def check_job(stdout: str):
+    if Constants.CLUSTER== "CONDOR":
+        jobid_str: str = get_condor_jobid(stdout)
+
+    if Constants.DEBUG >0: print(f"Jobid is: {jobid_str}")
+        
+    while True:
+        if Constants.CLUSTER== "CONDOR":
+            cluster_status_str: str = get_condor_cluster_status()
+            
+        if Constants.DEBUG >0: print(f"cluster_status_str is: {cluster_status_str}")
+            
+        if get_job_running(jobid_str, cluster_status_str):
+            if Constants.DEBUG >0: print(f"\tNot yet finished!")
+            time.sleep(5)
+        else:
+            break
+
 # ########
 # Script functions
 # #########
@@ -702,7 +869,18 @@ def build_event(event: Event):
     # Debug event info
     # #########    
     if Constants.DEBUG > 0: summarise_event(event)
-    
+
+    # ########
+    # Check if there is already an event
+    # #########    
+    build_result_file: Path = event.event_output_dir / Constants.RHOFIT_RESULT_JSON_FILE
+    if Constants.DEBUG >0: print(f"Build result file is {build_result_file}")
+    if build_result_file.exists():
+        with open(str(build_result_file), "r") as f:
+            result_dict = json.load(f)
+        
+        return EventBuildResults.from_dict(result_dict)
+
     # ########
     # Get Files
     # #########
@@ -844,9 +1022,23 @@ def build_event(event: Event):
 
     
     # Execute job script
-    stdin, stderr = submit(submit_command)
-    if Constants.DEBUG > 0: print(f"stdin is: {stdin}")
-    if Constants.DEBUG > 0: print(f"stderr is: {stdin}")
+    stdout, stderr = submit(submit_command)
+    if Constants.DEBUG > 0: print(f"stdin is: {stdout}")
+    if Constants.DEBUG > 0: print(f"stderr is: {stderr}")
+    
+    # Check if job is finished
+    check_job(stdout)
+    
+    # Parse Rhofit result
+    result: EventBuildResults = EventBuildResults.from_event(event)
+    if Constants.DEBUG > 0: print(f"result is: {result}")
+    
+    # Save result
+    result_json_file: Path = result.to_json_file(event)
+    if Constants.DEBUG > 0: print(f"result_json_file is: {result_json_file}")
+
+    # return
+    return result_json_file
     
     
 def get_event_table_dict(path_list: List[Path]) -> Dict[System, pd.DataFrame]:
