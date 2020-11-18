@@ -391,6 +391,7 @@ class ClusterBuildResults:
 
 @dataclasses.dataclass()
 class EventBuildResults:
+    success: bool
     build_results: Dict[BuildClusterID, ClusterBuildResults]
 
     def __iter__(self):
@@ -406,8 +407,11 @@ class EventBuildResults:
         rhofit_dir:Path = event.event_output_dir / Constants.RHOFIT_DIR
         
         rhofit_results_file: Path = rhofit_dir / Constants.RHOFIT_RESULTS_FILE
+        
+        if not rhofit_results_file.exists():
+            return EventBuildResults(False, {})
 
-        with open(str(rhofit_dir / Constants.RHOFIT_RESULTS_FILE), "r") as f:
+        with open(str(rhofit_results_file), "r") as f:
             results_string = f.read()
 
         build_matches = re.findall(Constants.RHOFIT_HIT_REGEX,
@@ -441,7 +445,7 @@ class EventBuildResults:
             cluster_builds = cluster_builds_dict[cluster_id]
             event_clusters[cluster_id] = ClusterBuildResults(cluster_builds)
 
-        return EventBuildResults(event_clusters)
+        return EventBuildResults(True, event_clusters)
     
     def to_json_file(self, event: Event):
         builds = {}
