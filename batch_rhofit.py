@@ -170,8 +170,11 @@ class Constants:
     
     RHOFIT_SCRIPT = (
         "#!/bin/bash \n"
-        "source ~/.bashrc \n"
         "conda activate pandda \n"
+        "source ~/.bashrc \n"
+        "source /data/share-2/conor/xtal_software/ccp4-7.1/bin/ccp4.setup-sh"
+        "source /data/share-2/conor/xtal_software/phenix/phenix-1.18.2-3874/phenix_env.sh"
+        "source /data/share-2/conor/xtal_software/buster-2.10/setup.sh"
         "rhofit -m {mtz} -p {pdb} -l {ligand} -d {out_dir_path} -allclusters -use_2fofc -thorough"
     )
     RHOFIT_SCRIPT_FILE = "run_rhofit.sh"
