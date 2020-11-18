@@ -593,7 +593,7 @@ def get_masked_pdb_file(masked_pdb: gemmi.Structure, event: Event) -> Path:
     
     return masked_pdb_file
 
-def get_cut_out_event_map(event: Event, event_map: gemmi.FloatGrid, radius:float = 7.0) -> gemmi.FloatGrid:
+def get_cut_out_event_map(event: Event, event_map: gemmi.FloatGrid, radius:float = 10.0) -> gemmi.FloatGrid:
     event_centroid = gemmi.Position(event.x, event.y, event.z)
 
     xmap_array = np.array(event_map, copy=True)
