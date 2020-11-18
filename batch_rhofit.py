@@ -724,7 +724,7 @@ def submit(command: str) -> Tuple[str, str]:
     p = subprocess.Popen(
         command,
         shell=True,
-        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
     stdin, stderr = p.communicate()
