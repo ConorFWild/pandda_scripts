@@ -1154,7 +1154,8 @@ def make_autobuild_output_dir(event_dict: Dict[EventID, Event], autobuild_dirs_d
 
 def map_dict(func: Callable, dictionary: Dict[EventID, Event]):
     if Constants.DEBUG > 0:
-        func(list(dictionary.values())[0])
+        for value in dictionary.values():
+            func(value)
     else:
         values = list(dictionary.values())
         joblib.Parallel(
