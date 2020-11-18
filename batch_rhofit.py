@@ -1153,22 +1153,23 @@ def make_autobuild_output_dir(event_dict: Dict[EventID, Event], autobuild_dirs_d
         make_event_output_dir(event, autobuild_dirs_dir)
 
 def map_dict(func: Callable, dictionary: Dict[EventID, Event]):
-    if Constants.DEBUG > 0:
-        for value in dictionary.values():
-            func(value)
-    else:
-        values = list(dictionary.values())
-        joblib.Parallel(
-            
+    # if Constants.DEBUG > 0:
+    #     for value in dictionary.values():
+    #         func(value)
+    # else:
+    values = list(dictionary.values())
+    joblib.Parallel(
+        n_jobs=-2,
+        verbose=50,
+    )(
+        joblib.delayed(
+            func
         )(
-            joblib.delayed(
-                func
-            )(
-                value
-            )
-            for value
-            in values
+            value
         )
+        for value
+        in values
+    )
 
 # ########
 # Script
