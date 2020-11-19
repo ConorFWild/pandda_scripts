@@ -1,0 +1,14 @@
+#################### 
+# Example 1                                                             
+# Simple HTCondor submit description file                                     
+#                                                                       
+####################    
+
+Executable   = /data/share-2/conor/pandda/pandda_scripts/batch_rhofit.sh                                            
+Log          = /data/share-2/conor/pandda/output/batch_rhofit/log.log
+Output = /data/share-2/conor/pandda/output/batch_rhofit/out.out
+Error = /data/share-2/conor/pandda/output/batch_rhofit/err.err
+                                                                        
+request_memory = 180 GB 
+
+Queue
