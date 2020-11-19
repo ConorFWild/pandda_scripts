@@ -1,4 +1,20 @@
 #!/bin/bash 
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/data/share-2/conor/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/data/share-2/conor/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/data/share-2/conor/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/data/share-2/conor/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+
+
 conda activate pandda 
 source ~/.bashrc 
 source /data/share-2/conor/xtal_software/ccp4-7.1/bin/ccp4.setup-sh 
