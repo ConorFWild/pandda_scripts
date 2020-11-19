@@ -1,7 +1,5 @@
 #!/bin/bash 
 
-
-
 conda activate pandda 
 source ~/.bashrc 
 source /data/share-2/conor/xtal_software/ccp4-7.1/bin/ccp4.setup-sh 
