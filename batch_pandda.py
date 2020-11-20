@@ -5,6 +5,8 @@ from pathlib import Path
 import argparse
 import subprocess
 
+from xlib import Constants
+
 SUBMIT_COMMAND = "qsub -pe smp 10 -l m_mem_free=15G,h_vmem=200G {pandda_script_file}"
 
 JOB_SCRIPT = """####################                                                    
@@ -111,6 +113,11 @@ def main():
         )
         pandda_script_dict[system_name] = pandda_script
         
+        pandda_analyses_file: Path = out_dir / Constants.PANDDA_ANALYSES_DIR / Constants.PANDDA_ANALYSE_EVENTS_FILE
+        if pandda_analyses_file.exists():
+            print(f"System already finished: {system_name}")
+            continue
+        
         if args.debug == 1:
             print(f"# # System: {system_name}: pandda script")
             print(pandda_script)
@@ -118,7 +125,11 @@ def main():
 
     if args.debug == 2:
         print(f"# # Pandda script dict {len(pandda_script_dict)}")
+        
+    # Remove those systems already run
+    for system in pandda_script_dict:
 
+            
 
     # Make command scripts
     pandda_script_files = {}
