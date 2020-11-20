@@ -828,6 +828,24 @@ class RMSD:
 class RMSDDict:
     _dict: Dict[BuildID, RMSD]
     
+    
+    def __getitem__(self, key: BuildID) -> RMSD:
+        return self._dict[key]
+    
+    def __setitem__(self, key: BuildID, value: RMSD):
+        self._dict[key] = value
+        
+    def __delitem__(self, key: BuildID):
+        del self._dict[key]
+    
+    def __iter__(self) -> Iterator[BuildID]:
+        for item in self._dict:
+            yield item
+
+    def __len__(self) -> int:
+        return len(self._dict)
+    
+    
     @staticmethod
     def from_build_dict(
         build_dict: BuildDict,
@@ -851,6 +869,30 @@ class RMSDDict:
                 rmsd_dict[build_id] = rmsd
 
         return RMSDDict(rmsd_dict)            
+    
+    def best_by_dtag(self) -> RMSDDict:
+        best_rmsd_dict: Dict[BuildID, RMSD] = {}
+        
+        dtag_to_buildid_dict: Dict[Dtag, List[BuildID]] = {}
+        for build_id in self:
+            dtag: Dtag = build_id.dtag
+            if dtag not in dtag_to_buildid_dict:
+                dtag_to_buildid_dict[dtag] = []
+            dtag_to_buildid_dict[dtag].append(build_id)
+        
+        for dtag in dtag_to_buildid_dict:
+            build_id_list: List[BuildID] = dtag_to_buildid_dict[dtag]
+            rmsd_list: List[RMSD] = [self[build_id] for build_id in build_id_list]
+            rmsd_float_list: List[float] = [rmsd.rmsd for rmsd in rmsd_list]
+            
+            min_rmsd_index: int = np.argmin(rmsd_float_list)
+            
+            best_build_id: BuildID = build_id_list[min_rmsd_index]
+            best_rmsd: RMSD = rmsd_list[min_rmsd_index]
+
+            best_rmsd_dict[best_build_id] = best_rmsd
+            
+        return RMSDDict(best_rmsd_dict)
             
             
 
