@@ -79,10 +79,11 @@ def main():
     build_dict: BuildDict = BuildDict.from_autobuild_dir(args.autobuild_dirs_dir)
     if args.debug > 0: 
         system_dict: Dict[System, None] = {build_id.system: None for build_id in build_dict}
-        print(f"Got rmsds for {len(system_dict)} datasets")
+        print(f"Got builds for {len(system_dict)} datasets")
         dtag_dict: Dict[Dtag, None] = {build_id.dtag: None for build_id in build_dict}
-        print(f"Got rmsds for {len(dtag_dict)} datasets")
+        print(f"Got builds for {len(dtag_dict)} datasets")
         print(f"Found {len(build_dict)} builds")
+        
     
     # Get references
     reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(pandda_system_path_dict)
