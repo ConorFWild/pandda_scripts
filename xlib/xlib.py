@@ -741,13 +741,19 @@ class BuildDict:
             with open(build_result_file, "r") as f:
                 result_dict = json.load(f)
 
-            event_build_results: EventBuildResults = EventBuildResults.from_dict(result_dict)
+            # event_build_results: EventBuildResults = EventBuildResults.from_dict(result_dict)
             
-            for build_cluster_id in event_build_results:
-                build_cluster = event_build_results[build_cluster_id]
+            for build_cluster_id in result_dict:
+                build_cluster_id = BuildClusterID(result_dict[build_cluster_id])
                 
-                for build_number_id in build_cluster:
-                    build: Build = build_cluster[build_number_id]
+                build_cluster_dict: Dict[str, Dict[str, str]] = result_dict[build_cluster_id]
+                
+                for build_number_id_str in build_cluster_dict:
+                    current_build_dict: Dict[str, str] = build_cluster_dict[build_number_id_str]
+                    build_file: Path = Path(current_build_dict["build_file"])
+                    build_rscc: float = float(current_build_dict["build_rscc"])
+                    build: Build = Build(build_file, build_rscc)
+                    build_number_id: BuildNumberID = BuildNumberID(int(build_number_id_str))
                     build_id: BuildID = BuildID(system, dtag, event_idx, build_cluster_id, build_number_id)
                     build_dict[build_id] = build
 
