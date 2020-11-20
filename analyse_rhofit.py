@@ -81,12 +81,14 @@ def main():
     # Get rmsds
     rmsd_dict: RMSDDict = RMSDDict.from_build_dict(build_dict, reference_structure_dict)
     if args.debug > 0: print(rmsd_dict)
+    if args.debug > 0: print(f"Got optimum rmsds for {len(rmsd_dict)} builds")
     
     # Get dtag min_rmsds
     rmsd_dtag_dict: RMSDDict = rmsd_dict.best_by_dtag()
     if args.debug > 0: print(rmsd_dtag_dict)
+    if args.debug > 0: print(f"Got optimum rmsds for {len(rmsd_dtag_dict)} dtags")
 
-    
+
     # Get rsccs
     # rscc_dict: RSCCDict = RSCCDict.from_build_dict(build_dict)
     
