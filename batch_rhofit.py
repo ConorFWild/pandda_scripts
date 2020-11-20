@@ -744,7 +744,7 @@ def get_final_ligand_cif_file(
     ligand_cif_file: Union[Path, None],
     ligand_smiles_file: Union[Path, None],
     ligand_pdb_file: Union[Path, None],
-    ) -> Path:
+    ) -> Union[Path, None]:
     event_output_dir: Path = event.event_output_dir
     final_ligand_cif_file: Path = event_output_dir / Constants.FINAL_LIGAND_CIF_FILE
 
@@ -764,7 +764,8 @@ def get_final_ligand_cif_file(
         return Path(ligand_cif_file)
     
     else:
-        raise Exception("No ligand!")
+        # raise Exception("No ligand!")
+        return None
     
 def change_permission(path: Path):
     command: str = Constants.CHANGE_PERMISSION_COMMAND.format(path=path)
@@ -988,13 +989,17 @@ def build_event(event: Event):
     if Constants.DEBUG > 0: print(f"phase_grafted_mtz_file is: {phase_grafted_mtz_file}")
     
     # Get ligand file
-    final_ligand_cif_file: Path = get_final_ligand_cif_file(
+    final_ligand_cif_file: Union[Path, None] = get_final_ligand_cif_file(
         event,
         ligand_cif_file,
         ligand_smiles_file,
         ligand_pdb_file,
     )
-
+    
+    if final_ligand_cif_file is None:
+        return None
+    else:
+        cast(Path, final_ligand_cif_file)
     
     # ########
     # Run Rhofit
