@@ -1,6 +1,5 @@
 from __future__ import annotations
 from os import stat, system
-from batch_rhofit import get_event_table_dict
 
 from typing import *
 from collections import abc
