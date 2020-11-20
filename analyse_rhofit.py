@@ -74,8 +74,9 @@ def main():
     event_dict: EventDict = EventDict.from_event_tables(event_table_dict, args.pandda_dirs_dir, args.autobuild_dirs_dir)
     if args.debug > 0: 
         system_dict: Dict[System, None] = {build_id.system: None for build_id in event_dict}
-        print(f"Got builds for {len(system_dict)} datasets")
+        print(f"Got events for {len(system_dict)} systems")
         dtag_dict: Dict[Dtag, None] = {build_id.dtag: None for build_id in event_dict}
+        print(f"Got events for {len(dtag_dict)} datasets")
         print(f"Found {len(event_dict)} events")
 
     
@@ -83,7 +84,7 @@ def main():
     build_dict: BuildDict = BuildDict.from_autobuild_dir(args.autobuild_dirs_dir)
     if args.debug > 0: 
         system_dict: Dict[System, None] = {build_id.system: None for build_id in build_dict}
-        print(f"Got builds for {len(system_dict)} datasets")
+        print(f"Got builds for {len(system_dict)} systems")
         dtag_dict: Dict[Dtag, None] = {build_id.dtag: None for build_id in build_dict}
         print(f"Got builds for {len(dtag_dict)} datasets")
         print(f"Found {len(build_dict)} builds")
@@ -98,7 +99,7 @@ def main():
     # if args.debug > 0: print(rmsd_dict)
     if args.debug > 0:
         system_dict: Dict[System, None] = {build_id.system: None for build_id in rmsd_dict}
-        print(f"Got rmsds for {len(system_dict)} datasets")
+        print(f"Got rmsds for {len(system_dict)} systems")
         dtag_dict: Dict[Dtag, None] = {build_id.dtag: None for build_id in rmsd_dict}
         print(f"Got rmsds for {len(dtag_dict)} datasets")
         print(f"Got rmsds for {len(rmsd_dict)} builds")
