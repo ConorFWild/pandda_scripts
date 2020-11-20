@@ -359,6 +359,17 @@ class BuildID:
     event_idx: EventIDX
     build_cluster: BuildClusterID
     build_number: BuildNumberID
+    
+    def __hash__(self) -> int:
+        return hash(
+            (
+                self.system,
+                self.dtag,
+                self.event_idx,
+                self.build_cluster,
+                self.build_number,
+                )
+            )
 
 
 @dataclasses.dataclass()
