@@ -83,8 +83,9 @@ def main():
     if args.debug > 0: print(rmsd_dict)
     
     # Get dtag min_rmsds
-    rmsd_dtag_dict: RMSDDict = RMSDDict.best_by_dtag()
-    
+    rmsd_dtag_dict: RMSDDict = rmsd_dict.best_by_dtag()
+    if args.debug > 0: print(rmsd_dtag_dict)
+
     
     # Get rsccs
     # rscc_dict: RSCCDict = RSCCDict.from_build_dict(build_dict)
