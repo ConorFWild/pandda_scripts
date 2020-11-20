@@ -70,6 +70,11 @@ def main():
     event_table_dict: EventTableDict = EventTableDict.from_system_path_dict(pandda_system_path_dict,)
     if args.debug > 0: print(f"Found {len(event_table_dict)} system tables")
     
+    # Get events
+    event_dict: EventDict = EventDict.from_event_tables(event_table_dict, args.pandda_dirs_dir, args.autobuild_dirs_dir)
+    if args.debug > 0: print(f"Found {len(event_dict)} events")
+
+    
     # Get builds
     build_dict: BuildDict = BuildDict.from_autobuild_dir(args.autobuild_dirs_dir)
     if args.debug > 0: print(f"Found {len(build_dict)} builds")
