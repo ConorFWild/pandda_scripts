@@ -64,19 +64,19 @@ def main():
     
     # Get systems
     pandda_system_path_dict: SystemPathDict = SystemPathDict.from_dir(args.pandda_dirs_dir)
-    if Constants.DEBUG > 0: print(f"Found {len(pandda_system_path_dict)} systems")
+    if args.debug > 0: print(f"Found {len(pandda_system_path_dict)} systems")
 
     # Get PanDDAs
     event_table_dict: EventTableDict = EventTableDict.from_system_path_dict(pandda_system_path_dict,)
-    if Constants.DEBUG > 0: print(f"Found {len(event_table_dict)} system tables")
+    if args.debug > 0: print(f"Found {len(event_table_dict)} system tables")
     
     # Get builds
     build_dict: BuildDict = BuildDict.from_autobuild_dir(args.autobuild_dirs_dir)
-    if Constants.DEBUG > 0: print(f"Found {len(build_dict)} builds")
+    if args.debug > 0: print(f"Found {len(build_dict)} builds")
     
     # Get references
     reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(pandda_system_path_dict)
-    if Constants.DEBUG > 0: print(f"Found {len(reference_structure_dict)} reference structures")
+    if args.debug > 0: print(f"Found {len(reference_structure_dict)} reference structures")
     
     # Get rmsds
     rmsd_dict: RMSDDict = RMSDDict.from_build_dict(build_dict, reference_structure_dict)
