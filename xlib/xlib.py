@@ -743,10 +743,10 @@ class BuildDict:
 
             # event_build_results: EventBuildResults = EventBuildResults.from_dict(result_dict)
             
-            for build_cluster_id in result_dict:
-                build_cluster_id = BuildClusterID(result_dict[build_cluster_id])
+            for build_cluster_id_str in result_dict:
+                build_cluster_id = BuildClusterID(build_cluster_id_str)
                 
-                build_cluster_dict: Dict[str, Dict[str, str]] = result_dict[build_cluster_id]
+                build_cluster_dict: Dict[str, Dict[str, str]] = result_dict[build_cluster_id_str]
                 
                 for build_number_id_str in build_cluster_dict:
                     current_build_dict: Dict[str, str] = build_cluster_dict[build_number_id_str]
