@@ -835,6 +835,8 @@ class RMSDDict:
             if dtag in reference_structure_dict:
                 reference_structure: Structure = reference_structure_dict[dtag]
 
+                print(build)
+                
                 build_structure_file: Path = build.build_file
                 
                 build_structure: Structure = Structure.from_model_path(build_structure_file)
