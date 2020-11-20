@@ -1,6 +1,4 @@
-
 from __future__ import annotations
-from lib import EventTableDict
 from re import match
 from batch_pandda import OUTPUT_FILE
 
