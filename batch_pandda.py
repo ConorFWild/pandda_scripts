@@ -114,6 +114,9 @@ def main():
         pandda_script_dict[system_name] = pandda_script
         
         pandda_analyses_file: Path = out_dir / Constants.PANDDA_ANALYSES_DIR / Constants.PANDDA_ANALYSE_EVENTS_FILE
+        if args.debug == 1:
+            print(f"Analysses path: {pandda_analyses_file}")
+
         if pandda_analyses_file.exists():
             print(f"System already finished: {system_name}")
             continue
@@ -125,10 +128,6 @@ def main():
 
     if args.debug == 2:
         print(f"# # Pandda script dict {len(pandda_script_dict)}")
-        
-    # Remove those systems already run
-    for system in pandda_script_dict:
-
             
 
     # Make command scripts
