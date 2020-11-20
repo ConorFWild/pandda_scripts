@@ -858,8 +858,6 @@ class RMSDDict:
             
             if dtag in reference_structure_dict:
                 reference_structure: Structure = reference_structure_dict[dtag]
-
-                print(build)
                 
                 build_structure_file: Path = build.build_file
                 

@@ -77,7 +77,8 @@ def main():
     
     # Get builds
     build_dict: BuildDict = BuildDict.from_autobuild_dir(args.autobuild_dirs_dir)
-    if args.debug > 0: print(f"Found {len(build_dict)} builds")
+    if args.debug > 0: 
+        print(f"Found {len(build_dict)} builds")
     
     # Get references
     reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(pandda_system_path_dict)
