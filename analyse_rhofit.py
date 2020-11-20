@@ -72,7 +72,11 @@ def main():
     
     # Get events
     event_dict: EventDict = EventDict.from_event_tables(event_table_dict, args.pandda_dirs_dir, args.autobuild_dirs_dir)
-    if args.debug > 0: print(f"Found {len(event_dict)} events")
+    if args.debug > 0: 
+        system_dict: Dict[System, None] = {build_id.system: None for build_id in event_dict}
+        print(f"Got builds for {len(system_dict)} datasets")
+        dtag_dict: Dict[Dtag, None] = {build_id.dtag: None for build_id in event_dict}
+        print(f"Found {len(event_dict)} events")
 
     
     # Get builds
