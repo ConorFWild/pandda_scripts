@@ -80,14 +80,23 @@ def main():
     
     # Get rmsds
     rmsd_dict: RMSDDict = RMSDDict.from_build_dict(build_dict, reference_structure_dict)
-    if args.debug > 0: print(rmsd_dict)
-    if args.debug > 0: print(f"Got optimum rmsds for {len(rmsd_dict)} builds")
+    # if args.debug > 0: print(rmsd_dict)
+    if args.debug > 0:
+        system_dict: Dict[System, None] = {build_id.system: None for build_id in rmsd_dict}
+        print(f"Got rmsds for {len(system_dict)} datasets")
+        dtag_dict: Dict[Dtag, None] = {build_id.dtag: None for build_id in rmsd_dict}
+        print(f"Got rmsds for {len(dtag_dict)} datasets")
+        print(f"Got rmsds for {len(rmsd_dict)} builds")
     
     # Get dtag min_rmsds
     rmsd_dtag_dict: RMSDDict = rmsd_dict.best_by_dtag()
-    if args.debug > 0: print(rmsd_dtag_dict)
-    if args.debug > 0: print(f"Got optimum rmsds for {len(rmsd_dtag_dict)} dtags")
-
+    # if args.debug > 0: print(rmsd_dtag_dict)
+    if args.debug > 0: 
+        system_dict: Dict[System, None] = {build_id.system: None for build_id in rmsd_dtag_dict}
+        print(f"Got optimum rmsds for {len(system_dict)} datasets")
+        dtag_dict: Dict[Dtag, None] = {build_id.dtag: None for build_id in rmsd_dtag_dict}
+        print(f"Got optimum rmsds for {len(dtag_dict)} datasets")
+        print(f"Got optimum rmsds for {len(rmsd_dtag_dict)} dtags")
 
     # Get rsccs
     # rscc_dict: RSCCDict = RSCCDict.from_build_dict(build_dict)
