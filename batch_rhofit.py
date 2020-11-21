@@ -1,6 +1,5 @@
 from __future__ import annotations
 from re import match
-from batch_pandda import OUTPUT_FILE
 
 from os import system, write, mkdir
 import shutil
