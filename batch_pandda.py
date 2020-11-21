@@ -111,7 +111,6 @@ def main():
             data_dirs=data_dirs,
             out_dir=out_dir,
         )
-        pandda_script_dict[system_name] = pandda_script
         
         pandda_analyses_file: Path = out_dir / Constants.PANDDA_ANALYSES_DIR / Constants.PANDDA_ANALYSE_EVENTS_FILE
         if args.debug == 1:
@@ -125,6 +124,9 @@ def main():
             print(f"# # System: {system_name}: pandda script")
             print(pandda_script)
             break
+        
+        pandda_script_dict[system_name] = pandda_script
+
 
     if args.debug == 2:
         print(f"# # Pandda script dict {len(pandda_script_dict)}")
