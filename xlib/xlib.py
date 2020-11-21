@@ -127,6 +127,8 @@ class Constants:
     XCHEM_DTAG_REGEX = r"^([0-9a-zA-Z]+[-]+[0-9a-zA-Z]+)"
     XCHEM_SYSTEM_REGEX = r"([^\-]+)\-[^\-]+"
     
+    
+    
 
 @dataclasses.dataclass()
 class HKL:
