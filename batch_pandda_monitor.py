@@ -76,7 +76,7 @@ def main():
     if args.debug > 0: print(f"Found {len(pandda_system_path_dict)} systems")
 
     # Get PanDDAs
-    event_table_dict: EventTableDict = EventTableDict.from_system_path_dict(pandda_system_path_dict,)
+    event_table_dict: EventTableDict = EventTableDict.from_system_path_dict(pandda_system_path_dict)
     if args.debug > 0: print(f"Found {len(event_table_dict)} system tables")    
     
     # Unfinished systems dict
