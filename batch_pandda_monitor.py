@@ -25,7 +25,7 @@ import gemmi
 from xlib import *
 
 def tail(file: Path, n: int = 20) -> str:
-    command: str = f"tail -n {n} {str(path)}"
+    command: str = f"tail -n {n} {str(file)}"
     print(command)
     p = subprocess.Popen(command,
                          shell=True,
