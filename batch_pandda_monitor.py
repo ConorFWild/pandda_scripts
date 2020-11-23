@@ -87,10 +87,12 @@ def main():
          if not (pandda_system_path_dict[system] /Constants.PANDDA_ANALYSES_DIR /Constants.PANDDA_ANALYSE_EVENTS_FILE).exists()
          }
         )
+    if args.debug > 0: print(f"Found {len(unfinished_system_path_dict)} unfinished systems")    
+
     
     # err dict
     err_dict: Dict[System, Path] = {
-        system: args.pandda_dirs_dir / Constants.PANDDA_JOB_ERROR_FILE.format(system.system)
+        system: args.pandda_dirs_dir / Constants.PANDDA_JOB_ERROR_FILE.format(system_name=system.system)
         for system
         in unfinished_system_path_dict
         }
