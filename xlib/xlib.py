@@ -90,6 +90,10 @@ class Constants:
     PANDDA_Z_MAP_FILE = "{dtag}-z_map.native.ccp4"
     PANDDA_EVENT_MAP_FILE = "{dtag}-event_{event_idx}_1-BDC_{bdc}_map.native.ccp4"
 
+    PANDDA_JOB_LOG_FILE = "{system_name}.log"
+    PANDDA_JOB_OUTPUT_FILE = "{system_name}.out"
+    PANDDA_JOB_ERROR_FILE = "{system_name}.err"
+
     PANDDA_LOG_FILE = "pandda_log.json"
     
     ELBOW_COMMAND = "cd {event_dir.event_dir}; phenix. {smiles_file.smiles_file} --output=\"{autobuilding_ligand}\""

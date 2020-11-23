@@ -72,7 +72,8 @@ def main():
     
     # Get references
     reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(pandda_system_path_dict)
-    if args.debug > 0: print(f"Found {len(reference_structure_dict)} reference structures")    
+    if args.debug > 0: 
+        print(f"Found {len(reference_structure_dict)} reference structures")    
     
     # Get events
     event_dict: EventDict = EventDict.from_event_tables(event_table_dict, args.pandda_dirs_dir, args.autobuild_dirs_dir)
