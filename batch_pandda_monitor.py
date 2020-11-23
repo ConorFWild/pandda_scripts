@@ -26,6 +26,7 @@ from xlib import *
 
 def tail(file: Path, n: int = 20) -> str:
     command: str = f"tail -n {n} {str(path)}"
+    
     p = subprocess.Popen(command,
                          shell=True,
                          stdout=subprocess.PIPE,
@@ -100,6 +101,7 @@ def main():
         for system in err_dict:
             print((
                 f"# # {system.system} \n"
+                f"{err_dict[system]} \n"
                 f"{tail(err_dict[system])} \n"
             )
                   )    
