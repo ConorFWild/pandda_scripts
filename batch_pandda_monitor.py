@@ -26,7 +26,7 @@ from xlib import *
 
 def tail(file: Path, n: int = 20) -> str:
     command: str = f"tail -n {n} {str(path)}"
-    
+    print(command)
     p = subprocess.Popen(command,
                          shell=True,
                          stdout=subprocess.PIPE,
