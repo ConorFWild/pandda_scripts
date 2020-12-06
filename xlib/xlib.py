@@ -943,6 +943,10 @@ def get_event_distance_from_reference_model_dict(
                 distance: float = np.linalg.norm(np.array(event_centroid) - np.array(ligand_centroid))
                 # Update
                 ligand_distance_list.append(distance)
+                
+        # Skip processing if none found
+        if len(ligand_distance_list) == 0:
+            continue
         # Get minimum
         min_distance = min(ligand_distance_list)
         # update
