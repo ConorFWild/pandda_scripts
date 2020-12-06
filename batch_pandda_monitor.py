@@ -35,6 +35,13 @@ def tail(file: Path, n: int = 20) -> str:
     stdout, stderr = p.communicate()
     return str(stdout)
 
+def errored(string: str) -> bool:
+    pattern: Pattern = re.compile("Traceback")
+    matches: List[Any] = re.findall(pattern, string)
+    if len(matches) > 0:
+        return True
+    else:
+        return False
 
 @dataclasses.dataclass()
 class Args:
@@ -105,8 +112,20 @@ def main():
                 f"{tail(err_dict[system])} \n"
             )
                   )    
+        # Print num errored systems
+        errored_target_list: List[System] = [system 
+                                                    for system 
+                                                    in err_dict 
+                                                    if errored(tail(err_dict[system]))
+                                                    ]
+        print(f"Number of systems errored: {len(errored_target_list)}")
+        print(f"Errored systems: {errored_target_list}")
 
-    
+    # Get references
+    reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(pandda_system_path_dict)
+    if args.debug > 0: 
+        print(f"Found {len(reference_structure_dict)} reference structures")    
+
     # out dict
     
     # load jsons

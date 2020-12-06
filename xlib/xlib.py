@@ -609,6 +609,13 @@ class SystemPathDict:
 class ReferenceStructureDict:
     _dict: Dict[Dtag, Structure]
 
+    def __iter__(self):
+        for dtag in self._dict:
+            yield self._dict[dtag]
+            
+    def __getitem__(self, key):
+        return self._dict[key]
+
     @staticmethod
     def from_system_path_dict(system_path_dict: SystemPathDict) -> ReferenceStructureDict:
         
@@ -780,6 +787,10 @@ class BuildDict:
 class LigandResidues:
     residues: List[Any]
 
+    def __iter__(self):
+        for residue in self.residues:
+            yield residue
+
     @staticmethod
     def from_structure(structure: Structure):
         residues = []
@@ -897,7 +908,53 @@ class RMSDDict:
             
         return RMSDDict(best_rmsd_dict)
             
+def get_residue_centroid(residue: gemmi.Residue) -> Tuple[float, float, float]:
+    pos_list = []
+    for atom in residue:
+        pos = atom.pos
+        pos_tuple = (pos.x, pos.y, pos.z)
+        pos_list.append(pos_tuple)
+        
+    pos_array = np.array(pos_list)
+    centroid = np.mean(pos_array, axis=0)
+    centroid_tuple = (centroid[0], centroid[1], centroid[2])
+    return centroid_tuple
             
+def get_event_distance_from_reference_model_dict(
+    event_dict: EventDict, 
+    reference_structure_dict: ReferenceStructureDict,
+    ) -> Dict[Dtag, float]:
+    dtag_distance_from_reference_model_dict: Dict[Dtag, float] = {}
+    
+    # Iterate over reference models
+    for dtag in reference_structure_dict:
+        # Get reference structure
+        reference_structure: Structure = reference_structure_dict[dtag]
+        # Get ligands
+        ligand_residues: LigandResidues = LigandResidues.from_structure(reference_structure)
+        # Iterate
+        ligand_distance_list: List[float] = []
+        for ligand_residue in ligand_residues:
+            # Get ligand centroid
+            ligand_centroid: Tuple[float, float, float] = get_residue_centroid(ligand_residue)
+            # Iterate over events with this dtag
+            dtag_event_list: List[EventID] = [event_id for event_id in event_dict if event_id.dtag == dtag]
+            for event_id in dtag_event_list:
+                # Get event
+                event: Event = event_dict[event_id]
+                # Get event centroid
+                event_centroid: Tuple[float, float, float] = (event.x, event.y, event.z)
+                # Get distance
+                distance: float = np.linalg.norm(np.array(event_centroid) - np.array(ligand_centroid))
+                # Update
+                ligand_distance_list.append(distance)
+        # Get minimum
+        min_distance = min(ligand_distance_list)
+        # update
+        dtag_distance_from_reference_model_dict[dtag] = min(ligand_distance_list)
+        
+    return dtag_distance_from_reference_model_dict
+                
 
     
 # @dataclasses.dataclass()
