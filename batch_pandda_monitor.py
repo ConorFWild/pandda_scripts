@@ -20,6 +20,8 @@ import pandas as pd
 
 import joblib
 
+import seaborn as sns
+
 import gemmi
 
 from xlib import *
@@ -43,21 +45,50 @@ def errored(string: str) -> bool:
     else:
         return False
 
+def make_event_distance_graph(event_distance_dict: Dict[Dtag, float], path: Path):
+    
+    def categorise(number: float) -> str:
+        if number < 2:
+            return "<2"
+        elif number <5:
+            return "2-5"
+        else:
+            return ">5"
+    
+    data = {
+        "Dtag": [dtag for dtag in event_distance_dict],
+        "Distance": [categorise(event_distance_dict[dtag]) for dtag in event_distance_dict],
+    }
+    
+    table = pd.DataFrame.from_dict(data)
+
+    g = sns.catplot(x="Distance",
+                    kind="count",
+                    data=table,
+                    )
+
+    
+    g.savefig(str(path))
+    
+
 @dataclasses.dataclass()
 class Args:
     pandda_dirs_dir: Path
     autobuild_dirs_dir: Path
+    graph_dir: Path
     debug: int
     
     @staticmethod
     def from_args(args: Any):
         pandda_dirs_dir = Path(args.pandda_dirs_dir)
         autobuild_dirs_dir = Path(args.autobuild_dirs_dir)
+        graph_dir: Path = Path(args.graph_dir)
         debug: int = int(args.debug)
         
         return Args(
             pandda_dirs_dir,
             autobuild_dirs_dir,
+            graph_dir,
             debug,
         )
     
@@ -67,6 +98,8 @@ class Args:
         parser.add_argument("--pandda_dirs_dir",
                             )
         parser.add_argument("--autobuild_dirs_dir",
+                            )
+        parser.add_argument("--graph_dir",
                             )
         parser.add_argument("--debug",
                             default=2,
@@ -151,6 +184,9 @@ def main():
     if args.debug > 0: 
         print(event_distance_dict)
         print(f"Found {len(event_distance_dict)} closest events to know hits")    
+    make_event_distance_graph(event_distance_dict, 
+                              args.graph_dir / "pandda_gemmi_all_closest_event_distance.png",
+                              )
 
     # check which are finished
     
