@@ -87,6 +87,15 @@ def main():
     event_table_dict: EventTableDict = EventTableDict.from_system_path_dict(pandda_system_path_dict)
     if args.debug > 0: print(f"Found {len(event_table_dict)} system tables")    
     
+    # Get events
+    event_dict: EventDict = EventDict.from_event_tables(event_table_dict, args.pandda_dirs_dir, args.autobuild_dirs_dir)
+    if args.debug > 0: 
+        system_dict: Dict[System, None] = {build_id.system: None for build_id in event_dict}
+        print(f"Got events for {len(system_dict)} systems")
+        dtag_dict: Dict[Dtag, None] = {build_id.dtag: None for build_id in event_dict}
+        print(f"Got events for {len(dtag_dict)} datasets")
+        print(f"Found {len(event_dict)} events")
+    
     # Unfinished systems dict
     unfinished_system_path_dict: SystemPathDict = SystemPathDict(
         {system: pandda_system_path_dict[system]
@@ -135,7 +144,14 @@ def main():
     #         json_dict = json.load(str(json_path))
 
     # Check for event tables
-    
+    event_distance_dict: Dict[Dtag, float] = get_event_distance_from_reference_model_dict(
+        event_dict,
+        reference_structure_dict
+    )
+    if args.debug > 0: 
+        print(event_distance_dict)
+        print(f"Found {len(event_distance_dict)} closest events to know hits")    
+
     # check which are finished
     
     # Output

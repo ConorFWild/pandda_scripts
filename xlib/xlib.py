@@ -611,7 +611,7 @@ class ReferenceStructureDict:
 
     def __iter__(self):
         for dtag in self._dict:
-            yield self._dict[dtag]
+            yield dtag
             
     def __getitem__(self, key):
         return self._dict[key]
