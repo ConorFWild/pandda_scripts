@@ -609,13 +609,6 @@ class SystemPathDict:
 class ReferenceStructureDict:
     _dict: Dict[Dtag, Structure]
 
-    def __iter__(self):
-        for dtag in self._dict:
-            yield dtag
-            
-    def __getitem__(self, key):
-        return self._dict[key]
-
     @staticmethod
     def from_system_path_dict(system_path_dict: SystemPathDict) -> ReferenceStructureDict:
         
@@ -630,7 +623,9 @@ class ReferenceStructureDict:
             reference_structure_dict.update(system_reference_structure_dict)
             
         return ReferenceStructureDict(reference_structure_dict)
-            
+    
+    def as_dict(self):
+        return self._dict            
         
 
     @staticmethod
@@ -664,7 +659,7 @@ class ReferenceStructureDict:
 
     def __iter__(self):
         for dtag in self._dict:
-            yield self._dict[dtag]
+            yield dtag
 
     def __len__(self):
         return len(self._dict)
@@ -951,7 +946,7 @@ def get_event_distance_from_reference_model_dict(
         # Get minimum
         min_distance = min(ligand_distance_list)
         # update
-        dtag_distance_from_reference_model_dict[dtag] = min(ligand_distance_list)
+        dtag_distance_from_reference_model_dict[dtag] = min_distance
         
     return dtag_distance_from_reference_model_dict
                 
