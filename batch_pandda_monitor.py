@@ -193,6 +193,13 @@ def main():
         print(f"Number of systems errored: {len(errored_target_list)}")
         print(f"Errored systems: {errored_target_list}")
 
+    # Pandda status graph
+    make_successful_pandda_plot(pandda_system_path_dict,
+                                event_table_dict,
+                                err_dict,
+                                args.graph_dir / "pandda_gemmi_status_graph.png",
+                                )
+
     # Get references
     reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(pandda_system_path_dict)
     if args.debug > 0: 
