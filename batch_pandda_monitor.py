@@ -1,4 +1,5 @@
 from __future__ import annotations
+from batch_rhofit import get_event_table_dict
 from re import match
 from batch_pandda import OUTPUT_FILE
 
@@ -70,6 +71,35 @@ def make_event_distance_graph(event_distance_dict: Dict[Dtag, float], path: Path
     
     g.savefig(str(path))
     
+def make_successful_pandda_plot(
+    system_path_dict, 
+    event_table_dict, 
+    err_dict, 
+    path: Path):
+    
+    def categorise(system, event_table_dict, err_dict) -> str:
+        if system in event_table_dict:
+            return "Complete"
+        elif system in err_dict:
+            return "Errored"
+        else:
+            return "Unknown"
+        
+    data = {
+        "System": [system.system for system in system_path_dict],
+        "Status": [categorise(system, event_table_dict, err_dict) 
+                   for system
+                   in system_path_dict
+                   ],
+    }
+    table = pd.DataFrame.from_dict(data)
+
+    g = sns.catplot(x="Status",
+                    kind="count",
+                    data=table,
+                    )
+    
+    g.savefig(str(path))
 
 @dataclasses.dataclass()
 class Args:
