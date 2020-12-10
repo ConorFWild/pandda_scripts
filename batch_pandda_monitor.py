@@ -118,8 +118,8 @@ def make_event_plot(
         else:
             return "Unknown"
         
-    def get_num_events(system: System, event_table_dict: EventTableDict) -> int:
-        system_events = [event_id for event_id in event_table_dict if event_id.system == system.system]
+    def get_num_events(system: System, event_dict: EventDict) -> int:
+        system_events = [event_id for event_id in event_dict if event_id.system.system == system.system]
         return len(system_events)
         
     def get_num_datasets(system: System, system_path_dict: SystemPathDict) -> int:
@@ -134,11 +134,11 @@ def make_event_plot(
         
         for dtag in reference_structure_dict:
             dtag_system = System.from_dtag(dtag.dtag)
-            if not dtag_system == system:
+            if not dtag_system.system == system.system:
                 continue
             
             # Check if an event
-            dtag_events = [event_id for event_id in event_dict if event_id.dtag == dtag]
+            dtag_events = [event_id for event_id in event_dict if event_id.dtag.dtag == dtag.dtag]
             
             if len(dtag_events) > 0:
                 dtag_structures.append(dtag)
@@ -180,6 +180,9 @@ def make_event_plot(
     for system in system_path_dict:
         num_hits: int =  get_num_hits(system, reference_structure_dict, event_dict,)
         num_events: int = get_num_events(system, event_table_dict) 
+        
+        print(num_hits)
+        print(num_events)
         
         # Get percentage
         if num_events == 0:
