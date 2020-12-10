@@ -164,7 +164,7 @@ def make_event_plot(
         num_datasets: int = get_num_datasets(system, system_path_dict)
         
         # Get percentage
-        if get_num_datasets == 0:
+        if num_datasets == 0:
             percentage = 0.0
         else:
             percentage = num_events / num_datasets
@@ -211,6 +211,7 @@ def make_event_plot(
             "Percentage": percentage,
         }
         data.append(record)
+    
     
     table = pd.DataFrame(data)
 
