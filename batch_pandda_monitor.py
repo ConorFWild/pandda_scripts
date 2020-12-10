@@ -228,7 +228,7 @@ def main():
                               args.graph_dir / "pandda_gemmi_all_closest_event_distance.png",
                               )
 
-    # check which are finished
+    # events by 
     
     # Output
 
