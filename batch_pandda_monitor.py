@@ -119,7 +119,7 @@ def make_event_plot(
             return "Unknown"
         
     def get_num_events(system: System, event_table_dict: EventTableDict) -> int:
-        system_events = [event_id for event_id in event_table_dict if event_id.system == system]
+        system_events = [event_id for event_id in event_table_dict if event_id.system == system.system]
         return len(system_events)
         
     def get_num_datasets(system: System, system_path_dict: SystemPathDict) -> int:
@@ -150,7 +150,7 @@ def make_event_plot(
         
         for dtag in reference_structure_dict:
             dtag_system = System.from_dtag(dtag.dtag)
-            if not dtag_system == system:
+            if not dtag_system.system == system.system:
                 continue
             dtag_structures.append(dtag)
         
