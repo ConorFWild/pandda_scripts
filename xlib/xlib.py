@@ -965,7 +965,7 @@ def get_event_distance_from_reference_model_dict(
         # Get system
         system: System = System.from_dtag(dtag.dtag)
         # Get dtag path
-        dtag_path: Path = system_path_dict[system] / dtag.dtag
+        dtag_path: Path = system_path_dict[system] / Constants.PANDDA_PROCESSED_DATASETS_DIR / dtag.dtag
         # Check if this system has been processed, and skip if not
         if not dtag_path.exists():
             print(f"Dtag has not been processed: {dtag_path}, skipping")
