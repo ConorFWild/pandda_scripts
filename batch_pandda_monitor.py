@@ -220,6 +220,7 @@ def make_event_plot(
                     hue="Kind",
                     kind="bar",
                     data=table,
+                    aspect=6,
                     )
     
     g.savefig(str(path))
