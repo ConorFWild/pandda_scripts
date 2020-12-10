@@ -102,6 +102,99 @@ def make_successful_pandda_plot(
                     )
     
     g.savefig(str(path))
+    
+def make_event_plot(
+    system_path_dict, 
+    event_table_dict, 
+    reference_structure_dict: ReferenceStructureDict,
+    event_dict: EventDict,
+    path: Path):
+    
+    def categorise(system, event_table_dict, err_dict) -> str:
+        if system in event_table_dict:
+            return "Complete"
+        elif system in err_dict:
+            return "Errored"
+        else:
+            return "Unknown"
+        
+    def get_num_events(system: System, event_table_dict: EventTableDict) -> int:
+        system_events = [event_id for event_id in event_table_dict if event_id.system == system]
+        return len(system_events)
+        
+    def get_num_datasets(system: System, system_path_dict: SystemPathDict) -> int:
+        processed_dataset_dict: Path = system_path_dict[system] / Constants.PANDDA_PROCESSED_DATASETS_DIR
+        processed_dataset_dir_list: List[Path] = list(processed_dataset_dict.glob("*"))
+        return len(processed_dataset_dir_list)
+        
+    def get_num_hits(system: System, reference_structure_dict: ReferenceStructureDict,
+                     event_dict: EventDict) -> int:
+        
+        dtag_structures = []
+        
+        for dtag in reference_structure_dict:
+            dtag_system = System.from_dtag(dtag.dtag)
+            if not dtag_system == system:
+                continue
+            
+            # Check if an event
+            dtag_events = [event_id for event_id in event_dict if event_id.dtag == dtag]
+            
+            if len(dtag_events) > 0:
+                dtag_structures.append(dtag)
+                
+        return len(dtag_structures)
+    
+    def get_num_target_hits(system: System, reference_structure_dict: ReferenceStructureDict) -> int:
+        dtag_structures = []
+        
+        for dtag in reference_structure_dict:
+            dtag_system = System.from_dtag(dtag.dtag)
+            if not dtag_system == system:
+                continue
+            dtag_structures.append(dtag)
+        
+        return len(dtag_structures)
+            
+            
+    data = []    
+    # Make events/datasets
+    for system in system_path_dict:
+        record = {
+            "System": system.system,
+            "Kind": "num events/num datasets",
+            "Percentage": get_num_events(system, event_table_dict) / get_num_datasets(system, system_path_dict),
+        }
+        data.append(record)
+        
+    # Make hits/events
+    for system in system_path_dict:
+        record = {
+            "System": system.system,
+            "Kind": "captured hits/number of events",
+            "Percentage": get_num_hits(system, reference_structure_dict, event_dict,) / get_num_events(system, event_table_dict),
+        }
+        data.append(record)
+    
+    # makes hits / dataset hits
+    for system in system_path_dict:
+        record = {
+            "System": system.system,
+            "Kind": "captured hits/target hits",
+            "Percentage": get_num_hits(system, reference_structure_dict, event_dict) / get_num_target_hits(system, reference_structure_dict),
+        }
+        data.append(record)
+    
+    table = pd.DataFrame.from_dict(data)
+
+    g = sns.catplot(x="System",
+                    y="Percentage",
+                    hue="Kind",
+                    kind="bar",
+                    data=table,
+                    )
+    
+    g.savefig(str(path))
 
 @dataclasses.dataclass()
 class Args:
@@ -207,7 +300,14 @@ def main():
     if args.debug > 0: 
         print(f"Found {len(reference_structure_dict)} reference structures")    
 
-    # out dict
+    # events
+    make_event_plot(
+        pandda_system_path_dict, 
+        event_table_dict, 
+        reference_structure_dict,
+        event_dict,
+        args.graph_dir / "pandda_gemmi_all_event_summary.png",
+        )
     
     # load jsons
     # for system_path in system_paths:
