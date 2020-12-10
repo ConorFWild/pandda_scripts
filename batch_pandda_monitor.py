@@ -49,6 +49,8 @@ def errored(string: str) -> bool:
 def make_event_distance_graph(event_distance_dict: Dict[Dtag, float], path: Path):
     
     def categorise(number: float) -> str:
+        if number< 0:
+            return "Missed!"
         if number < 2:
             return "<2"
         elif number <5:
@@ -216,7 +218,8 @@ def main():
     # Check for event tables
     event_distance_dict: Dict[Dtag, float] = get_event_distance_from_reference_model_dict(
         event_dict,
-        reference_structure_dict
+        reference_structure_dict,
+        pandda_system_path_dict,
     )
     if args.debug > 0: 
         print(event_distance_dict)

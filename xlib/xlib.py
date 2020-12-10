@@ -131,6 +131,44 @@ class Constants:
     XCHEM_DTAG_REGEX = r"^([0-9a-zA-Z]+[-]+[0-9a-zA-Z]+)"
     XCHEM_SYSTEM_REGEX = r"([^\-]+)\-[^\-]+"
     
+    # PROJECT_CODE_MAPPING_DICT = {
+    #     "NUDT7A"
+    #     "ATAD"
+    #     "BRD1A"
+    #     "DCP2B"
+    #     "FAM83BA"
+    #     "MURD"
+    #     "OXA100TA"
+    #     "PARP14A"
+    #     "PHIPA"
+    #     "PTP1B"
+    #     "SMTGR"
+    #     "ATAD2A"
+    #     "CAMK1DA"
+    #     "DCLRE1AA"
+    #     "FALZA"
+    #     "HAO1A"
+    #     "MUREECA"
+    #     "NUDT21A"
+    #     "NUDT4"
+    #     "NUDT5A"
+    #     "NUDT7A_CRUDE"
+    #     "smTGRNEW"
+    #     "STAG1A"
+    #     "TBXTA"
+    #     "VIM2"
+    #     "XX02KALRNA"
+    #     "TNCA"
+    #     "ALAS2A"
+    #     "EPB41L3A"
+    #     "mArh"
+    #     "INPP5DA"
+    #     "nsp13"
+    #     "Mac1"
+    #     "Mpro"
+    #     "NSP15_B"
+    # }
+    
     
     
 
@@ -240,7 +278,7 @@ class System:
         return hash(self.system)
     
     @staticmethod
-    def from_dtag(dtag):
+    def from_dtag(dtag: str):
         regex = Constants.XCHEM_SYSTEM_REGEX
 
         matches = re.findall(regex,
@@ -918,22 +956,36 @@ def get_residue_centroid(residue: gemmi.Residue) -> Tuple[float, float, float]:
 def get_event_distance_from_reference_model_dict(
     event_dict: EventDict, 
     reference_structure_dict: ReferenceStructureDict,
+    system_path_dict: SystemPathDict,
     ) -> Dict[Dtag, float]:
     dtag_distance_from_reference_model_dict: Dict[Dtag, float] = {}
     
     # Iterate over reference models
     for dtag in reference_structure_dict:
+        # Get system
+        system: System = System.from_dtag(dtag.dtag)
+        # Check if this system has been processed, and skip if not
+        if system not in system_path_dict:
+            print(f"System has not been processed: {system}, skipping")
+            continue
         # Get reference structure
         reference_structure: Structure = reference_structure_dict[dtag]
         # Get ligands
         ligand_residues: LigandResidues = LigandResidues.from_structure(reference_structure)
+        # Iterate over events with this dtag
+        dtag_event_list: List[EventID] = [event_id for event_id in event_dict if event_id.dtag == dtag]
+
+        if len(dtag_event_list) == 0:
+            dtag_distance_from_reference_model_dict[dtag] = -1
+            continue
+
+
         # Iterate
         ligand_distance_list: List[float] = []
         for ligand_residue in ligand_residues:
             # Get ligand centroid
-            ligand_centroid: Tuple[float, float, float] = get_residue_centroid(ligand_residue)
-            # Iterate over events with this dtag
-            dtag_event_list: List[EventID] = [event_id for event_id in event_dict if event_id.dtag == dtag]
+            ligand_centroid: Tuple[float, float, float] = get_residue_centroid(ligand_residue)                
+            
             for event_id in dtag_event_list:
                 # Get event
                 event: Event = event_dict[event_id]
