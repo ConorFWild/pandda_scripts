@@ -162,6 +162,8 @@ class Constants:
     
     MASKED_PDB_FILE = "masked.pdb"
     
+    CUT_OUT_EVENT_MAP_FILE = "cut_out_event_map.ccp4"
+    
     RHOFIT_LOG_FILE = "rhofit.log"
     RHOFIT_OUTPUT_FILE = "rhofit.out"
     RHOFIT_ERROR_FILE = "rhofit.err"
@@ -198,6 +200,7 @@ class Constants:
     CLUSTER = "CONDOR"
     CONDOR_JOB_ID_REGEX = r"[0-9]+\."
     CONDOR_STATUS_COMMAND = r"condor_q"
+    
 
 @dataclasses.dataclass()
 class Args:
@@ -724,6 +727,20 @@ def phase_graft(mtz: gemmi.Mtz, cut_out_event_mtz: gemmi.Mtz) -> gemmi.Mtz:
 
     return initial_mtz
 
+def get_cut_out_event_map_file(event: Event, get_cut_out_event_map: gemmi.FloatGrid, p1: bool=True) -> Path:
+    cut_out_event_file: Path = event.event_output_dir / Constants.CUT_OUT_EVENT_MAP_FILE
+    ccp4 = gemmi.Ccp4Map()
+    ccp4.grid = get_cut_out_event_map
+    if p1:
+        ccp4.grid.spacegroup = gemmi.find_spacegroup_by_name("P 1")
+    else:
+        ccp4.grid.symmetrize_max()
+    ccp4.update_ccp4_header(2, True)
+    ccp4.write_ccp4_map(str(cut_out_event_file))
+    
+    return cut_out_event_file
+
+
 def write_mtz(mtz: gemmi.Mtz, path: Path):
     mtz.write_to_file(str(path))
 
@@ -962,6 +979,9 @@ def build_event(event: Event):
     if Constants.DEBUG > 0: 
         print("# Cut event map")
         summarise_grid(cut_out_event_map)
+        
+    # Save cut out event
+    cut_out_event_map_file: Path = get_cut_out_event_map_file(event, cut_out_event_map)
     
     # Get ligand file
     final_ligand_cif_file: Union[Path, None] = get_final_ligand_cif_file(
@@ -983,7 +1003,7 @@ def build_event(event: Event):
     # Make rhofit commands
     rhofit_script: str = get_rhofit_script_clemens(
         event,
-        event_map_file,
+        cut_out_event_map_file,
         mtz_file, 
         pdb_file,
         final_ligand_cif_file,
