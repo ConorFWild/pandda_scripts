@@ -158,44 +158,44 @@ def make_event_plot(
             
             
     data = []    
-    # Make events/datasets
-    for system in system_path_dict:
-        num_events: int = get_num_events(system, event_dict) 
-        num_datasets: int = get_num_datasets(system, system_path_dict)
+    # # Make events/datasets
+    # for system in system_path_dict:
+    #     num_events: int = get_num_events(system, event_dict) 
+    #     num_datasets: int = get_num_datasets(system, system_path_dict)
         
-        # Get percentage
-        if num_datasets == 0:
-            percentage = 0.0
-        else:
-            percentage = num_events / num_datasets
+    #     # Get percentage
+    #     if num_datasets == 0:
+    #         percentage = 0.0
+    #     else:
+    #         percentage = num_events / num_datasets
             
-        record = {
-            "System": system.system,
-            "Kind": "num events/num datasets",
-            "Percentage": percentage,
-        }
-        data.append(record)
+    #     record = {
+    #         "System": system.system,
+    #         "Kind": "num events/num datasets",
+    #         "Percentage": percentage,
+    #     }
+    #     data.append(record)
         
-    # Make hits/events
-    for system in system_path_dict:
-        num_hits: int =  get_num_hits(system, reference_structure_dict, event_dict,)
-        num_events: int = get_num_events(system, event_dict) 
+    # # Make hits/events
+    # for system in system_path_dict:
+    #     num_hits: int =  get_num_hits(system, reference_structure_dict, event_dict,)
+    #     num_events: int = get_num_events(system, event_dict) 
         
-        print(num_hits)
-        print(num_events)
+    #     print(num_hits)
+    #     print(num_events)
         
-        # Get percentage
-        if num_events == 0:
-            percentage = 0.0
-        else:
-            percentage = num_hits / num_events
+    #     # Get percentage
+    #     if num_events == 0:
+    #         percentage = 0.0
+    #     else:
+    #         percentage = num_hits / num_events
         
-        record = {
-            "System": system.system,
-            "Kind": "captured hits/number of events",
-            "Percentage": percentage,
-        }
-        data.append(record)
+    #     record = {
+    #         "System": system.system,
+    #         "Kind": "captured hits/number of events",
+    #         "Percentage": percentage,
+    #     }
+    #     data.append(record)
     
     # makes hits / dataset hits
     for system in system_path_dict:
@@ -225,7 +225,7 @@ def make_event_plot(
                     data=table,
                     aspect=12,
                     )
-    g.set_xticklabels(rotation=30)
+    g.set_xticklabels(rotation=90)
     
     g.savefig(str(path))
 
