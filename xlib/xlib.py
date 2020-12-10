@@ -968,7 +968,7 @@ def get_event_distance_from_reference_model_dict(
         dtag_path: Path = system_path_dict[system] / dtag.dtag
         # Check if this system has been processed, and skip if not
         if not dtag_path.exists():
-            print(f"Dtag has not been processed: {system}, skipping")
+            print(f"Dtag has not been processed: {dtag_path}, skipping")
             continue
         # Get reference structure
         reference_structure: Structure = reference_structure_dict[dtag]
