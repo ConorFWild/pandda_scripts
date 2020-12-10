@@ -123,8 +123,8 @@ def make_event_plot(
         return len(system_events)
         
     def get_num_datasets(system: System, system_path_dict: SystemPathDict) -> int:
-        processed_dataset_dict: Path = system_path_dict[system] / Constants.PANDDA_PROCESSED_DATASETS_DIR
-        processed_dataset_dir_list: List[Path] = list(processed_dataset_dict.glob("*"))
+        processed_dataset_path: Path = system_path_dict[system] / Constants.PANDDA_PROCESSED_DATASETS_DIR
+        processed_dataset_dir_list: List[Path] = list(processed_dataset_path.glob("*"))
         return len(processed_dataset_dir_list)
         
     def get_num_hits(system: System, reference_structure_dict: ReferenceStructureDict,
@@ -160,32 +160,59 @@ def make_event_plot(
     data = []    
     # Make events/datasets
     for system in system_path_dict:
+        num_events: int = get_num_events(system, event_table_dict) 
+        num_datasets: int = get_num_datasets(system, system_path_dict)
+        
+        # Get percentage
+        if get_num_datasets == 0:
+            percentage = 0.0
+        else:
+            percentage = num_events / num_datasets
+            
         record = {
             "System": system.system,
             "Kind": "num events/num datasets",
-            "Percentage": get_num_events(system, event_table_dict) / get_num_datasets(system, system_path_dict),
+            "Percentage": percentage,
         }
         data.append(record)
         
     # Make hits/events
     for system in system_path_dict:
+        num_hits: int =  get_num_hits(system, reference_structure_dict, event_dict,)
+        num_events: int = get_num_events(system, event_table_dict) 
+        
+        # Get percentage
+        if num_events == 0:
+            percentage = 0.0
+        else:
+            percentage = num_hits / num_events
+        
         record = {
             "System": system.system,
             "Kind": "captured hits/number of events",
-            "Percentage": get_num_hits(system, reference_structure_dict, event_dict,) / get_num_events(system, event_table_dict),
+            "Percentage": percentage,
         }
         data.append(record)
     
     # makes hits / dataset hits
     for system in system_path_dict:
+        num_hits:int = get_num_hits(system, reference_structure_dict, event_dict) 
+        num_target_hits:int = get_num_target_hits(system, reference_structure_dict)
+        
+        # Get percentage
+        if num_target_hits == 0:
+            percentage = 0.0
+        else:
+            percentage = num_hits / num_target_hits
+        
         record = {
             "System": system.system,
             "Kind": "captured hits/target hits",
-            "Percentage": get_num_hits(system, reference_structure_dict, event_dict) / get_num_target_hits(system, reference_structure_dict),
+            "Percentage": percentage,
         }
         data.append(record)
     
-    table = pd.DataFrame.from_dict(data)
+    table = pd.DataFrame(data)
 
     g = sns.catplot(x="System",
                     y="Percentage",
@@ -301,14 +328,15 @@ def main():
         print(f"Found {len(reference_structure_dict)} reference structures")    
 
     # events
-    make_event_plot(
-        pandda_system_path_dict, 
-        event_table_dict, 
-        reference_structure_dict,
-        event_dict,
-        args.graph_dir / "pandda_gemmi_all_event_summary.png",
-        )
-    
+    if args.debug > 0: 
+        make_event_plot(
+            pandda_system_path_dict, 
+            event_table_dict, 
+            reference_structure_dict,
+            event_dict,
+            args.graph_dir / "pandda_gemmi_all_event_summary.png",
+            )
+        
     # load jsons
     # for system_path in system_paths:
     #     json_path = system_path / "log.json"
