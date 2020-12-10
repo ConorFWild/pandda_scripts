@@ -964,6 +964,12 @@ def get_event_distance_from_reference_model_dict(
     for dtag in reference_structure_dict:
         # Get system
         system: System = System.from_dtag(dtag.dtag)
+        # Check if the pandda finished
+        csv_path: Path = system_path_dict[system] / Constants.PANDDA_ANALYSES_DIR / Constants.PANDDA_ANALYSE_EVENTS_FILE
+        # Continue if not finished
+        if not csv_path.exists():
+            print(f"System didn't finish: {system}")
+            continue
         # Get dtag path
         dtag_path: Path = system_path_dict[system] / Constants.PANDDA_PROCESSED_DATASETS_DIR / dtag.dtag
         # Check if this system has been processed, and skip if not
