@@ -222,6 +222,7 @@ def make_event_plot(
                     data=table,
                     aspect=12,
                     )
+    g.set_xticklabels(rotation=30)
     
     g.savefig(str(path))
 
