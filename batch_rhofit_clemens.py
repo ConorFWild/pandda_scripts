@@ -21,6 +21,8 @@ import joblib
 
 import gemmi
 
+from xlib import *
+
 # ########
 # debug
 # #########
@@ -1175,6 +1177,18 @@ def map_dict(func: Callable, dictionary: Dict[EventID, Event]):
         for value
         in values
     )
+    
+def get_event_with_reference_dict(
+    event_dict,
+    reference_structure_dict: ReferenceStructureDict,
+    ) -> Dict[EventID, Event]:
+    new_events: Dict[EventID, Event] = {}
+    for dtag in reference_structure_dict:
+        for event_id in event_dict:
+            if event_id.dtag.dtag == dtag.dtag:
+                new_events[event_id] = event_dict[event_id]
+                
+    return new_events
 
 # ########
 # Script
@@ -1189,6 +1203,8 @@ def main():
     # Get pandda directories
     system_path_list: List[Path] = list(path for path in args.pandda_dirs_dir.glob("*") if path.is_dir())
     if Constants.DEBUG > 0: print(f"Found {len(system_path_list)} systems")
+    system_path_dict: SystemPathDict = SystemPathDict.from_dir(args.pandda_dirs_dir)
+
 
     # Get events tables: List[Path] -> Dict[EventID, Event]
     event_table_dict: Dict[System, pd.DataFrame] = get_event_table_dict(system_path_list)
@@ -1197,14 +1213,26 @@ def main():
     # Get events
     event_dict: Dict[EventID, Event] = get_event_dict(event_table_dict, args.pandda_dirs_dir, args.autobuild_dirs_dir)
     if Constants.DEBUG > 0: print(f"Found {len(event_dict)} events")
+    
+    # Get reference models
+    reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(system_path_dict)
+    
+    # Filter events that have models
+    event_with_reference_dict: Dict[EventID, Event] = get_event_with_reference_dict(
+        event_dict,
+        reference_structure_dict,
+    )
 
     # Make output directory
-    make_autobuild_output_dir(event_dict, args.autobuild_dirs_dir)
+    make_autobuild_output_dir(
+        event_with_reference_dict, 
+        args.autobuild_dirs_dir,
+        )
 
     # Map over all events
     map_dict(
         build_event, 
-        event_dict,
+        event_with_reference_dict,
         )
         
 
