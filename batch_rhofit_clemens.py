@@ -1224,13 +1224,14 @@ def main():
         event_dict,
         reference_structure_dict,
     )
-    if Constants.DEBUG > 0: print(f"Found {len(reference_structure_dict)} events with models")
+    if Constants.DEBUG > 0: print(f"Found {len(event_with_reference_dict)} events with models")
 
     # Make output directory
     make_autobuild_output_dir(
         event_with_reference_dict, 
         args.autobuild_dirs_dir,
         )
+
 
     # Map over all events
     map_dict(
