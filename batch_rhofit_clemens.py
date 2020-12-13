@@ -1216,12 +1216,15 @@ def main():
     
     # Get reference models
     reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(system_path_dict)
+    if Constants.DEBUG > 0: print(f"Found {len(reference_structure_dict)} reference models")
+
     
     # Filter events that have models
     event_with_reference_dict: Dict[EventID, Event] = get_event_with_reference_dict(
         event_dict,
         reference_structure_dict,
     )
+    if Constants.DEBUG > 0: print(f"Found {len(reference_structure_dict)} events with models")
 
     # Make output directory
     make_autobuild_output_dir(
