@@ -1087,7 +1087,7 @@ class RSCCDict:
     
     @staticmethod
     def parse_phenix_map_model_cc_log(phenix_map_model_cc_log_string) -> float:
-        
+        return 0
             
     @staticmethod
     def get_rscc(
