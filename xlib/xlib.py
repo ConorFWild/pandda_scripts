@@ -1174,3 +1174,17 @@ class RSCCDict:
                     event_dict[event_id] = rscc
         return RSCCDict(event_rscc_dict)
     
+    def filter_best(self) -> RSCCDict:
+        dtag_rscc_dict: Dict[Dtag, List[float]] = {}
+        for event_id in self:
+            if event_id.dtag not in dtag_rscc_dict:
+                dtag_rscc_dict[event_id.dtag] = []
+            
+            dtag_rscc_dict[event_id.dtag].append(self[event_id])
+        
+        best_rscc_dict: Dict[Dtag, float] = {}
+        # Get min
+        for dtag in dtag_rscc_dict:
+            best_rscc_dict[dtag] = min(dtag_rscc_dict[dtag])
+            
+        return RSCCDict(best_rscc_dict)

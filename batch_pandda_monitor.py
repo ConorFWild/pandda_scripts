@@ -427,6 +427,11 @@ def main():
     )
     if args.debug > 0: 
         print(rscc_dict)
+        
+    # Get fragment RSCC per dtag
+    rscc_best_dict: RSCCDict = rscc_dict.filter_best()
+    if args.debug > 0: 
+        print(rscc_best_dict)
     
     # Output
 
