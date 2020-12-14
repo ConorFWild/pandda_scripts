@@ -1163,7 +1163,7 @@ def make_event_output_dir(event: Event, autobuild_dirs_dir: Path):
     make_system_dir(autobuild_dirs_dir, event)
     make_dtag_dir(autobuild_dirs_dir, event)
     make_event_idx_dir(autobuild_dirs_dir, event)
-    make_rhofit_dir(autobuild_dirs_dir, event)
+    # make_rhofit_dir(autobuild_dirs_dir, event)
     
     
 def make_autobuild_output_dir(event_dict: Dict[EventID, Event], autobuild_dirs_dir: Path):

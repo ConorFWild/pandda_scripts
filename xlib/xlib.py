@@ -1086,8 +1086,13 @@ class RSCCDict:
         return string
     
     @staticmethod
-    def parse_phenix_map_model_cc_log(phenix_map_model_cc_log_string) -> float:
-        return 0
+    def parse_phenix_map_model_cc_log(phenix_map_model_cc_log_string: str) -> float:
+        pattern: Pattern = Constants.PHENIX_MAP_MODEL_CC_pattern
+        matches = re.findall(
+            pattern,
+            phenix_map_model_cc_log_string,
+            )
+        return float(matches[0])
             
     @staticmethod
     def get_rscc(
