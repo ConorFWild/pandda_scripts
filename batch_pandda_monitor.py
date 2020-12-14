@@ -229,6 +229,46 @@ def make_event_plot(
     
     g.savefig(str(path))
 
+def make_system_dir(analyses_dir: Path, event_id: EventID):
+    dir: Path = analyses_dir / event_id.system.system
+    if dir.exists():
+        return
+    else:
+        mkdir(str(dir))
+
+def make_dtag_dir(analyses_dir: Path, event_id: EventID):
+    dir: Path = analyses_dir / event_id.system.system / event_id.dtag.dtag
+    if dir.exists():
+        return
+    else:
+        mkdir(str(dir))
+        
+def make_event_idx_dir(analyses_dir: Path, event_id: EventID):
+    dir: Path = analyses_dir / event_id.system.system / event_id.dtag.dtag / event_id.event_idx.event_idx
+    if dir.exists():
+        return
+    else:
+        mkdir(str(dir))
+    
+
+def make_analyses_dir(
+    analyses_dir: Path, 
+    reference_structure_dict: ReferenceStructureDict, 
+    event_dict: EventDict,
+    ):
+    
+    for event_id in event_dict:
+        for dtag in reference_structure_dict:
+            if dtag.dtag == event_id.dtag.dtag:
+                make_system_dir(analyses_dir, event_id)
+                make_dtag_dir(analyses_dir, event_id)
+                make_event_idx_dir(analyses_dir, event_id)
+
+
+# #########################
+# Args
+# #########################
+
 @dataclasses.dataclass()
 class Args:
     pandda_dirs_dir: Path
@@ -241,12 +281,14 @@ class Args:
         pandda_dirs_dir = Path(args.pandda_dirs_dir)
         autobuild_dirs_dir = Path(args.autobuild_dirs_dir)
         graph_dir: Path = Path(args.graph_dir)
+        analyses_dir: Path = Path(args.analyses_dir)
         debug: int = int(args.debug)
         
         return Args(
             pandda_dirs_dir,
             autobuild_dirs_dir,
             graph_dir,
+            analyses_dir,
             debug,
         )
     
@@ -259,12 +301,18 @@ class Args:
                             )
         parser.add_argument("--graph_dir",
                             )
+        parser.add_argument("--analyses_dir",
+                    )
         parser.add_argument("--debug",
                             default=2,
                             )
         args = parser.parse_args()
         
         return Args.from_args(args)
+    
+# ############################
+# Script
+# #############################
 
 def main():
     # Get args
@@ -362,13 +410,17 @@ def main():
                               args.graph_dir / "pandda_gemmi_all_closest_event_distance.png",
                               )
 
+    # Make analyses dir
+    make_analyses_dir(args.analyses_dir, reference_structure_dict, event_dict)
+
     # RSCCs: Get RSCCs of reference models
     rscc_dict: RSCCDict = RSCCDict.from_event_dict(
         event_dict,
         reference_structure_dict,
+        args.analyses_dir,
     )
     if args.debug > 0: 
-        
+        print(rscc_dict)
     
     # Output
 

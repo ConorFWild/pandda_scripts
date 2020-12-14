@@ -1,5 +1,6 @@
 from __future__ import annotations
 from os import stat, system
+import subprocess
 
 from typing import *
 from collections import abc
@@ -130,6 +131,9 @@ class Constants:
     
     XCHEM_DTAG_REGEX = r"^([0-9a-zA-Z]+[-]+[0-9a-zA-Z]+)"
     XCHEM_SYSTEM_REGEX = r"([^\-]+)\-[^\-]+"
+    
+    PHENIX_MAP_MODEL_CC_COMMAND = "phenix.map_model_cc {pdb_file} {event_map_file} resolution={resolution} ignore_symmetry_conflicts=True"
+    PHENIX_MAP_MODEL_CC_LOG_FILE = "cc_per_residue.log"
     
     # PROJECT_CODE_MAPPING_DICT = {
     #     "NUDT7A"
@@ -345,6 +349,7 @@ class Event:
     x: float
     y: float
     z: float
+    resolution: float
     
     @staticmethod
     def get_event_input_dir(system: System, dtag: Dtag, event_idx: EventIDX, pandda_dirs_dir: Path) -> Path:
@@ -363,6 +368,7 @@ class Event:
         x = row["x"]
         y = row["y"]
         z = row["z"]
+        resolution = row["analysed_resolution"]
         
         event_input_dir: Path = Event.get_event_input_dir(system, dtag, event_idx, pandda_dirs_dir)
         event_output_dir: Path = Event.get_event_output_dir(system, dtag, event_idx, autobuild_dirs_dir)
@@ -377,6 +383,7 @@ class Event:
             x=x,
             y=y,
             z=z,
+            resolution=resolution,
         )
 
 @dataclasses.dataclass()    
@@ -894,7 +901,6 @@ class RMSDDict:
     def __len__(self) -> int:
         return len(self._dict)
     
-    
     @staticmethod
     def from_build_dict(
         build_dict: BuildDict,
@@ -1025,7 +1031,7 @@ def get_event_distance_from_reference_model_dict(
         
 @dataclasses.dataclass()
 class RSCCDict:
-    _dict: Dict[BuildID, RMSD]
+    _dict: Dict[EventID, float]
     
     def __getitem__(self, key: BuildID) -> RMSD:
         return self._dict[key]
@@ -1044,9 +1050,113 @@ class RSCCDict:
         return len(self._dict)
     
     @staticmethod
+    def get_phenix_map_model_cc_log_file(reference_structure_file,
+            event_map_file,
+            resolution,
+            event_analysis_dir: Path,
+            ) -> Path:
+        # Path to ligand cc log
+        ligand_cc_log_file: Path = event_analysis_dir / Constants.PHENIX_MAP_MODEL_CC_LOG_FILE
+        
+        # format script
+        command: str = Constants.PHENIX_MAP_MODEL_CC_COMMAND.format(
+            dir=str(event_analysis_dir),
+            pdb_file=str(reference_structure_file),
+            event_map_file=str(event_map_file),
+            resolution=resolution,
+        )
+        
+        # Run
+        p = subprocess.Popen(
+            command,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.subprocess.PIPE,
+        )
+        
+        stdout, stderr = p.communicate()
+        
+        return ligand_cc_log_file
+    
+    @staticmethod
+    def get_phenix_map_model_cc_log_string(phenix_map_model_cc_log_file: Path) -> str:
+        with open(str(phenix_map_model_cc_log_file), "r") as f:
+            string = f.read()
+            
+        return string
+    
+    @staticmethod
+    def parse_phenix_map_model_cc_log(phenix_map_model_cc_log_string) -> float:
+        
+            
+    @staticmethod
+    def get_rscc(
+        event: Event,
+        reference_structure: Structure,
+        pandda_dirs_dict: SystemPathDict,
+        analyses_dir: Path,
+        ):
+        # Get analysis dir
+        event_analysis_dir: Path = analyses_dir / event.system.system / event.dtag.dtag / event.event_idx.event_idx
+        
+        # Write reference structure
+        reference_structure_file: Path = reference_structure.to_pdb(
+            event_analysis_dir,
+            )
+        
+        # Get PanDDA path
+        for system in pandda_dirs_dir:
+            if system.system == event.system.system:
+                pandda_dir: Path = pandda_dirs_dict[system]
+        
+        
+        # Get event map file
+        event_map_file: Path = pandda_dir / Constants.PANDDA_PROCESSED_DATASETS_DIR / event.dtag.dtag / Constants.PANDDA_EVENT_MAP_FILE.format(
+            dtag=event.dtag.dtag, 
+            event_idx=event.event_idx.event_idx,
+            bdc=event.bdc,
+            )
+        
+        # Run RSCC calc
+        phenix_map_model_cc_log_file: Path = RSCCDict.get_phenix_map_model_cc_log_file(
+            reference_structure_file,
+            event_map_file,
+            event.resolution,
+            event_analysis_dir,
+        )
+        
+        # Read log
+        phenix_map_model_cc_log_string: str = RSCCDict.get_phenix_map_model_cc_log_string(
+            event_map_file
+        )
+        
+        # Parse log
+        rscc: float = RSCCDict.parse_phenix_map_model_cc_log(phenix_map_model_cc_log_string)
+        
+        return rscc
+        
+        
+    
+    @staticmethod
     def from_event_dict(
         event_dict: EventDict,
         reference_structure_dict: ReferenceStructureDict, 
+        pandda_dirs_dir: SystemPathDict,
+        analyses_dir: Path,
         ) -> RSCCDict:
-        pass
+        
+        event_rscc_dict: Dict[EventID, float] = {}
+        
+        for event_id in event_dict:
+            # Check if there is a corresponding reference structure for the event, and get rscc if so
+            for dtag in reference_structure_dict:
+                if dtag.dtag == event_id.dtag.dtag:
+                    rscc: float = RSCCDict.get_rscc(
+                        event_dict[event_id],
+                        reference_structure_dict[dtag],
+                        pandda_dirs_dir,
+                        analyses_dir,
+                        )
+                    event_dict[event_id] = rscc
+        return RSCCDict(event_rscc_dict)
     

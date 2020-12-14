@@ -811,14 +811,15 @@ def get_rhofit_script_clemens(
         ligand_cif_file: Path,
         ) -> str:
     event_output_dir: Path = event.event_output_dir
-    rhofit_dir: Path = event_output_dir / Constants.RHOFIT_DIR 
+    # rhofit_dir: Path = event_output_dir / Constants.RHOFIT_DIR 
+    out_dir: Path = event_output_dir
     rhofit_command: str = Constants.RHOFIT_SCRIPT_CLEMENS.format(
         pandda_rhofit=Constants.PANDDA_RHOFIT_SCRIPT_FILE,
         event_map=event_map_file,
         mtz=mtz_file,
         pdb=masked_pdb_file,
         cif=ligand_cif_file,
-        out_dir_path=rhofit_dir,
+        out_dir_path=out_dir,
     )
     return rhofit_command
 
