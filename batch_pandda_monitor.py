@@ -274,6 +274,7 @@ class Args:
     pandda_dirs_dir: Path
     autobuild_dirs_dir: Path
     graph_dir: Path
+    analyses_dir: Path
     debug: int
     
     @staticmethod
