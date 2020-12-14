@@ -604,6 +604,15 @@ class EventDict:
                 
         return EventDict(event_dict)
     
+    def filter_reference_structure_dict(self, reference_structure_dict: ReferenceStructureDict) -> EventDict:
+        new_events: Dict[EventID, Event] = {}
+        
+        for event_id in self:
+            for dtag in reference_structure_dict:
+                if dtag.dtag == event_id.dtag.dtag:
+                    new_events[event_id] = self[event_id]
+
+        return EventDict(new_events)    
 
 @dataclasses.dataclass()
 class Structure:

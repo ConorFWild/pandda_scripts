@@ -413,10 +413,15 @@ def main():
 
     # Make analyses dir
     make_analyses_dir(args.analyses_dir, reference_structure_dict, event_dict)
+    if args.debug > 0: 
+        print("Made analyses dir!")
+        
+    # Get events with a reference structure
+    event_with_reference_dict: EventDict = event_dict.filter_reference_structure_dict(reference_structure_dict)
 
     # RSCCs: Get RSCCs of reference models
     rscc_dict: RSCCDict = RSCCDict.from_event_dict(
-        event_dict,
+        event_with_reference_dict,
         reference_structure_dict,
         args.analyses_dir,
     )
