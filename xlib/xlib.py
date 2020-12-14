@@ -1023,4 +1023,29 @@ def get_event_distance_from_reference_model_dict(
 #     @staticmethod
 #     def from_build_dict() -> RSCCDict:
         
+@dataclasses.dataclass()
+class RSCCDict:
+    _dict: Dict[BuildID, RMSD]
+    
+    def __getitem__(self, key: BuildID) -> RMSD:
+        return self._dict[key]
+    
+    def __setitem__(self, key: BuildID, value: RMSD):
+        self._dict[key] = value
+        
+    def __delitem__(self, key: BuildID):
+        del self._dict[key]
+    
+    def __iter__(self) -> Iterator[BuildID]:
+        for item in self._dict:
+            yield item
 
+    def __len__(self) -> int:
+        return len(self._dict)
+    
+    @staticmethod
+    def from_event_dict(
+        event_dict: EventDict,
+        reference_structure_dict: ReferenceStructureDict, 
+        ) -> RSCCDict:
+        

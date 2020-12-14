@@ -1150,7 +1150,7 @@ def make_event_idx_dir(autobuild_dirs_dir: Path, event: Event):
         mkdir(str(event_idx_dir))
 
 def make_rhofit_dir(autobuild_dirs_dir: Path, event: Event):
-    event_rhofit_dir: Path = autobuild_dirs_dir / Constants.RHOFIT_DIR
+    event_rhofit_dir: Path = autobuild_dirs_dir / event.system.system / event.dtag.dtag / event.event_idx.event_idx / Constants.RHOFIT_DIR
     
     if event_rhofit_dir.exists():
         return
