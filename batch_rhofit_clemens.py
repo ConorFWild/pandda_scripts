@@ -1149,10 +1149,20 @@ def make_event_idx_dir(autobuild_dirs_dir: Path, event: Event):
     else:
         mkdir(str(event_idx_dir))
 
+def make_rhofit_dir(autobuild_dirs_dir: Path, event: Event):
+    event_rhofit_dir: Path = autobuild_dirs_dir / Constants.RHOFIT_DIR
+    
+    if event_rhofit_dir.exists():
+        return
+    
+    else:
+        mkdir(str(event_rhofit_dir))
+
 def make_event_output_dir(event: Event, autobuild_dirs_dir: Path):
     make_system_dir(autobuild_dirs_dir, event)
     make_dtag_dir(autobuild_dirs_dir, event)
     make_event_idx_dir(autobuild_dirs_dir, event)
+    make_rhofit_dir(autobuild_dirs_dir, event)
     
     
 def make_autobuild_output_dir(event_dict: Dict[EventID, Event], autobuild_dirs_dir: Path):
@@ -1217,7 +1227,6 @@ def main():
     # Get reference models
     reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(system_path_dict)
     if Constants.DEBUG > 0: print(f"Found {len(reference_structure_dict)} reference models")
-
     
     # Filter events that have models
     event_with_reference_dict: Dict[EventID, Event] = get_event_with_reference_dict(

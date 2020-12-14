@@ -362,7 +362,13 @@ def main():
                               args.graph_dir / "pandda_gemmi_all_closest_event_distance.png",
                               )
 
-    # events by 
+    # RSCCs: Get RSCCs of reference models
+    rscc_dict: RSCCDict = RSCCDict.from_event_dict(
+        event_dict,
+        reference_structure_dict,
+    )
+    if args.debug > 0: 
+        
     
     # Output
 
