@@ -1048,4 +1048,5 @@ class RSCCDict:
         event_dict: EventDict,
         reference_structure_dict: ReferenceStructureDict, 
         ) -> RSCCDict:
-        
+        pass
+    
