@@ -185,7 +185,7 @@ class Database:
         
         # Get event tables
         for system_record in system_table.iterrows():
-            system: str = str(system_record["system"])
+            system: str = str(system_record["system"], 'utf-8')
             
             event_table_file: Path = pandda_dirs_dir / system / xlib.Constants.PANDDA_ANALYSES_DIR / xlib.Constants.PANDDA_ANALYSE_EVENTS_FILE
             print(event_table_file)
