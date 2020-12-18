@@ -187,7 +187,7 @@ class Database:
         for system_record in system_table.iterrows():
             system: str = system_record["system"]
             
-            event_table_file: Path = pandda_dirs_dir / xlib.Constants.PANDDA_ANALYSES_DIR / xlib.Constants.PANDDA_ANALYSE_EVENTS_FILE
+            event_table_file: Path = pandda_dirs_dir / system / xlib.Constants.PANDDA_ANALYSES_DIR / xlib.Constants.PANDDA_ANALYSE_EVENTS_FILE
             print(event_table_file)
             if event_table_file.exists():
                 pandda_dir: Path = pandda_dirs_dir / system
