@@ -89,7 +89,7 @@ class Database:
         
         _table = tables.open_file(
             str(path), 
-            "r+",
+            "w+",
             )
         
         # Create groups
