@@ -78,6 +78,7 @@ class StructureRecord(tables.IsDescription):
     dtag = tables.StringCol(255)
     path = tables.StringCol(255)
 
+@dataclasses.dataclass()
 class Database:
     _file: Path 
     _table: tables.File
