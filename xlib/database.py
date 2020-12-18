@@ -202,6 +202,7 @@ class Database:
                 # pandda_row.system = system
                 # pandda_row.path = pandda_dir
                 # pandda_row.event_table_file = event_table_file
+                pandda_row.append()
                 
         # Flush records
         self._table.flush()
