@@ -1,5 +1,6 @@
 from __future__ import annotations
-from os import system
+
+import os
 
 from typing import *
 import dataclasses
@@ -84,9 +85,12 @@ class Database:
     _table: tables.File
     
     @staticmethod
-    def from_file(path: str = TableConstants.DEFAULT_DATABASE_FILE) -> Database:
+    def from_file(path: str = TableConstants.DEFAULT_DATABASE_FILE, overwrite: bool=True) -> Database:
         
         _file: Path = Path(path)
+        
+        if overwrite:
+            os.remove(str(_file))
         
         _table = tables.open_file(
             str(path), 
