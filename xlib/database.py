@@ -170,6 +170,7 @@ class Database:
             # Create record
             row["system"] = system
             row["path"] = system_path
+            row.append()
             
         self._table.flush()
         print(system_table)
