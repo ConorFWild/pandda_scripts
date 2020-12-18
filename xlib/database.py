@@ -168,8 +168,8 @@ class Database:
             system_path: str =str(system_path) 
             
             # Create record
-            row.system = system
-            row.path = system_path
+            row["system"] = system
+            row["path"] = system_path
             
         self._table.flush()
         print(system_table)
