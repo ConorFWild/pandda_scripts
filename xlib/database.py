@@ -193,9 +193,15 @@ class Database:
                 pandda_dir: Path = pandda_dirs_dir / system
                     
                 # Make record
-                pandda_row.system = system
-                pandda_row.path = pandda_dir
-                pandda_row.event_table_file = event_table_file
+                pandda_row = Database.fill_row_pandda(
+                    pandda_row,
+                    system,
+                    pandda_dir,
+                    event_table_file,
+                )
+                # pandda_row.system = system
+                # pandda_row.path = pandda_dir
+                # pandda_row.event_table_file = event_table_file
                 
         # Flush records
         self._table.flush()
@@ -264,6 +270,19 @@ class Database:
         row["system"] = system
         row["path"] = system_path
         return row
+    
+    @staticmethod
+    def fill_row_pandda(
+        pandda_row: tables.tableextension.Row,
+        system: str,
+        pandda_dir: str,
+        event_table_file: str,
+        
+    ) -> tables.tableextension.Row:
+        pandda_row["system"] = system
+        pandda_row["path"] = pandda_dir
+        pandda_row["event_table_file"] = event_table_file
+        return pandda_row
 
 # ############
 # Args
