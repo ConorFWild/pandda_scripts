@@ -83,7 +83,7 @@ class Database:
     _table: tables.File
     
     @staticmethod
-    def from_file(path: str = TableConstants.DATABASE_FILE) -> Database:
+    def from_file(path: str = TableConstants.DEFAULT_DATABASE_FILE) -> Database:
         
         _file: Path = Path(path)
         
