@@ -30,6 +30,11 @@ class TableConstants:
     EVENT_TABLE_NAME = "event"
     AUTOBUILD_TABLE_NAME = "autobuild"
     
+    # Defaults
+    DEFAULT_DATABASE_FILE = "/data/share-2/conor/pandda/output/database.hdf5"
+    DEFAULT_SYSTEM_DIRS_DIR = "/data/share-2/conor/pandda/data/pandda_inputs"
+    DEFAULT_PANDDA_DIRS_DIR = "/data/share-2/conor/pandda/output/all_systems"
+    DEFAULT_AUTOBUILD_DIRS_DIR = "/data/share-2/conor/pandda/output/all_autobuild"
     
 # #############
 # Records
@@ -251,12 +256,16 @@ class Args:
     def from_cmd():
         parser = argparse.ArgumentParser()
         parser.add_argument("--database_file",
+                            default=TableConstants.DEFAULT_DATABASE_FILE,
                             )
         parser.add_argument("--system_dirs_dir",
+                            default=TableConstants.DEFAULT_SYSTEM_DIRS_DIR,
                             )
         parser.add_argument("--pandda_dirs_dir",
+                            default=TableConstants.DEFAULT_PANDDA_DIRS_DIR,
                             )
         parser.add_argument("--autobuild_dirs_dir",
+                            default=TableConstants.DEFAULT_AUTOBUILD_DIRS_DIR,
                             )
         parser.add_argument("--debug",
                             default=2,
