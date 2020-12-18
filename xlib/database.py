@@ -84,6 +84,17 @@ class Database:
     _file: Path 
     _table: tables.File
     
+    system_group: tables.Group
+    pandda_group: tables.Group
+    event_group: tables.Group
+    autobuild_group: tables.Group
+    
+    system_table: tables.Table
+    pandda_table: tables.Table
+    event_table: tables.Table
+    autobuild_table: tables.Table
+                        
+    
     @staticmethod
     def from_file(path: str = TableConstants.DEFAULT_DATABASE_FILE, overwrite: bool=True) -> Database:
         
@@ -104,24 +115,33 @@ class Database:
         autobuild_group: tables.Group = _table.create_group(_table.root, TableConstants.AUTOBUILD_GROUP_NAME)
         
         # Create tables
-        _table.create_table(system_group, 
+        system_table = _table.create_table(system_group, 
                             TableConstants.SYSTEM_TABLE_NAME,
                             SystemRecord,
                             )
-        _table.create_table(pandda_group, 
+        pandda_table = _table.create_table(pandda_group, 
                             TableConstants.PANDDA_TABLE_NAME,
                             PanDDARecord,
                             )
-        _table.create_table(event_group, 
+        event_table = _table.create_table(event_group, 
                             TableConstants.EVENT_TABLE_NAME,
                             EventRecord,
                             )
-        _table.create_table(autobuild_group, 
+        autobuild_table = _table.create_table(autobuild_group, 
                             TableConstants.AUTOBUILD_TABLE_NAME,
                             BuildRecord,
                             )
         
-        return Database(_file, _table)
+        return Database(_file, _table,
+                        system_group,
+                        pandda_group,
+                        event_group,
+                        autobuild_group,
+                        system_table,
+                        pandda_table,
+                        event_table,
+                        autobuild_table,               
+                        )
         
     def make(self) -> None:
         # PanDDAs
@@ -138,7 +158,7 @@ class Database:
         # Autobuilds
         
     def populate_systems(self, path: Path) -> None:
-        system_table: tables.Table = self._table.systems
+        system_table: tables.Table = self.system_table
         row: tables.tableextension.Row = system_table.row
         
         system_path_list: List[Path] = list(path for path in path.glob("*") if path.is_dir())
@@ -155,8 +175,8 @@ class Database:
         print(system_table)
         
     def populate_panddas(self, pandda_dirs_dir: Path) -> None:
-        system_table: tables.Table = self._table.system_table
-        pandda_table: tables.Table = self._table.pandda_table
+        system_table: tables.Table = self.system_table
+        pandda_table: tables.Table = self.pandda_table
         pandda_row: tables.tableextension.Row = pandda_table.row
         
         # Get event tables
@@ -177,9 +197,9 @@ class Database:
         print(pandda_table)
         
     def populate_events(self, pandda_dirs_dir, autobuild_dirs_dir) -> None:
-        system_table: tables.Table = self._table.system_table
-        pandda_table: tables.Table = self._table.pandda_table
-        event_table: tables.Table = self._table.event_table
+        system_table: tables.Table = self.system_table
+        pandda_table: tables.Table = self.pandda_table
+        event_table: tables.Table = self.event_table
         event_row:  tables.tableextension.Row = event_table.row
         
         for pandda_row in pandda_table:
@@ -209,7 +229,7 @@ class Database:
 
         
     def populate_autobuilds(self, autobuild_dirs_dir: Path) -> None:
-        build_table: tables.Table = self._table.event_table
+        build_table: tables.Table = self.event_table
         build_row:  tables.tableextension.Row = build_table.row
         
         build_dict: xlib.BuildDict = xlib.BuildDict.from_autobuild_dir(autobuild_dirs_dir)
