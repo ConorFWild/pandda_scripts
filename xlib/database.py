@@ -45,17 +45,6 @@ class SystemRecord(tables.IsDescription):
     system = tables.StringCol(255)
     path = tables.StringCol(255)
 
-    @staticmethod
-    def fill_row(
-        row: tables.tableextension.Row,
-        system: str,
-        system_path: str,
-        ) -> tables.tableextension.Row:
-        row["system"] = system
-        row["path"] = system_path
-        return row
-        
-
 class BuildRecord(tables.IsDescription):
     system = tables.StringCol(255)
     dtag = tables.StringCol(255)
@@ -179,13 +168,11 @@ class Database:
             system_path: str =str(system_path) 
             
             # Create record
-            row = SystemRecord.fill_row(
+            row = Database.fill_row_system(
                 row,
                 system,
                 system_path,
                 )
-            # row["system"] = system
-            # row["path"] = system_path
             row.append()
             
         self._table.flush()
@@ -266,6 +253,16 @@ class Database:
         
         self._table.flush()
         print(build_table)
+        
+    @staticmethod
+    def fill_row_system(
+        row: tables.tableextension.Row,
+        system: str,
+        system_path: str,
+        ) -> tables.tableextension.Row:
+        row["system"] = system
+        row["path"] = system_path
+        return row
 
 # ############
 # Args
