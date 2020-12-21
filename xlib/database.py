@@ -85,8 +85,8 @@ class BuildRecord():
         row["event_idx"] = self.event_idx
         row["build_cluster"] = self.build_cluster
         row["build_number"] = self.build_number
-        row["rscc"] = self.build_rscc
-        row["file"] = self.build_file
+        row["rscc"] = self.rscc
+        row["file"] = self.file
         return row
 
 class BuildRecordDescription(tables.IsDescription):
