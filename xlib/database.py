@@ -218,7 +218,7 @@ class Database:
                             )
         event_table = _table.create_table(event_group, 
                             TableConstants.EVENT_TABLE_NAME,
-                            EventRecord,
+                            EventRecordDescription,
                             )
         autobuild_table = _table.create_table(autobuild_group, 
                             TableConstants.AUTOBUILD_TABLE_NAME,
