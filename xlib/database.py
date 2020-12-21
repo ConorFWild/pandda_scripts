@@ -63,8 +63,8 @@ class BuildRecord():
             build_id.event_idx.event_idx,
             build_id.build_cluster.build_cluster_id,
             build_id.build_number.build_number_id,
-            build.build_file,
             build.build_rscc,
+            build.build_file,
         )
     
     @staticmethod
