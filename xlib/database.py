@@ -129,7 +129,7 @@ class EventRecord:
             row["x"] ,
             row["y"] ,
             row["z"] ,
-            row["1-BDX"],
+            row["1-BDC"],
             row["analysed_resolution"],
         )        
     
