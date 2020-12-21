@@ -199,9 +199,6 @@ class Database:
                     pandda_dir,
                     event_table_file,
                 )
-                # pandda_row.system = system
-                # pandda_row.path = pandda_dir
-                # pandda_row.event_table_file = event_table_file
                 pandda_row.append()
                 
         # Flush records
@@ -224,6 +221,8 @@ class Database:
                 event_id: xlib.EventID = xlib.get_event_id(system, row)
                 event: xlib.Event = xlib.get_event(system, row, pandda_dirs_dir, autobuild_dirs_dir)
                 
+                event_row = self.fill_row_events()
+                
                 # 
                 event_row.system = event.system.system
                 event_row.dtag = event.dtag.dtag
@@ -233,6 +232,8 @@ class Database:
                 event_row.z = event.z
                 event_row.bdc = event.bdc
                 event_row.resolution = event.resolution
+                
+                event_row.append()
                 
             # Flush records
             self._table.flush()
