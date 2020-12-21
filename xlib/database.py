@@ -61,8 +61,8 @@ class BuildRecord():
             build_id.system.system,
             build_id.dtag.dtag,
             build_id.event_idx.event_idx,
-            build_id.build_cluster.build_cluster,
-            build_id.build_number.build_number,
+            build_id.build_cluster.build_cluster_id,
+            build_id.build_number.build_number_id,
             build.build_file,
             build.build_rscc,
         )
