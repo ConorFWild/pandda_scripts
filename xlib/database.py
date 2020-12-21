@@ -45,7 +45,31 @@ class SystemRecord(tables.IsDescription):
     system = tables.StringCol(255)
     path = tables.StringCol(255)
 
-class BuildRecord(tables.IsDescription):
+@dataclasses.dataclass()
+class BuildRecord():
+    @staticmethod
+    def from_row(row) -> PanDDARecord:
+        return EventRecord(
+            row["system"],
+            row["dtag"] ,
+            row["event_idx"],
+            row["build_cluster"] ,
+            row["build_number"] ,
+            row["rscc"] ,
+            row["file"],
+        )
+
+    def fill_row(self, row: tables.tableextension.Row) -> tables.tableextension.Row:
+        row["system"] = self.system
+        row["dtag"] = self.dtag
+        row["event_idx"] = self.event_idx
+        row["build_cluster"] = self.build_cluster_id
+        row["build_number"] = self.build_number_id
+        row["rscc"] = self.build_rscc
+        row["file"] = self.build_file
+        return row
+
+class BuildRecordDescription(tables.IsDescription):
     system = tables.StringCol(255)
     dtag = tables.StringCol(255)
     event_idx = tables.Int32Col()
@@ -53,8 +77,29 @@ class BuildRecord(tables.IsDescription):
     build_number = tables.Int32Col()
     rscc = tables.Float32Col()
     file = tables.StringCol(255)
+
+@dataclasses.dataclass()
+class PanDDARecord:
+    system: str
+    path: str
+    event_table_file: str
+
+    @staticmethod
+    def from_row(row) -> PanDDARecord:
+        return PanDDARecord(
+            row["system"],
+            row["path"] ,
+            row["event_table_file"],
+        )
+
+    def fill_row(self, row: tables.tableextension.Row) -> tables.tableextension.Row:
+        row["system"] = self.system
+        row["path"] = self.pandda_dir
+        row["event_table_file"] = self.event_table_file
+        return row
+        
     
-class PanDDARecord(tables.IsDescription):
+class PanDDARecordDescription(tables.IsDescription):
     system = tables.StringCol(255)
     path = tables.StringCol(255)
     event_table_file = tables.StringCol(255)
@@ -64,7 +109,55 @@ class MTZRecord(tables.IsDescription):
     dtag = tables.StringCol(255)
     path = tables.StringCol(255)
 
-class EventRecord(tables.IsDescription):
+@dataclasses.dataclass()
+class EventRecord:
+    system: str
+    path: str
+    event_idx: int
+    x: float
+    y: float
+    z: float
+    bdc: float
+    resolution: float
+    
+    @staticmethod
+    def from_pandda_event_table_row(row) -> PanDDARecord:
+        return EventRecord(
+            row["system"],
+            row["dtag"] ,
+            row["event_idx"],
+            row["x"] ,
+            row["y"] ,
+            row["z"] ,
+            row["1-BDX"],
+            row["analysed_resolution"],
+        )        
+    
+    @staticmethod
+    def from_row(row) -> PanDDARecord:
+        return EventRecord(
+            row["system"],
+            row["dtag"] ,
+            row["event_idx"],
+            row["x"] ,
+            row["y"] ,
+            row["z"] ,
+            row["bdc"],
+            row["resolution"],
+        )
+
+    def fill_row(self, row: tables.tableextension.Row) -> tables.tableextension.Row:
+        row["system"] = self.system
+        row["dtag"] = self.dtag
+        row["event_idx"] = self.event_idx
+        row["x"] = self.x
+        row["y"] = self.y
+        row["z"] = self.z
+        row["bdc"] = self.bdc
+        row["resolution"] = self.resolution
+        return row
+
+class EventRecordDescription(tables.IsDescription):
     system = tables.StringCol(255)
     dtag = tables.StringCol(255)
     event_idx = tables.Int32Col()
@@ -121,7 +214,7 @@ class Database:
                             )
         pandda_table = _table.create_table(pandda_group, 
                             TableConstants.PANDDA_TABLE_NAME,
-                            PanDDARecord,
+                            PanDDARecordDescription,
                             )
         event_table = _table.create_table(event_group, 
                             TableConstants.EVENT_TABLE_NAME,
@@ -212,26 +305,16 @@ class Database:
         event_row:  tables.tableextension.Row = event_table.row
         
         for pandda_row in pandda_table:
-            event_table_file = pandda_table.event_table_file
+            pandda_record: PanDDARecord = PanDDARecord.from_row(pandda_row)
+            event_table_file = pandda_record.event_table_file
             # Get table
             event_table: pd.DataFrame = pd.read_csv(str(event_table_file))
             
             # Get events
             for index, row in event_table.iterrows():
-                event_id: xlib.EventID = xlib.get_event_id(system, row)
-                event: xlib.Event = xlib.get_event(system, row, pandda_dirs_dir, autobuild_dirs_dir)
+                event_record: EventRecord = EventRecord.from_pandda_event_table_row(row)
                 
-                event_row = self.fill_row_events()
-                
-                # 
-                event_row.system = event.system.system
-                event_row.dtag = event.dtag.dtag
-                event_row.event_idx = event.event_idx.event_idx
-                event_row.x = event.x
-                event_row.y = event.y
-                event_row.z = event.z
-                event_row.bdc = event.bdc
-                event_row.resolution = event.resolution
+                event_record.fill_row(event_row)
                 
                 event_row.append()
                 
