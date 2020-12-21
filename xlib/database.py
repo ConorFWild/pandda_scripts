@@ -1,4 +1,5 @@
 from __future__ import annotations
+from batch_rhofit import Build
 
 import os
 
@@ -47,6 +48,24 @@ class SystemRecord(tables.IsDescription):
 
 @dataclasses.dataclass()
 class BuildRecord():
+    system :str
+    dtag :str 
+    event_idx :str 
+    build_cluster :str 
+    build_number :str 
+    rscc :str
+    file :str
+    
+    @staticmethod
+    def from_build(build: Build, build_id: xlib.BuildID) -> BuildRecord:
+        return BuildRecord(
+            build_id.system.system,
+            build_id.dtag.dtag,
+            build_id.event_idx.event_idx,
+            build.build_file,
+            build.build_rscc,
+        )
+    
     @staticmethod
     def from_row(row) -> PanDDARecord:
         return EventRecord(
@@ -320,9 +339,9 @@ class Database:
                 
                 event_row.append()
                 
-            # Flush records
-            self._table.flush()
-            print(event_table)
+        # Flush records
+        self._table.flush()
+        print(event_table)
             
 
         
@@ -334,15 +353,21 @@ class Database:
         
         for build_id in build_dict:
             build: xlib.Build = build_dict[build_id]
+            
+            build_record: BuildRecord = BuildRecord.from_build(build, build_id)
 
-            # Get event record
-            build_row.system = build_id.system.system
-            build_row.dtag = build_id.dtag.dtag
-            build_row.event_idx = build_id.event_idx.event_idx
-            build_row.build_cluster = build_id.build_cluster.build_cluster_id
-            build_row.build_number = build_id.build_number.build_number_id
-            build_row.rscc = build.build_rscc
-            build_row.file = build.build_file
+            build_record.fill_row(build_row)
+
+            build_row.append()
+            
+            # # Get event record
+            # build_row.system = build_id.system.system
+            # build_row.dtag = build_id.dtag.dtag
+            # build_row.event_idx = build_id.event_idx.event_idx
+            # build_row.build_cluster = build_id.build_cluster.build_cluster_id
+            # build_row.build_number = build_id.build_number.build_number_id
+            # build_row.rscc = build.build_rscc
+            # build_row.file = build.build_file
 
         
         self._table.flush()
