@@ -49,10 +49,10 @@ class SystemRecord(tables.IsDescription):
 class BuildRecord():
     system :str
     dtag :str 
-    event_idx :str 
-    build_cluster :str 
-    build_number :str 
-    rscc :str
+    event_idx :int 
+    build_cluster :int 
+    build_number :int 
+    rscc :float
     file :str
     
     @staticmethod
@@ -83,8 +83,8 @@ class BuildRecord():
         row["system"] = self.system
         row["dtag"] = self.dtag
         row["event_idx"] = self.event_idx
-        row["build_cluster"] = self.build_cluster_id
-        row["build_number"] = self.build_number_id
+        row["build_cluster"] = self.build_cluster
+        row["build_number"] = self.build_number
         row["rscc"] = self.build_rscc
         row["file"] = self.build_file
         return row
