@@ -121,9 +121,9 @@ class EventRecord:
     resolution: float
     
     @staticmethod
-    def from_pandda_event_table_row(row) -> PanDDARecord:
+    def from_pandda_event_table_row(row, system) -> PanDDARecord:
         return EventRecord(
-            row["system"],
+            system,
             row["dtag"] ,
             row["event_idx"],
             row["x"] ,
@@ -312,7 +312,9 @@ class Database:
             
             # Get events
             for index, row in pandda_event_table.iterrows():
-                event_record: EventRecord = EventRecord.from_pandda_event_table_row(row)
+                event_record: EventRecord = EventRecord.from_pandda_event_table_row(row,
+                                                                                    pandda_record.system,
+                                                                                    )
                 
                 event_record.fill_row(event_row)
                 
