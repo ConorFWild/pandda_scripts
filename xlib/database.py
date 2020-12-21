@@ -1,5 +1,4 @@
 from __future__ import annotations
-from batch_rhofit import Build
 
 import os
 
@@ -57,7 +56,7 @@ class BuildRecord():
     file :str
     
     @staticmethod
-    def from_build(build: Build, build_id: xlib.BuildID) -> BuildRecord:
+    def from_build(build: xlib.Build, build_id: xlib.BuildID) -> BuildRecord:
         return BuildRecord(
             build_id.system.system,
             build_id.dtag.dtag,
