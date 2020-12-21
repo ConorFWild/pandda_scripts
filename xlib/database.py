@@ -222,7 +222,7 @@ class Database:
                             )
         autobuild_table = _table.create_table(autobuild_group, 
                             TableConstants.AUTOBUILD_TABLE_NAME,
-                            BuildRecord,
+                            BuildRecordDescription,
                             )
         
         return Database(_file, _table,
