@@ -112,7 +112,7 @@ class MTZRecord(tables.IsDescription):
 @dataclasses.dataclass()
 class EventRecord:
     system: str
-    path: str
+    dtag: str
     event_idx: int
     x: float
     y: float
