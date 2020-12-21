@@ -306,12 +306,12 @@ class Database:
         
         for pandda_row in pandda_table:
             pandda_record: PanDDARecord = PanDDARecord.from_row(pandda_row)
-            event_table_file = pandda_record.event_table_file
+            event_table_file = str(pandda_record.event_table_file, "utf-8")
             # Get table
-            event_table: pd.DataFrame = pd.read_csv(str(event_table_file))
+            pandda_event_table: pd.DataFrame = pd.read_csv(str(event_table_file))
             
             # Get events
-            for index, row in event_table.iterrows():
+            for index, row in pandda_event_table.iterrows():
                 event_record: EventRecord = EventRecord.from_pandda_event_table_row(row)
                 
                 event_record.fill_row(event_row)
