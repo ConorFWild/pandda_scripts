@@ -347,7 +347,7 @@ class Database:
 
         
     def populate_autobuilds(self, autobuild_dirs_dir: Path) -> None:
-        build_table: tables.Table = self.event_table
+        build_table: tables.Table = self.autobuild_table
         build_row:  tables.tableextension.Row = build_table.row
         
         build_dict: xlib.BuildDict = xlib.BuildDict.from_autobuild_dir(autobuild_dirs_dir)
