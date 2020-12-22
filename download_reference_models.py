@@ -67,7 +67,7 @@ if __name__ == "__main__":
     print(f"Got {len(system_path_dict)} systems")
     
     print("Getting reference structures")
-    reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(system_path_dict)
+    reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_dir(args.data_dirs_dir)
     print(f"Got {len(reference_structure_dict)} reference structures")
     
     print("Saving reference structures")
