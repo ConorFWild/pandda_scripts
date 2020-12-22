@@ -66,9 +66,13 @@ if __name__ == "__main__":
     system_path_dict: SystemPathDict = SystemPathDict.from_dir(args.data_dirs_dir)
     print(f"Got {len(system_path_dict)} systems")
     
+    print("Getting reference structures")
     reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(system_path_dict)
+    print(f"Got {len(reference_structure_dict)} reference structures")
     
+    print("Saving reference structures")
     for dtag in reference_structure_dict:
+        print(f"Working on dtag: {dtag.dtag}")
         structure: Structure = reference_structure_dict[dtag]
         
         path: Path = args.reference_structure_dir / xlib.Constants.REFERENCE_STRUCTURE_FILE.format(dtag=dtag.dtag)
