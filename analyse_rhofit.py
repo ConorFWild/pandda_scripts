@@ -94,9 +94,6 @@ def main():
         print(f"Got builds for {len(dtag_dict)} datasets")
         print(f"Found {len(build_dict)} builds")
         
-    
-
-    
     # Get rmsds
     rmsd_dict: RMSDDict = RMSDDict.from_build_dict(build_dict, reference_structure_dict)
     # if args.debug > 0: print(rmsd_dict)

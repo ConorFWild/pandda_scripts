@@ -173,6 +173,8 @@ class Constants:
     #     "NSP15_B"
     # }
     
+    REFERENCE_STRUCTURE_FILE = "{dtag}.pdb"
+    
     
     
 
@@ -628,6 +630,9 @@ class Structure:
     def from_pdb_string(pdb_string: str):
         structure = gemmi.read_pdb_string(pdb_string)
         return Structure(structure)
+    
+    def to_pdb(self, path: Path):
+        self.structure.write_pdb(path)
 
 
 
