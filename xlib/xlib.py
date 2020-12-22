@@ -644,7 +644,7 @@ class Structure:
         return Structure(structure)
     
     def to_pdb(self, path: Path):
-        self.structure.write_pdb(path)
+        self.structure.write_pdb(str(path))
 
 
 
