@@ -674,6 +674,7 @@ class ReferenceStructureDict:
         reference_structure_dict: Dict[Dtag, Structure] = {}
         for system in system_path_dict:
             system_path: Path = system_path_dict[system]
+            print(system_path)
             try:
                 system_reference_structure_dict: Dict[Dtag, Structure] = ReferenceStructureDict.from_dir(system_path)
             except Exception as e:
