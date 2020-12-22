@@ -34,7 +34,7 @@ class Args:
     @staticmethod
     def from_args(args: Any):
         data_dirs_dir = Path(args.data_dirs_dir)
-        reference_structure_dir = Path(args.autobuild_dirs_dir)
+        reference_structure_dir = Path(args.reference_structure_dir)
         debug: int = int(args.debug)
         
         return Args(
