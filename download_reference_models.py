@@ -60,7 +60,7 @@ class Args:
 if __name__ == "__main__":
     args: Args = Args.from_cmd()
     
-    system_path_dict: SystemPathDict = SystemPathDict.from_dir(args.pandda_dirs_dir)
+    system_path_dict: SystemPathDict = SystemPathDict.from_dir(args.data_dirs_dir)
     
     reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(system_path_dict)
     
