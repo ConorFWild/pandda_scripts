@@ -279,7 +279,7 @@ class ProjectCode:
     @staticmethod
     def from_dir(data_dir: Path):
 
-        dtag_dir = next(processed_models_dir.glob("*"))
+        dtag_dir = next(data_dir.glob("*"))
 
         example_dtag = dtag_dir.name
 
