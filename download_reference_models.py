@@ -58,9 +58,13 @@ class Args:
         return Args.from_args(args)
 
 if __name__ == "__main__":
+    print("Getting args")
     args: Args = Args.from_cmd()
+    print(f"Got args: {args}")
     
+    print("Getting system path dict")
     system_path_dict: SystemPathDict = SystemPathDict.from_dir(args.data_dirs_dir)
+    print(f"Got {len(system_path_dict)} systems")
     
     reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(system_path_dict)
     
