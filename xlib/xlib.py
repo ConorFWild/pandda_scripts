@@ -265,7 +265,7 @@ class ProjectCode:
         self.project_code = project_code
 
     @staticmethod
-    def from_dir(pandda_dir: Path):
+    def from_pandda_processed_dir(pandda_dir: Path):
         processed_models_dir = pandda_dir / Constants.PANDDA_PROCESSED_DATASETS_DIR
 
         processed_model_dir = next(processed_models_dir.glob("*"))
@@ -275,6 +275,18 @@ class ProjectCode:
         project_name = System.from_dtag(example_dtag).system
 
         return ProjectCode(project_name)
+
+    @staticmethod
+    def from_dir(data_dir: Path):
+
+        dtag_dir = next(processed_models_dir.glob("*"))
+
+        example_dtag = dtag_dir.name
+
+        project_name = System.from_dtag(example_dtag).system
+
+        return ProjectCode(project_name)
+
 
 @dataclasses.dataclass()
 class System:
