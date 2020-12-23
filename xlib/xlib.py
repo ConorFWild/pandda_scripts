@@ -1233,7 +1233,7 @@ class Skeleton:
     @staticmethod
     def from_structure(_structure: Structure) -> Skeleton:
         
-        Structure = _structure.structure
+        structure = _structure.structure
         
         # Get ligand res
         for n_ch, chain in enumerate(structure[0]):
