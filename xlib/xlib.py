@@ -175,6 +175,11 @@ class Constants:
     
     REFERENCE_STRUCTURE_FILE = "{dtag}.pdb"
     
+    SKELETON_STRUCTURE_JSON_FILE="skeleton_score.json"
+    SKELETON_XMAP_FILE_RECORD="xmap_file"
+    SKELETON_STRUCTURE_FILE_RECORD="structure_file"
+    SKELETON_SCORE_RECORD="score"
+    
     
     
 
@@ -1264,6 +1269,7 @@ class Skeleton:
             for mark in marks:
                 key = (atom_idx, mark.atom_idx)
                 bond_list.append(key)
+        print(f"Found {len(numbered_atoms)} residue atoms")
                 
         # Filter duplicates
         filtered_bonds = []
@@ -1271,6 +1277,7 @@ class Skeleton:
             reversed_bond = (bond[1], bond[0])
             if reversed_bond not in filtered_bonds:
                 filtered_bonds.append(bond)
+        print(f"Found {len(filtered_bonds)} bonds")
 
         # Get normal atom
         node_list = []
@@ -1301,6 +1308,8 @@ class Skeleton:
                 mean_z,
             )
             node_list.append(node)
+            
+        print(f"Found {len(node_list)} nodes")
             
         return Skeleton(node_list)
     
