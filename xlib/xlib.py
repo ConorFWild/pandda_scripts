@@ -1231,7 +1231,9 @@ class Skeleton:
     _node: List[Node] 
     
     @staticmethod
-    def from_residue(structure: Structure) -> Skeleton:
+    def from_structure(_structure: Structure) -> Skeleton:
+        
+        Structure = _structure.structure
         
         # Get ligand res
         for n_ch, chain in enumerate(structure[0]):
@@ -1304,11 +1306,13 @@ class SkeletonScore:
     skeleton_score: float
     
     @staticmethod
-    def from_residue(residue,
-                     xmap,
+    def from_structure(structure: Structure,
+                     xmap: Xmap,
                      contour: float=1.0,
                      ) -> SkeletonScore:
-        skeleton: Skeleton = Skeleton.from_residue(residue)
+        
+        
+        skeleton: Skeleton = Skeleton.from_structure(structure)
         
         xmap_grid: gemmi.FloatGrid = xmap.to_grid()
         
