@@ -68,8 +68,10 @@ if __name__ == "__main__":
     
     # Summarise
     print(
-        (f"Loading build from: {args.build_file}\n")
-        (f"Loading xmap from {args.event_map_file}\n")
+        (
+            f"Loading build from: {args.build_file}\n"
+            f"Loading xmap from {args.event_map_file}\n"
+        )
         )
     
     # Load xmap
