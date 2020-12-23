@@ -647,6 +647,18 @@ class Structure:
         self.structure.write_pdb(str(path))
 
 
+@dataclasses.dataclass()
+class Xmap:
+    xmap: gemmi.FloatGrid
+
+    @staticmethod
+    def from_file(file):
+        ccp4 = gemmi.read_ccp4_map(str(file))
+        ccp4.setup()
+        return Xmap(ccp4.grid)
+    
+    def to_grid(self) -> gemmi.FloatGrid:
+        return self.xmap
 
 @dataclasses.dataclass()
 class SystemPathDict:
@@ -1206,3 +1218,117 @@ class RSCCDict:
             best_rscc_dict[dtag] = min(dtag_rscc_dict[dtag])
             
         return RSCCDict(best_rscc_dict)
+    
+
+@dataclasses.dataclass()
+class Node:
+    x: float
+    y: float
+    z: float
+
+@dataclasses.dataclass()
+class Skeleton:
+    _node: List[Node] 
+    
+    @staticmethod
+    def from_residue(structure: Structure) -> Skeleton:
+        
+        # Get ligand res
+        for n_ch, chain in enumerate(structure[0]):
+            for n_res, res in enumerate(chain):
+                if res.name == "LIG":
+                    residue = res
+                    continue
+        
+        # Make the neighbourhood search
+        ns = gemmi.NeighborSearch(structure[0], structure.cell, 3)
+        for n_ch, chain in enumerate(structure[0]):
+            for n_res, res in enumerate(chain):
+                for n_atom, atom in enumerate(res):
+                    if not atom.is_hydrogen():
+                        ns.add_atom(atom, n_ch, n_res, n_atom)
+
+        # Find the bonds
+        bond_list = []
+        numbered_atoms = {}
+        for atom_idx, atom in enumerate(residue):
+            numbered_atoms[atom_idx] = atom
+            # A little more than the average distance of a standard c-c bond
+            marks = ns.find_neighbors(atom, min_dist=0.1, max_dist=1.6)
+            for mark in marks:
+                key = (atom_idx, mark.atom_idx)
+                bond_list.append(key)
+                
+        # Filter duplicates
+        filtered_bonds = []
+        for bond in bond_list:
+            reversed_bond = (bond[1], bond[0])
+            if reversed_bond not in filtered_bonds:
+                filtered_bonds.append(bond)
+
+        # Get normal atom
+        node_list = []
+        for atom in residue:
+            pos = atom.pos
+            node = Node(
+                pos.x,
+                pos.y,
+                pos.z,
+            )
+            node_list.append(node)
+        
+        # Get bonds
+        for bond in filtered_bonds:
+            atom_1 = numbered_atoms[bond[0]]
+            atom_2 = numbered_atoms[bond[1]]
+            
+            pos_1 = atom_1.pos
+            pos_2 = atom_2.pos
+            
+            mean_x = (pos_1.x + pos_2.x) / 2        
+            mean_y = (pos_1.y + pos_2.y) / 2        
+            mean_z = (pos_1.z + pos_2.z) / 2        
+
+            node = Node(
+                mean_x,
+                mean_y,
+                mean_z,
+            )
+            node_list.append(node)
+            
+        return Skeleton(node_list)
+    
+    
+@dataclasses.dataclass()
+class SkeletonScore:
+    skeleton_score: float
+    
+    @staticmethod
+    def from_residue(residue,
+                     xmap,
+                     contour: float=1.0,
+                     ) -> SkeletonScore:
+        skeleton: Skeleton = Skeleton.from_residue(residue)
+        
+        xmap_grid: gemmi.FloatGrid = xmap.to_grid()
+        
+        xmap_array: np.array = np.array(xmap_grid, copy=False)
+        
+        xmap_array[xmap_array < contour] = 0
+        
+        values: List[float] = []
+        for node in skeleton:
+            pos = gemmi.Position(node.x,
+                                 node.y,
+                                 node.z,
+                                 )
+            
+            sample_value: float = xmap_grid.sample_point(pos)
+            
+            if sample_value > 0:
+                values.append(1)
+            else:
+                values.append(0)
+                
+        return SkeletonScore(sum(values) / len(values))
+

@@ -28,28 +28,28 @@ from xlib import *
 
 @dataclasses.dataclass()
 class Args:
-    pandda_dirs_dir: Path
-    autobuild_dirs_dir: Path
+    reference_structure_file: Path
+    structure_file: Path
     debug: int
     
     @staticmethod
     def from_args(args: Any):
-        pandda_dirs_dir = Path(args.pandda_dirs_dir)
-        autobuild_dirs_dir = Path(args.autobuild_dirs_dir)
+        reference_structure_file = Path(args.reference_structure_file)
+        structure_file = Path(args.structure_file)
         debug: int = int(args.debug)
         
         return Args(
-            pandda_dirs_dir,
-            autobuild_dirs_dir,
+            reference_structure_file,
+            structure_file,
             debug,
         )
     
     @staticmethod
     def from_cmd():
         parser = argparse.ArgumentParser()
-        parser.add_argument("--pandda_dirs_dir",
+        parser.add_argument("--reference_structure_file",
                             )
-        parser.add_argument("--autobuild_dirs_dir",
+        parser.add_argument("--structure_file",
                             )
         parser.add_argument("--debug",
                             default=2,
@@ -61,3 +61,11 @@ class Args:
 if __name__ == "__main__":
     args: Args = Args.from_cmd()
     
+    reference_structure = Structure.from_model_path()
+    
+    build_structure = Structure.from_model_path()
+    
+    rmsd: RMSD = RMSD.from_structures(
+        reference_structure=reference_structure,
+        build_structure=build_structure,
+    )

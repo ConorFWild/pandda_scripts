@@ -187,10 +187,37 @@ class EventRecordDescription(tables.IsDescription):
     bdc = tables.Float32Col()
     resolution = tables.Float32Col()
 
-class StructureRecord(tables.IsDescription):
+class ReferenceStructureRecordDescription(tables.IsDescription):
     system = tables.StringCol(255)
     dtag = tables.StringCol(255)
     path = tables.StringCol(255)
+    
+
+@dataclasses.dataclass()
+class ReferenceStructureRecord:
+    system: str
+    dtag: str
+    path: str
+
+    @staticmethod
+    def from_row(row) -> ReferenceStructureRecord:
+        return ReferenceStructureRecord(
+            row["system"],
+            row["dtag"] ,
+            row["path"],
+        )
+
+    def fill_row(self, row: tables.tableextension.Row) -> tables.tableextension.Row:
+        row["system"] = self.system
+        row["dtag"] = self.dtag
+        row["path"] = self.path
+        return row
+        
+    
+class PanDDARecordDescription(tables.IsDescription):
+    system = tables.StringCol(255)
+    path = tables.StringCol(255)
+    event_table_file = tables.StringCol(255)
 
 @dataclasses.dataclass()
 class Database:
@@ -290,6 +317,36 @@ class Database:
             
         self._table.flush()
         print(system_table)
+        
+    def populate_reference_structures(self, path: Path):
+        reference_table : tables.Table = self.reference_structure_table
+        row: tables.tableextension.Row = reference_table.row
+        
+        reference_structure_path_list: List[Path] = list(path for path in path.glob("*") if path.is_dir())
+
+        for reference_structure_path in system_path_list:
+            system: str = system_path.name
+            system_path: str =str(system_path) 
+            
+            dtag = reference_structure_path
+            system = xlib.System.from_dtag(dtag)
+
+            # Create record
+            reference_structure_record = ReferenceStructureRecord(
+                system,
+                dtag,
+                str(reference_structure_path),
+            )
+            
+            # Fill row
+            reference_structure_record.fill_row(row)
+            
+            # Append row
+            row.append()
+        
+        self._table.flush()
+        print(reference_table)
+        
         
     def populate_panddas(self, pandda_dirs_dir: Path) -> None:
         system_table: tables.Table = self.system_table
@@ -460,6 +517,9 @@ def main():
     # Populate systems
     database.populate_systems(args.system_dirs_dir)
     
+    # Populate reference structures
+    database.populate_reference_structures(args.reference_structure_dir)
+    
     # populate panddas
     database.populate_panddas(args.pandda_dirs_dir)
     
@@ -470,6 +530,7 @@ def main():
     
     # Populate autobuilds
     database.populate_autobuilds(args.autobuild_dirs_dir)
+    
     
     
     
