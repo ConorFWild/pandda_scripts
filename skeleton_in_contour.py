@@ -35,9 +35,9 @@ class Args:
     
     @staticmethod
     def from_args(args: Any):
-        build_file = Path(args.reference_structure_file)
-        event_map_file = Path(args.structure_file)
-        output_dir = Path(args.structure_file)
+        build_file = Path(args.build_file)
+        event_map_file = Path(args.event_map_file)
+        output_dir = Path(args.output_dir)
         debug: int = int(args.debug)
         
         return Args(
@@ -95,7 +95,8 @@ if __name__ == "__main__":
     json_file = args.output_dir / Constants.SKELETON_STRUCTURE_JSON_FILE
     print(f"Saving result to: {json_file}")
     
-    record_dict = {xlib.Constants.SKELETON_XMAP_FILE_RECORD: str(args.event_map_file),
+    record_dict = {
+        xlib.Constants.SKELETON_XMAP_FILE_RECORD: str(args.event_map_file),
      xlib.Constants.SKELETON_STRUCTURE_FILE_RECORD: str(args.build_file),
      xlib.Constants.SKELETON_SCORE_RECORD: skeleton_score.skeleton_score,
      }
