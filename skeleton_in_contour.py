@@ -82,7 +82,7 @@ if __name__ == "__main__":
     build: Structure = Structure.from_model_path(args.build_file)
     
     # Get skeleton
-    skeleton_score: xlib.SkeletonScore = xlib.SkeletonScore.from_build(
+    skeleton_score: xlib.SkeletonScore = xlib.SkeletonScore.from_residue(
         build,
         xmap,
         contour=1.0,
