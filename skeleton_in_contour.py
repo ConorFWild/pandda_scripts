@@ -74,6 +74,7 @@ if __name__ == "__main__":
         )
         )
     
+    
     # Load xmap
     xmap = Xmap.from_file(args.event_map_file)
     
