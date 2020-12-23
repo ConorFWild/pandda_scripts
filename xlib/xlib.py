@@ -1228,7 +1228,11 @@ class Node:
 
 @dataclasses.dataclass()
 class Skeleton:
-    _node: List[Node] 
+    _node_list: List[Node] 
+    
+    def __iter__(self):
+        for node in self._node_list:
+            yield node
     
     @staticmethod
     def from_structure(_structure: Structure) -> Skeleton:
