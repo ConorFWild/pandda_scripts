@@ -1331,7 +1331,7 @@ class SkeletonScore:
                                  node.z,
                                  )
             
-            sample_value: float = xmap_grid.sample_point(pos)
+            sample_value: float = xmap_grid.interpolate_value(pos)
             
             if sample_value > 0:
                 values.append(1)
