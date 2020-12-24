@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import json
 
 from typing import *
 import dataclasses
@@ -218,7 +219,44 @@ class PanDDARecordDescription(tables.IsDescription):
     system = tables.StringCol(255)
     path = tables.StringCol(255)
     event_table_file = tables.StringCol(255)
+    
+@dataclasses.dataclass()
+class SkeletonScoreRecord:
+    system: str
+    dtag: str
+    event_idx: int
+    build_cluster: int
+    build_number: int
+    skeleton_score: float
+    
+    @staticmethod
+    def from_row(row) -> SkeletonScoreRecord:
+        return ReferenceStructureRecord(
+            row["system"],
+            row["dtag"] ,
+            row["path"],
+            row["build_cluster"],
+            row["build_number"] ,
+            row["skeleton_score"],
+        )
 
+    def fill_row(self, row: tables.tableextension.Row) -> tables.tableextension.Row:
+        row["system"] = self.system
+        row["dtag"] = self.dtag
+        row["path"] = self.path
+        row["build_cluster"] = self.build_cluster
+        row["build_number"] = self.build_number
+        row["skeleton_score"] = self.skeleton_score
+        return row
+    
+class SkeletonScoreRecordDescription(tables.IsDescription):
+    system = tables.Col.from_atom(tables.VLUnicodeAtom)
+    dtag = tables.Col.from_atom(tables.VLUnicodeAtom)
+    event_idx = tables.Col.from_atom(tables.VLUnicodeAtom)
+    build_cluster = tables.Int32Col()
+    build_number = tables.Int32Col()
+    skeleton_score = tables.Float32Col()
+    
 @dataclasses.dataclass()
 class Database:
     _file: Path 
@@ -228,11 +266,13 @@ class Database:
     pandda_group: tables.Group
     event_group: tables.Group
     autobuild_group: tables.Group
+    skeleton_score_group: tables.Group
     
     system_table: tables.Table
     pandda_table: tables.Table
     event_table: tables.Table
     autobuild_table: tables.Table
+    skeleton_score_table: tables.Table
                         
     
     @staticmethod
@@ -253,6 +293,7 @@ class Database:
         pandda_group: tables.Group = _table.create_group(_table.root, TableConstants.PANDDA_GROUP_NAME)
         event_group: tables.Group = _table.create_group(_table.root, TableConstants.EVENT_GROUP_NAME)
         autobuild_group: tables.Group = _table.create_group(_table.root, TableConstants.AUTOBUILD_GROUP_NAME)
+        skeleton_score_group: tables.Group = _table.create_group(_table.root, TableConstants.SKELETON_SCORE_GROUP)
         
         # Create tables
         system_table = _table.create_table(system_group, 
@@ -271,16 +312,22 @@ class Database:
                             TableConstants.AUTOBUILD_TABLE_NAME,
                             BuildRecordDescription,
                             )
+        skeleton_score_table = _table.create_table(skeleton_score_group,
+                                                   TableConstants.SKELETON_SCORE_TABLE_NAME,
+                                                   SkeletonScoreRecordDescription,
+                                                   )
         
         return Database(_file, _table,
                         system_group,
                         pandda_group,
                         event_group,
                         autobuild_group,
+                        skeleton_score_group,
                         system_table,
                         pandda_table,
                         event_table,
-                        autobuild_table,               
+                        autobuild_table,     
+                        skeleton_score_table,          
                         )
         
     def make(self) -> None:
@@ -431,6 +478,31 @@ class Database:
         self._table.flush()
         print(build_table)
         
+    def populate_skeleton_scores(self, autobuild_dirs_dir: Path, skeleton_score_dir: Path):
+        build_table: tables.Table = self.autobuild_table
+        skeleton_score_table : tables.Table = self.skeleton_score_table
+        skeleton_score_row:  tables.tableextension.Row = build_table.row
+        
+        for build_row in build_table:
+            build_record: BuildRecord = BuildRecord.from_row(build_row)
+            
+            # Get path
+            skeleton_score_json = skeleton_score_dir / build_record.system / build_record.dtag / build_record.event_idx / build_record.build_cluster / build_record.build_number
+            
+            # open json
+            with open(skeleton_score_json, "r") as f:
+                skeleton_score_dict = json.load(f)
+            
+            # Create record
+            skeleton_score_record = SkeletonScoreRecord.from_row(skeleton_score_dict)
+            
+            # Fill row
+            skeleton_score_record.fill_row(skeleton_score_row)
+            
+            # Append
+            skeleton_score_row.append()
+            
+        
     @staticmethod
     def fill_row_system(
         row: tables.tableextension.Row,
@@ -530,6 +602,10 @@ def main():
     
     # Populate autobuilds
     database.populate_autobuilds(args.autobuild_dirs_dir)
+    
+    # Populate skeleton scores
+    database.populate_skeleton_scores(args.autobuild_dirs_dir)
+
     
     
     
