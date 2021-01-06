@@ -320,9 +320,13 @@ class Database:
             dataset_dir_list = list(path for path in system_path.glob("*") if path.is_dir())
             
             for dataset_dir in dataset_dir_list:
-                compound_path = dataset_dir / Constants.COMPOUND_FILE
-                reflections_path = dataset_dir / Constants.REFLECTIONS_FILE
-                model_path = dataset_dir / Constants.MODEL_FILE
+                # compound_path = dataset_dir / Constants.COMPOUND_FILE
+                # reflections_path = dataset_dir / Constants.REFLECTIONS_FILE
+                # model_path = dataset_dir / Constants.MODEL_FILE
+                
+                compound_path = list(dataset_dir.glob("*.cif"))[0]
+                reflections_path = list(dataset_dir.glob("*.mtz"))[0]
+                model_path = list(dataset_dir.glob("*.pdb"))[0]
             
                 model = Model(path=str(compound_path))
             
