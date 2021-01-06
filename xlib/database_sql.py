@@ -315,6 +315,7 @@ class Database:
             system_path = Path(system.path)
             
             dataset_dirs_dir = system_path / system.system
+            print(dataset_dirs_dir)
             
             dataset_dir_list = list(path for path in dataset_dirs_dir.glob("*") if path.is_dir())
             
