@@ -2,6 +2,10 @@ import os
 from pathlib import Path
 import json
 
+import argparse
+import dataclasses
+from typing import *
+
 from sqlalchemy import Column, ForeignKey, Integer, String, Float, Bool, create_engine
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -250,7 +254,7 @@ class Database:
     def populate_panddas(self, pandda_dirs_dir: Path):
         
         for system in self.session.query(System):
-            pandda_dir = pandda_dir / system.system
+            pandda_dir = pandda_dirs_dir / system.system
             
             pandda_json_file = pandda_dir / xlib.Constants.PANDDA_LOG_FILE
             
@@ -267,7 +271,7 @@ class Database:
         
         self.session.commit()
         
-    def populate_autobuilds(self, autobuild_dir: Path):
+    def populate_autobuilds(self, autobuild_dirs_dir: Path):
         
         build_dict: xlib.BuildDict = xlib.BuildDict.from_autobuild_dir(autobuild_dirs_dir)
         
