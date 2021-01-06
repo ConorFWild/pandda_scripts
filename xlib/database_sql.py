@@ -354,7 +354,7 @@ class Database:
         
     def populate_panddas(self, pandda_dirs_dir: Path):
         
-        for system in self.session.query(System):
+        for system in self.session.query(System).all():
             pandda_dir = pandda_dirs_dir / system.system
             
             pandda_json_file = pandda_dir / xlib.Constants.PANDDA_LOG_FILE
