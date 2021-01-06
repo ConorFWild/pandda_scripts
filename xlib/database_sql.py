@@ -311,6 +311,7 @@ class Database:
     def populate_models_reflections_compounds_datasets(self):
         
         for system in self.session.query(System).all():
+            print(system)
             system_path = Path(system.path)
             
             dataset_dirs_dir = system_path / system.system
