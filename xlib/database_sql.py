@@ -101,7 +101,7 @@ class Event(base):
     
     # Foreign keys
     system_id = Column(Integer, ForeignKey(System.id))
-    dataset_id = Column(Integer, ForeignKey(Model.id))
+    dataset_id = Column(Integer, ForeignKey(Dataset.id))
     pandda_id = Column(Integer, ForeignKey(PanDDA.id))
     
     # Relationships
