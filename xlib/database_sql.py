@@ -6,9 +6,10 @@ import argparse
 import dataclasses
 from typing import *
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean, create_engine
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean, create_engine, func
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+
 
 import pandas as pd
 
@@ -303,6 +304,9 @@ class Database:
             self.session.add(system)
         
         self.session.commit()
+        
+        print("Populated systems")
+        print(f"Got {self.session.query(func.count(System.id))}")
         
     def populate_models_reflections_compounds_datasets(self):
         
