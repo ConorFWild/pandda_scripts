@@ -16,8 +16,24 @@ import xlib
 
 
 class Constants:
+    COMPOUND_TABLE = "compound"
+    REFLECTIONS_TABLE = "reflections"
+    MODEL_TABLE = "model"
+    DATASET_TABLE = "dataset"
+    SYSTEM_TABLE = "system"
+    PANDDA_TABLE = "pandda"
+    EVENT_TABLE = "event"
+    REFERENCE_TABLE = "reference"
+    AUTOBUILD_TABLE = "autobuild"
+    AUTOBUILD_BEST_TABLE = "autobuild_best"
+    AUTOBUILD_SKELETON_SCORE_TABLE = "autobuild_skeleton_score"
+    AUTOBUILD_RSCC_TABLE = "autobuild_rscc"
+    AUTOBUILD_RMSD_TABLE = "autobuild_rmsd"
+    AUTOBUILD_HUMAN_TABLE = "autobuild_human"
+    REAL_SPACE_CLUSTERING_TABLE = "real_space_clustering"
+    EVENT_SCORE_TABLE = "event_score"
     
-    PANDDA_TABLE = ""
+    
 
 base = declarative_base()
         
@@ -46,6 +62,12 @@ class Dataset(base):
     reflections_id = Column(Integer, ForeignKey(Reflections.id))
     model_id = Column(Integer, ForeignKey(Model.id))
     compound_id = Column(Integer, ForeignKey(Compound.id))
+    
+    # Relationships
+    reflections = relationship(Reflections)
+    model = relationship(Model)
+    compound = relationship(Compound)
+    
 
 class System(base):
     __tablename__ = Constants.SYSTEM_TABLE
@@ -56,13 +78,17 @@ class System(base):
 class PanDDA(base):
     __tablename__ = Constants.PANDDA_TABLE
     id = Column(Integer, primary_key=True)
-    success = Column(Bool)
+    success = Column(Boolean)
     runtime = Column(Float)
     path = Column(String(255))
     
     # Foreign keys
     system_id = Column(Integer, ForeignKey(System.id))
+
+    # Relationships
+    system = relationship(System)
     
+
 class Event(base):
     __tablename__ = Constants.EVENT_TABLE
     id = Column(Integer, primary_key=True)
@@ -78,6 +104,11 @@ class Event(base):
     dataset_id = Column(Integer, ForeignKey(Model.id))
     pandda_id = dataset_id = Column(Integer, ForeignKey(PanDDA.id))
     
+    # Relationships
+    system = relationship(System)
+    dataset = relationship(Dataset)
+    pandda = relationship(PanDDA)
+    
 
 class ReferenceModel(base):
     __tablename__ = Constants.REFERENCE_TABLE
@@ -87,6 +118,11 @@ class ReferenceModel(base):
     # Foreign keys
     system_id = Column(Integer, ForeignKey(System.id))
     dataset_id= Column(Integer, ForeignKey(Dataset.id))
+    
+    # Relationships
+    system = relationship(System)
+    dataset = relationship(Dataset)
+    
     
 class Autobuild(base):
     __tablename__ = Constants.AUTOBUILD_TABLE
@@ -98,9 +134,15 @@ class Autobuild(base):
     dataset_id= Column(Integer, ForeignKey(Dataset.id))
     pandda_id= Column(Integer, ForeignKey(PanDDA.id))
     event_id= Column(Integer, ForeignKey(Event.id))
+    
+    # Relationships
+    system = relationship(System)
+    dataset = relationship(Dataset)
+    pandda = relationship(PanDDA)
+    event = relationship(Event)
 
 class AutobuildBest(base):
-    __tablename__ = Constants.AUTOBUILDBEST_TABLE
+    __tablename__ = Constants.AUTOBUILD_BEST_TABLE
     id = Column(Integer, primary_key=True)
     path = Column(String(255))
 
@@ -111,9 +153,15 @@ class AutobuildBest(base):
     event_id= Column(Integer, ForeignKey(Event.id))
     autobuild_id = Column(Integer, ForeignKey(Autobuild.id))
 
+    # Relationships
+    system = relationship(System)
+    dataset = relationship(Dataset)
+    pandda = relationship(PanDDA)
+    event = relationship(Event)
+    autobuild = relationship(Autobuild)
 
 class AutobuildSkeletonScore(base):
-    __tablename__ = Constants.AUTOBUILDSKELETONSCORE_TABLE
+    __tablename__ = Constants.AUTOBUILD_SKELETON_SCORE_TABLE
     id = Column(Integer, primary_key=True)
     autobuild_id = Column(Integer, ForeignKey(Autobuild.id))
     skeleton_score = Column(Float)
@@ -125,6 +173,12 @@ class AutobuildSkeletonScore(base):
     event_id= Column(Integer, ForeignKey(Event.id))
     autobuild_id = Column(Integer, ForeignKey(Autobuild.id))
 
+    # Relationships
+    system = relationship(System)
+    dataset = relationship(Dataset)
+    pandda = relationship(PanDDA)
+    event = relationship(Event)
+    autobuild = relationship(Autobuild)
 
 class AutobuildRSCC(base):
     __tablename__ = Constants.AUTOBUILD_RSCC_TABLE
@@ -137,6 +191,13 @@ class AutobuildRSCC(base):
     pandda_id= Column(Integer, ForeignKey(PanDDA.id))
     event_id= Column(Integer, ForeignKey(Event.id))
     autobuild_id = Column(Integer, ForeignKey(Autobuild.id))
+
+    # Relationships
+    system = relationship(System)
+    dataset = relationship(Dataset)
+    pandda = relationship(PanDDA)
+    event = relationship(Event)
+    autobuild = relationship(Autobuild)
 
 class AutobuildRMSD(base):
     __tablename__ = Constants.AUTOBUILD_RMSD_TABLE
@@ -151,8 +212,15 @@ class AutobuildRMSD(base):
     event_id= Column(Integer, ForeignKey(Event.id))
     autobuild_id = Column(Integer, ForeignKey(Autobuild.id))
 
+    # Relationships
+    system = relationship(System)
+    dataset = relationship(Dataset)
+    pandda = relationship(PanDDA)
+    event = relationship(Event)
+    autobuild = relationship(Autobuild)
+
 class HumanAutobuildComparison(base):
-    __tablename__ = Constants.AUTOBUILD_RMSD_TABLE
+    __tablename__ = Constants.AUTOBUILD_HUMAN_TABLE
     id = Column(Integer, primary_key=True)
     
     # foreign keys
@@ -163,6 +231,14 @@ class HumanAutobuildComparison(base):
     autobuild_id = Column(Integer, ForeignKey(Autobuild.id))
     reference_id = Column(Integer, ForeignKey(ReferenceModel.id))
     
+    # Relationships
+    system = relationship(System)
+    dataset = relationship(Dataset)
+    pandda = relationship(PanDDA)
+    event = relationship(Event)
+    autobuild = relationship(Autobuild)
+    reference_model = relationship(ReferenceModel)
+    
 class RealSpaceClustering(base):
     __tablename__ = Constants.REAL_SPACE_CLUSTERING_TABLE
     id = Column(Integer, primary_key=True)
@@ -171,6 +247,9 @@ class RealSpaceClustering(base):
     
     # Foreign keys
     system_id = Column(Integer, ForeignKey(System.id))
+
+    # Relationships
+    system = relationship(System)
 
 class EventScore(base):
     __tablename__ = Constants.EVENT_SCORE_TABLE
@@ -183,6 +262,11 @@ class EventScore(base):
     pandda_id= Column(Integer, ForeignKey(PanDDA.id))
     event_id= Column(Integer, ForeignKey(Event.id))
 
+    # Relationships
+    system = relationship(System)
+    dataset = relationship(Dataset)
+    pandda = relationship(PanDDA)
+    event = relationship(Event)
 
 class Database:
     
