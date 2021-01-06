@@ -203,7 +203,7 @@ class AutobuildRMSD(base):
     __tablename__ = Constants.AUTOBUILD_RMSD_TABLE
     id = Column(Integer, primary_key=True)
     reference_id = Column(Integer, ForeignKey(ReferenceModel.id))
-    rmsd = Column(float)
+    rmsd = Column(Float)
     
     # Foreign keys
     system_id = Column(Integer, ForeignKey(System.id))
