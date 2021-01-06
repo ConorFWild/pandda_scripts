@@ -306,7 +306,7 @@ class Database:
         self.session.commit()
         
         print("Populated systems")
-        print(f"Got {self.session.query(func.count(System.id)).scalar()}")
+        print(f"Got {self.session.query(func.count(System.id)).scalar()} systems")
         
     def populate_models_reflections_compounds_datasets(self):
         
@@ -341,6 +341,16 @@ class Database:
                 self.session.add(dataset)
                 
         self.session.commit()
+        
+        print("Populated systems")
+        print(
+            (
+                f"Got {self.session.query(func.count(Model.id)).scalar()} models"
+                f"Got {self.session.query(func.count(Reflections.id)).scalar()} Reflections"
+                f"Got {self.session.query(func.count(Compound.id)).scalar()} Compounds"
+                f"Got {self.session.query(func.count(Dataset.id)).scalar()} datasets"
+            )
+        )
         
     def populate_panddas(self, pandda_dirs_dir: Path):
         
