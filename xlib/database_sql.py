@@ -310,7 +310,7 @@ class Database:
         
     def populate_models_reflections_compounds_datasets(self):
         
-        for system in self.session.query(System):
+        for system in self.session.query(System).all():
             system_path = Path(system.path)
             
             dataset_dirs_dir = system_path / system.system
@@ -345,10 +345,10 @@ class Database:
         print("Populated systems")
         print(
             (
-                f"Got {self.session.query(func.count(Model.id)).scalar()} models"
-                f"Got {self.session.query(func.count(Reflections.id)).scalar()} Reflections"
-                f"Got {self.session.query(func.count(Compound.id)).scalar()} Compounds"
-                f"Got {self.session.query(func.count(Dataset.id)).scalar()} datasets"
+                f"Got {self.session.query(func.count(Model.id)).scalar()} models\n"
+                f"Got {self.session.query(func.count(Reflections.id)).scalar()} Reflections\n"
+                f"Got {self.session.query(func.count(Compound.id)).scalar()} Compounds\n"
+                f"Got {self.session.query(func.count(Dataset.id)).scalar()} datasets\n"
             )
         )
         
