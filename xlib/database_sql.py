@@ -314,10 +314,10 @@ class Database:
             print(system)
             system_path = Path(system.path)
             
-            dataset_dirs_dir = system_path / system.system
-            print(dataset_dirs_dir)
+            # dataset_dirs_dir = system_path / system.system
+            # print(dataset_dirs_dir)
             
-            dataset_dir_list = list(path for path in dataset_dirs_dir.glob("*") if path.is_dir())
+            dataset_dir_list = list(path for path in system_path.glob("*") if path.is_dir())
             
             for dataset_dir in dataset_dir_list:
                 compound_path = dataset_dir / Constants.COMPOUND_FILE
