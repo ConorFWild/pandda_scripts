@@ -287,6 +287,8 @@ class Database:
         DBSession.bind = engine
         session = DBSession()
         
+        self.session = session
+        
     def populate_systems(self, system_dir: Path):
         system_path_list: List[Path] = list(path for path in system_dir.glob("*") if path.is_dir())
         
