@@ -6,7 +6,7 @@ import argparse
 import dataclasses
 from typing import *
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, Bool, create_engine
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean, create_engine
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
