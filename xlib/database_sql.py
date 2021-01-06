@@ -274,7 +274,8 @@ class Database:
         super().__init__()
         # conn = sqlite3.connect('example.db')
         if overwrite: 
-            os.remove(str(database_path))
+            if database_path.exists():
+                os.remove(str(database_path))
         
         engine = create_engine(f'sqlite:///{str(database_path)}')
         
