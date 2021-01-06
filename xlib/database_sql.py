@@ -306,7 +306,7 @@ class Database:
         self.session.commit()
         
         print("Populated systems")
-        print(f"Got {self.session.query(func.count(System.id))}")
+        print(f"Got {self.session.query(func.count(System.id)).scalar()}")
         
     def populate_models_reflections_compounds_datasets(self):
         
