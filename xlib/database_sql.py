@@ -433,9 +433,9 @@ class Args:
         
         args_dict = vars(args)
         
-        typed_args = [field.type(args_dict[field.name]) for field in fields]
+        typed_args = {field.name: field.type(args_dict[field.name]) for field in fields}
         
-        return Args.from_args(args)
+        return Args(**typed_args)
         
 def main():
     args = Args.from_cmd()
