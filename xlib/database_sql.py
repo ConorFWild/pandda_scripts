@@ -323,11 +323,24 @@ class Database:
                 # compound_path = dataset_dir / Constants.COMPOUND_FILE
                 # reflections_path = dataset_dir / Constants.REFLECTIONS_FILE
                 # model_path = dataset_dir / Constants.MODEL_FILE
+
+                dataset_compounds = list(dataset_dir.glob("*.cif"))
+                if len(dataset_compounds) == 0:
+                    compound_path = ""
+                else: 
+                    compound_path = dataset_compounds[0]    
                 
-                compound_path = list(dataset_dir.glob("*.cif"))[0]
-                reflections_path = list(dataset_dir.glob("*.mtz"))[0]
-                model_path = list(dataset_dir.glob("*.pdb"))[0]
-            
+                dataset_reflections = list(dataset_dir.glob("*.mtz"))
+                if len(dataset_reflections) == 0:
+                    reflections_path = ""
+                else: 
+                    reflections_path = dataset_reflections[0]
+                
+                dataset_models = list(dataset_dir.glob("*.pdb"))
+                if len(dataset_models) == 0:
+                    model_path = ""
+                else: 
+                    model_path = dataset_models[0]            
                 model = Model(path=str(compound_path))
             
                 reflections = Reflections(path=str(reflections_path))
