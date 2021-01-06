@@ -243,7 +243,7 @@ class RealSpaceClustering(base):
     __tablename__ = Constants.REAL_SPACE_CLUSTERING_TABLE
     id = Column(Integer, primary_key=True)
     table_path = Column(String(255))
-    graph_path = path = Column(String(255))
+    graph_path = Column(String(255))
     
     # Foreign keys
     system_id = Column(Integer, ForeignKey(System.id))
@@ -274,7 +274,7 @@ class Database:
         super().__init__()
         # conn = sqlite3.connect('example.db')
         if overwrite: 
-            os.rm(str(database_path))
+            os.remove(str(database_path))
         
         engine = create_engine(f'sqlite:///{str(database_path)}')
         
