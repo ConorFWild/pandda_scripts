@@ -46,8 +46,8 @@ interp=\"/data/share-2/conor/anaconda3/envs/pandda/bin/python\"
 pandda=\"/data/share-2/conor/pandda/code/pandda_gemmi/pandda_gemmi/analyse.py\"
 data_dirs=\"{data_dirs}\"
 out_dir=\"{out_dir}\"
-pdb_regex=\"final.pdb\"
-mtz_regex=\"final.mtz\"
+pdb_regex=\"*.pdb\"
+mtz_regex=\"*.mtz\"
 
 $interp $pandda --data_dirs=$data_dirs --out_dir=$out_dir --pdb_regex=$pdb_regex --mtz_regex=$mtz_regex
 
