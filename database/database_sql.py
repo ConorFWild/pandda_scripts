@@ -482,11 +482,14 @@ def main():
     
     database.populate_systems(args.system_dirs_dir)
     database.populate_models_reflections_compounds_datasets()
+    database.populate_reference_models()
+    database.populate_resolution()
+    database.populate_spacegroup()
+    
     database.populate_panddas(args.pandda_dirs_dir)
     database.populate_autobuilds(args.autobuild_dirs_dir)
     database.populate_events()
     
-    database.populate_reference_models()
     database.populate_autobuild_rmsds()
     database.populate_autobuild_rsccs()
     database.populate_autobuild_skeleton_scores()
