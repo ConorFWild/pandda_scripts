@@ -703,7 +703,7 @@ class ReferenceStructureDict:
         reference_structure_dict: Dict[Dtag, Structure] = {}
         for system in system_path_dict:
             system_path: Path = system_path_dict[system]
-            print(system_path)
+            print(f"Working on sytem: {system_path}")
             try:
                 system_reference_structure_dict: Dict[Dtag, Structure] = ReferenceStructureDict.from_dir(system_path)
             except Exception as e:
@@ -719,6 +719,7 @@ class ReferenceStructureDict:
 
     @staticmethod
     def from_dir(pandda_dir: Path) -> Dict[Dtag, Structure]:
+        print("\Getting project code...")
         project_code = ProjectCode.from_dir(pandda_dir)
         print("\tProject code is: {}".format(project_code.project_code))
 
