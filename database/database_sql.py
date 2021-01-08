@@ -424,6 +424,13 @@ class Database:
         
         self.session.commit()
         
+        print("Populated reference models")
+        print(
+            (
+                f"Got {self.session.query(func.count(ReferenceModel.id)).scalar()} models\n"
+            )
+        )
+        
     def populate_resolution_spacegroup(self):
         for reflections in self.session.query(Reflections).all():
             
@@ -449,6 +456,14 @@ class Database:
 
             
         self.session.commit()
+        
+        print("Populated systems")
+        print(
+            (
+                f"Got {self.session.query(func.count(Resolution.id)).scalar()} resolutions\n"
+                f"Got {self.session.query(func.count(Spacegroup.id)).scalar()} spacegroups\n"
+            )
+        )
 
         
     def populate_panddas(self, pandda_dirs_dir: Path):
@@ -512,7 +527,6 @@ class Database:
                 dataset = self.session.query(Dataset).filter(Dataset.dtag == row["dtag"]).first()
                 
                 event_dir = pandda_dir/ xlib.Constants.PANDDA_PROCESSED_DATASETS_DIR / dataset.dtag
-                
                 
                 event = Event(
                     event_idx = row["event_idx"],
