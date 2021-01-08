@@ -14,8 +14,8 @@ import gemmi
 
 import pandas as pd
 
-import xlib
-import pandda_types
+from xlib_code import xlib
+from xlib_code import pandda_types
 
 
 class Constants:
