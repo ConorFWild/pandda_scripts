@@ -22,6 +22,7 @@ class Constants:
     REFLECTIONS_TABLE = "reflections"
     RESOLUTION_TABLE = "resolution"
     SPACEGROUP_TABLE = "spacegroup"
+    UNIT_CELL_TABLE = "unit_cell"
     MODEL_TABLE = "model"
     DATASET_TABLE = "dataset"
     SYSTEM_TABLE = "system"
@@ -69,7 +70,7 @@ class Spacegroup(base):
 
 
 class UnitCell(base):
-    __tablename__ = Constants.SPACEGROUP_TABLE
+    __tablename__ = Constants.UNIT_CELL_TABLE
     id = Column(Integer, primary_key=True)
     a = Column(Float)
     b = Column(Float)
@@ -503,12 +504,20 @@ class Database:
             
             with open(pandda_json_file, "r") as f:
                 pandda_json = json.load(f)
+                
+            
+            # Determine if ran by looking for event table
+            event_table_file = pandda_dir / xlib.data.Constants.PANDDA_ANALYSES_DIR / xlib.data.Constants.PANDDA_ANALYSE_EVENTS_FILE
+            if event_table_file.exists():
+                success = True
+            else:
+                success = False
         
             pandda = PanDDA(
                 path=str(pandda_dir),
                 system=system,
-                success=pandda_json["success"],
-                runtime=pandda_json["runtime"],
+                success=success,
+                runtime=0,
                 )
             self.session.add(pandda)
         
@@ -606,9 +615,11 @@ def main():
     database.populate_systems(args.system_dirs_dir)
     database.populate_models_reflections_compounds_datasets()
     database.populate_reference_models(args.reference_model_dir)
-    database.populate_resolution_spacegroup()
+    database.populate_resolution_spacegroup_unit_cell()
     
-    # database.populate_panddas(args.pandda_dirs_dir)
+    database.populate_panddas(args.pandda_dirs_dir)
+    
+    
     # database.populate_autobuilds(args.autobuild_dirs_dir)
     # database.populate_events()
     
