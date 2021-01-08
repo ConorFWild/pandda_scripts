@@ -351,19 +351,19 @@ class Database:
 
                 dataset_compounds = list(dataset_dir.glob("*.cif"))
                 if len(dataset_compounds) == 0:
-                    compound_path = ""
+                    compound_path = None
                 else: 
                     compound_path = dataset_compounds[0]    
                 
                 dataset_reflections = list(dataset_dir.glob("*.mtz"))
                 if len(dataset_reflections) == 0:
-                    reflections_path = ""
+                    reflections_path = None
                 else: 
                     reflections_path = dataset_reflections[0]
                 
                 dataset_models = list(dataset_dir.glob("*.pdb"))
                 if len(dataset_models) == 0:
-                    model_path = ""
+                    model_path = None
                 else: 
                     model_path = dataset_models[0]  
                     
