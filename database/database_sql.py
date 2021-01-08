@@ -336,7 +336,7 @@ class Database:
     def populate_models_reflections_compounds_datasets(self):
         
         for system in self.session.query(System).all():
-            print(system)
+            print(system.system)
             system_path = Path(system.path)
             
             # dataset_dirs_dir = system_path / system.system
@@ -456,7 +456,7 @@ class Database:
                 )
                 self.session.add(spacegroup)
             except Exception as e:
-                print(f"Reflection path is: {reflections.reflections_path}")
+                print(f"Reflection path is: {reflections.path}")
                 print(e)
                 
         self.session.commit()
