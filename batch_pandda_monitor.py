@@ -244,7 +244,7 @@ def make_dtag_dir(analyses_dir: Path, event_id: EventID):
         mkdir(str(dir))
         
 def make_event_idx_dir(analyses_dir: Path, event_id: EventID):
-    dir: Path = analyses_dir / event_id.system.system / event_id.dtag.dtag / event_id.event_idx.event_idx
+    dir: Path = analyses_dir / event_id.system.system / event_id.dtag.dtag / str(event_id.event_idx.event_idx)
     if dir.exists():
         return
     else:
