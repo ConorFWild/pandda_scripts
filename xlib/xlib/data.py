@@ -284,7 +284,7 @@ class ProjectCode:
     @staticmethod
     def from_dir(data_dir: Path):
         
-        print(f"Data dir is {data_dir}")
+        # print(f"Data dir is {data_dir}")
 
         dtag_dir = next(data_dir.glob("*"))
 
@@ -310,8 +310,8 @@ class System:
                              str(dtag),
                              )
         
-        print(f"regex is {regex}")
-        print(f"dtag is {dtag}")
+        # print(f"regex is {regex}")
+        # print(f"dtag is {dtag}")
 
         return System(matches[0])
 
@@ -708,7 +708,7 @@ class ReferenceStructureDict:
         reference_structure_dict: Dict[Dtag, Structure] = {}
         for system in system_path_dict:
             system_path: Path = system_path_dict[system]
-            print(f"Working on sytem: {system_path}")
+            # print(f"Working on sytem: {system_path}")
             try:
                 system_reference_structure_dict: Dict[Dtag, Structure] = ReferenceStructureDict.from_dir(system_path)
             except Exception as e:
@@ -723,7 +723,7 @@ class ReferenceStructureDict:
         reference_structure_dict: Dict[Dtag, Structure] = {}
         for system in system_path_dict:
             system_path: Path = system_path_dict[system]
-            print(f"Working on sytem: {system_path}")
+            # print(f"Working on sytem: {system_path}")
             try:
                 system_reference_structure_dict: Dict[Dtag, Structure] = ReferenceStructureDict.from_dir(system_path / Constants.PANDDA_PROCESSED_DATASETS_DIR)
             except Exception as e:
@@ -739,9 +739,9 @@ class ReferenceStructureDict:
 
     @staticmethod
     def from_dir(pandda_dir: Path) -> Dict[Dtag, Structure]:
-        print("\Getting project code...")
+        # print("\Getting project code...")
         project_code = ProjectCode.from_dir(pandda_dir)
-        print("\tProject code is: {}".format(project_code.project_code))
+        # print("\tProject code is: {}".format(project_code.project_code))
 
         xcd = xcextracter(project_code.project_code)
 
