@@ -372,7 +372,7 @@ class Database:
                 
                 compound = Compound(path=str(model_path))
                 
-                system = xlib.System.from_dtag(dataset_dir.name)            
+                system = xlib.data.System.from_dtag(dataset_dir.name)            
 
                 system = self.session.query(System).filter(System.system == system.system).first()
                 
@@ -410,7 +410,7 @@ class Database:
             
             dtag = reference_model_path.stem 
             
-            system = xlib.System.from_dtag(dtag)            
+            system = xlib.data.System.from_dtag(dtag)            
 
             system = self.session.query(System).filter(System.system == system.system).first()
             dataset = self.session.query(Dataset).filter(Dataset.dtag == dtag ).first()
@@ -471,7 +471,7 @@ class Database:
         for system in self.session.query(System).all():
             pandda_dir = pandda_dirs_dir / system.system
             
-            pandda_json_file = pandda_dir / xlib.Constants.PANDDA_LOG_FILE
+            pandda_json_file = pandda_dir / xlib.data.Constants.PANDDA_LOG_FILE
             
             with open(pandda_json_file, "r") as f:
                 pandda_json = json.load(f)
@@ -488,10 +488,10 @@ class Database:
         
     def populate_autobuilds(self, autobuild_dirs_dir: Path):
         
-        build_dict: xlib.BuildDict = xlib.BuildDict.from_autobuild_dir(autobuild_dirs_dir)
+        build_dict: xlib.data.BuildDict = xlib.data.BuildDict.from_autobuild_dir(autobuild_dirs_dir)
         
         for build_id in build_dict:
-            build: xlib.Build = build_dict[build_id]
+            build: xlib.data.Build = build_dict[build_id]
             
             system = self.session.query(System).filter(System.system == build_id.system.system).first()
             pandda = self.session.query(PanDDA).filter(PanDDA.system == build_id.system.system).first()
@@ -515,8 +515,8 @@ class Database:
         
         for pandda in self.session.query(PanDDA):
             pandda_dir = Path(pandda.path)
-            pandda_analyses_dir = pandda_dir / xlib.Constants.PANDDA_ANALYSES_DIR
-            pandda_event_table_file = pandda_analyses_dir / xlib.Constants.PANDDA_ANALYSE_EVENTS_FILE
+            pandda_analyses_dir = pandda_dir / xlib.data.Constants.PANDDA_ANALYSES_DIR
+            pandda_event_table_file = pandda_analyses_dir / xlib.data.Constants.PANDDA_ANALYSE_EVENTS_FILE
             
             # Get table
             pandda_event_table: pd.DataFrame = pd.read_csv(str(pandda_event_table_file))
@@ -526,7 +526,7 @@ class Database:
                 system = pandda.system
                 dataset = self.session.query(Dataset).filter(Dataset.dtag == row["dtag"]).first()
                 
-                event_dir = pandda_dir/ xlib.Constants.PANDDA_PROCESSED_DATASETS_DIR / dataset.dtag
+                event_dir = pandda_dir/ xlib.data.Constants.PANDDA_PROCESSED_DATASETS_DIR / dataset.dtag
                 
                 event = Event(
                     event_idx = row["event_idx"],
