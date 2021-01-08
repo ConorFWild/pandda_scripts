@@ -502,8 +502,8 @@ class Database:
             
             pandda_json_file = pandda_dir / xlib.data.Constants.PANDDA_LOG_FILE
             
-            with open(pandda_json_file, "r") as f:
-                pandda_json = json.load(f)
+            # with open(pandda_json_file, "r") as f:
+            #     pandda_json = json.load(f)
                 
             
             # Determine if ran by looking for event table
