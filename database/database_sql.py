@@ -535,6 +535,7 @@ class Args:
     pandda_dirs_dir: Path
     autobuild_dirs_dir: Path
     database_file: Path
+    reference_model_dir: Path
     
     @staticmethod
     def from_cmd():
