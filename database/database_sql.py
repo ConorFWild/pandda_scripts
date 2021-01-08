@@ -443,13 +443,13 @@ class Database:
             sg = mtz.spacegroup.ccp4
             
             resolution = Resolution(
-                res,
+                resolution=res,
                 reflections=reflections,
                 )
             self.session.add(resolution)
             
             spacegroup = Spacegroup(
-                sg,
+                spacegroup=sg,
                 reflections=reflections,
             )
             self.session.add(spacegroup)
