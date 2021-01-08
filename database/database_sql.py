@@ -68,6 +68,19 @@ class Spacegroup(base):
     reflections = relationship(Reflections)
 
 
+class UnitCell(base):
+    __tablename__ = Constants.SPACEGROUP_TABLE
+    id = Column(Integer, primary_key=True)
+    a = Column(Float)
+    b = Column(Float)
+    c = Column(Float)
+    alpha = Column(Float)
+    beta = Column(Float)
+    gamma = Column(Float)
+    
+    reflections_id = Column(Integer, ForeignKey(Reflections.id))
+    reflections = relationship(Reflections)
+
 
 class Model(base):
     __tablename__ = Constants.MODEL_TABLE
@@ -433,7 +446,7 @@ class Database:
             )
         )
         
-    def populate_resolution_spacegroup(self):
+    def populate_resolution_spacegroup_unit_cell(self):
         for reflections in self.session.query(Reflections).all():
             try:
                 reflections_path = Path(reflections.path)
@@ -455,6 +468,17 @@ class Database:
                     reflections=reflections,
                 )
                 self.session.add(spacegroup)
+                
+                unit_cell = UnitCell(
+                    a=mtz.cell.a,
+                    b=mtz.cell.b,
+                    c=mtz.cell.c,
+                    alpha=mtz.cell.alpha,
+                    beta=mtz.cell.beta,
+                    gamma=mtz.cell.gamma,
+                )
+                self.session.add(unit_cell)
+                
             except Exception as e:
                 print(f"Reflection path is: {reflections.path}")
                 print(e)
