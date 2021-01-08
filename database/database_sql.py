@@ -14,7 +14,7 @@ import gemmi
 
 import pandas as pd
 
-from xlib_code import xlib
+import xlib
 
 
 class Constants:
