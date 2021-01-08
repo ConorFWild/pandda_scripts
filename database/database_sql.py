@@ -20,6 +20,8 @@ import xlib
 class Constants:
     COMPOUND_TABLE = "compound"
     REFLECTIONS_TABLE = "reflections"
+    RESOLUTION_TABLE = "resolution"
+    SPACEGROUP_TABLE = "spacegroup"
     MODEL_TABLE = "model"
     DATASET_TABLE = "dataset"
     SYSTEM_TABLE = "system"
