@@ -378,7 +378,7 @@ def main():
                                 )
 
     # Get references
-    reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(pandda_system_path_dict)
+    reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_pandda_system_path_dict(pandda_system_path_dict)
     if args.debug > 0: 
         print(f"Found {len(reference_structure_dict)} reference structures")    
 

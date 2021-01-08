@@ -718,6 +718,21 @@ class ReferenceStructureDict:
             
         return ReferenceStructureDict(reference_structure_dict)
     
+    @staticmethod
+    def from_pandda_system_path_dict(system_path_dict: SystemPathDict):
+        reference_structure_dict: Dict[Dtag, Structure] = {}
+        for system in system_path_dict:
+            system_path: Path = system_path_dict[system]
+            print(f"Working on sytem: {system_path}")
+            try:
+                system_reference_structure_dict: Dict[Dtag, Structure] = ReferenceStructureDict.from_dir(system_path / Constants.PANDDA_PROCESSED_DATASETS_DIR)
+            except Exception as e:
+                print(e)
+                continue
+            reference_structure_dict.update(system_reference_structure_dict)
+            
+        return ReferenceStructureDict(reference_structure_dict)
+    
     def as_dict(self):
         return self._dict            
         
