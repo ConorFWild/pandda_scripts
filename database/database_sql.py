@@ -62,7 +62,7 @@ class Resolution(base):
 class Spacegroup(base):
     __tablename__ = Constants.SPACEGROUP_TABLE
     id = Column(Integer, primary_key=True)
-    resolution = Column(Integer)
+    spacegroup = Column(Integer)
     
     reflections_id = Column(Integer, ForeignKey(Reflections.id))
     reflections = relationship(Reflections)
