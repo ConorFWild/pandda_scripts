@@ -618,11 +618,10 @@ def main():
     database.populate_resolution_spacegroup_unit_cell()
     
     database.populate_panddas(args.pandda_dirs_dir)
-    
+    database.populate_events()
     
     # database.populate_autobuilds(args.autobuild_dirs_dir)
-    # database.populate_events()
-    
+
     # database.populate_autobuild_rmsds()
     # database.populate_autobuild_rsccs()
     # database.populate_autobuild_skeleton_scores()
