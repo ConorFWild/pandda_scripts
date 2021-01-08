@@ -307,6 +307,9 @@ class System:
         matches = re.findall(regex,
                              str(dtag),
                              )
+        
+        print(regex)
+        print(dtag)
 
         return System(matches[0])
 
