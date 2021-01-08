@@ -10,6 +10,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean, crea
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
+import gemmi
 
 import pandas as pd
 
@@ -48,10 +49,37 @@ class Reflections(base):
     id = Column(Integer, primary_key=True)
     path = Column(String(255))
 
+class Resolution(base):
+    __tablename__ = Constants.RESOLUTION_TABLE
+    id = Column(Integer, primary_key=True)
+    resolution = Column(Float)
+    
+    reflections_id = Column(Integer, ForeignKey(Reflections.id))
+    reflections = relationship(Reflections)
+
+class Spacegroup(base):
+    __tablename__ = Constants.SPACEGROUP_TABLE
+    id = Column(Integer, primary_key=True)
+    resolution = Column(Integer)
+    
+    reflections_id = Column(Integer, ForeignKey(Reflections.id))
+    reflections = relationship(Reflections)
+
+
+
 class Model(base):
     __tablename__ = Constants.MODEL_TABLE
     id = Column(Integer, primary_key=True)
     path = Column(String(255))
+
+    
+
+class System(base):
+    __tablename__ = Constants.SYSTEM_TABLE
+    id = Column(Integer, primary_key=True)
+    system = Column(String(255))
+    path = Column(String(255))
+
 
 class Dataset(base):
     __tablename__ = Constants.DATASET_TABLE
@@ -60,21 +88,16 @@ class Dataset(base):
     path = Column(String(255))
     
     # Foriegn keys
+    system_id = Column(Integer, ForeignKey(System.id))
     reflections_id = Column(Integer, ForeignKey(Reflections.id))
     model_id = Column(Integer, ForeignKey(Model.id))
     compound_id = Column(Integer, ForeignKey(Compound.id))
     
     # Relationships
+    system = relationship(System)
     reflections = relationship(Reflections)
     model = relationship(Model)
     compound = relationship(Compound)
-    
-
-class System(base):
-    __tablename__ = Constants.SYSTEM_TABLE
-    id = Column(Integer, primary_key=True)
-    system = Column(String(255))
-    path = Column(String(255))
 
 class PanDDA(base):
     __tablename__ = Constants.PANDDA_TABLE
@@ -347,8 +370,13 @@ class Database:
                 
                 compound = Compound(path=str(model_path))
                 
+                system = xlib.System.from_dtag(dataset_dir.name)            
+
+                system = self.session.query(System).filter(System.system == system.system).first()
+                
                 dataset = Dataset(dtag=dataset_dir.name,
                                   path=str(dataset_dir),
+                                  system=system,
                                   reflections=reflections,
                                   compound=compound,
                                   model=model,
@@ -370,6 +398,56 @@ class Database:
                 f"Got {self.session.query(func.count(Dataset.id)).scalar()} datasets\n"
             )
         )
+        
+      
+    def populate_reference_models(self, reference_structure_dir: Path):
+
+        reference_model_list = reference_structure_dir.glob("*")
+        
+        for reference_model_path in reference_model_list:
+            
+            dtag = reference_model_path.stem 
+            
+            system = xlib.System.from_dtag(dtag)            
+
+            system = self.session.query(System).filter(System.system == system.system).first()
+            dataset = self.session.query(Dataset).filter(Dataset.dtag == dtag ).first()
+        
+            reference_model = ReferenceModel(
+                path=str(reference_model_path),
+                system=system,
+                dataset=dataset,
+                )
+            self.session.add(reference_model)
+        
+        self.session.commit()
+        
+    def populate_resolution_spacegroup(self):
+        for reflections in self.session.query(Reflections).all():
+            
+            reflections_path = Path(reflections.path)
+            
+            mtz = gemmi.read_mtz_file(str(reflections_path))
+            
+            res = mtz.resolution_high()  
+            
+            sg = mtz.spacegroup.ccp4
+            
+            resolution = Resolution(
+                res,
+                reflections=reflections,
+                )
+            self.session.add(resolution)
+            
+            spacegroup = Spacegroup(
+                sg,
+                reflections=reflections,
+            )
+            self.session.add(spacegroup)
+
+            
+        self.session.commit()
+
         
     def populate_panddas(self, pandda_dirs_dir: Path):
         
@@ -482,20 +560,19 @@ def main():
     
     database.populate_systems(args.system_dirs_dir)
     database.populate_models_reflections_compounds_datasets()
-    database.populate_reference_models()
-    database.populate_resolution()
-    database.populate_spacegroup()
+    database.populate_reference_models(args.reference_model_dir)
+    database.populate_resolution_spacegroup()
     
-    database.populate_panddas(args.pandda_dirs_dir)
-    database.populate_autobuilds(args.autobuild_dirs_dir)
-    database.populate_events()
+    # database.populate_panddas(args.pandda_dirs_dir)
+    # database.populate_autobuilds(args.autobuild_dirs_dir)
+    # database.populate_events()
     
-    database.populate_autobuild_rmsds()
-    database.populate_autobuild_rsccs()
-    database.populate_autobuild_skeleton_scores()
-    database.populate_human_autobuild_comparison()
-    database.populate_real_space_clusterings()
-    database.populate_event_scores()
+    # database.populate_autobuild_rmsds()
+    # database.populate_autobuild_rsccs()
+    # database.populate_autobuild_skeleton_scores()
+    # database.populate_human_autobuild_comparison()
+    # database.populate_real_space_clusterings()
+    # database.populate_event_scores()
     
 if __name__ == "__main__":
     # If run as a script creates and populates database
