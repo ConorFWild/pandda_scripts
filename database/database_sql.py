@@ -365,12 +365,14 @@ class Database:
                 if len(dataset_models) == 0:
                     model_path = ""
                 else: 
-                    model_path = dataset_models[0]            
-                model = Model(path=str(compound_path))
+                    model_path = dataset_models[0]  
+                    
+                              
+                model = Model(path=str(model_path))
             
                 reflections = Reflections(path=str(reflections_path))
                 
-                compound = Compound(path=str(model_path))
+                compound = Compound(path=str(compound_path))
                 
                 system = xlib.data.System.from_dtag(dataset_dir.name)            
 
@@ -433,28 +435,30 @@ class Database:
         
     def populate_resolution_spacegroup(self):
         for reflections in self.session.query(Reflections).all():
-            
-            reflections_path = Path(reflections.path)
-            
-            mtz = gemmi.read_mtz_file(str(reflections_path))
-            
-            res = mtz.resolution_high()  
-            
-            sg = mtz.spacegroup.ccp4
-            
-            resolution = Resolution(
-                resolution=res,
-                reflections=reflections,
+            try:
+                reflections_path = Path(reflections.path)
+                
+                mtz = gemmi.read_mtz_file(str(reflections_path))
+                
+                res = mtz.resolution_high()  
+                
+                sg = mtz.spacegroup.ccp4
+                
+                resolution = Resolution(
+                    resolution=res,
+                    reflections=reflections,
+                    )
+                self.session.add(resolution)
+                
+                spacegroup = Spacegroup(
+                    spacegroup=sg,
+                    reflections=reflections,
                 )
-            self.session.add(resolution)
-            
-            spacegroup = Spacegroup(
-                spacegroup=sg,
-                reflections=reflections,
-            )
-            self.session.add(spacegroup)
-
-            
+                self.session.add(spacegroup)
+            except Exception as e:
+                print(f"Reflection path is: {reflections.reflections_path}")
+                print(e)
+                
         self.session.commit()
         
         print("Populated systems")
