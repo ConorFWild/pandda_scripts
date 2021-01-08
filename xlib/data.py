@@ -283,6 +283,8 @@ class ProjectCode:
 
     @staticmethod
     def from_dir(data_dir: Path):
+        
+        print(f"Data dir is {data_dir}")
 
         dtag_dir = next(data_dir.glob("*"))
 
@@ -308,8 +310,8 @@ class System:
                              str(dtag),
                              )
         
-        print(regex)
-        print(dtag)
+        print(f"regex is {regex}")
+        print(f"dtag is {dtag}")
 
         return System(matches[0])
 
