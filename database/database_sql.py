@@ -15,6 +15,7 @@ import gemmi
 import pandas as pd
 
 import xlib
+import pandda_types
 
 
 class Constants:
@@ -372,7 +373,7 @@ class Database:
                 
                 compound = Compound(path=str(model_path))
                 
-                system = xlib.System.from_dtag(dataset_dir.name)            
+                system = pandda_types.System.from_dtag(dataset_dir.name)            
 
                 system = self.session.query(System).filter(System.system == system.system).first()
                 
@@ -410,7 +411,7 @@ class Database:
             
             dtag = reference_model_path.stem 
             
-            system = xlib.System.from_dtag(dtag)            
+            system = pandda_types.System.from_dtag(dtag)            
 
             system = self.session.query(System).filter(System.system == system.system).first()
             dataset = self.session.query(Dataset).filter(Dataset.dtag == dtag ).first()
