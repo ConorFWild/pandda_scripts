@@ -1232,7 +1232,7 @@ def main():
     
     # Get reference models
     # reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(system_path_dict)
-    reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_dir(args.reference_structure_dir)
+    reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_structure_dir(args.reference_structure_dir)
 
     if Constants.DEBUG > 0: print(f"Found {len(reference_structure_dict)} reference models")
     
