@@ -1182,7 +1182,7 @@ def map_dict(func: Callable, dictionary: Dict[EventID, Event]):
     # else:
     values = list(dictionary.values())
     joblib.Parallel(
-        n_jobs=-2,
+        n_jobs=1,
         verbose=50,
     )(
         joblib.delayed(
