@@ -555,8 +555,13 @@ class Database:
             pandda_analyses_dir = pandda_dir / xlib.data.Constants.PANDDA_ANALYSES_DIR
             pandda_event_table_file = pandda_analyses_dir / xlib.data.Constants.PANDDA_ANALYSE_EVENTS_FILE
             
+            # Check if processed
+            if not pandda_event_table_file.exists():
+               continue
+            
             # Get table
             pandda_event_table: pd.DataFrame = pd.read_csv(str(pandda_event_table_file))
+            #
             
             # Get events
             for index, row in pandda_event_table.iterrows():
