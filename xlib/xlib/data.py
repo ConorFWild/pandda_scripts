@@ -742,7 +742,7 @@ class ReferenceStructureDict:
         
         reference_structure_dict = {}
         for path in structure_path_list:
-            if path.suffix == "pdb":
+            if path.suffix == ".pdb":
                 dtag = Dtag.from_protein_code(path.stem)
                 structure = Structure.from_model_path(path)
                 reference_structure_dict[dtag] = structure
