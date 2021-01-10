@@ -208,17 +208,20 @@ class Constants:
 class Args:
     pandda_dirs_dir: Path
     autobuild_dirs_dir: Path
+    reference_structure_dir: Path
     debug: int
     
     @staticmethod
     def from_args(args: Any):
         pandda_dirs_dir = Path(args.pandda_dirs_dir)
         autobuild_dirs_dir = Path(args.autobuild_dirs_dir)
+        reference_structure_dir = Path(args.reference_structure_dir)
         debug: int = int(args.debug)
         
         return Args(
             pandda_dirs_dir,
             autobuild_dirs_dir,
+            reference_structure_dir,
             debug,
         )
     
@@ -228,6 +231,8 @@ class Args:
         parser.add_argument("--pandda_dirs_dir",
                             )
         parser.add_argument("--autobuild_dirs_dir",
+                            )
+        parser.add_argument("--reference_structure_dir",
                             )
         parser.add_argument("--debug",
                             default=2,
@@ -1226,7 +1231,9 @@ def main():
     if Constants.DEBUG > 0: print(f"Found {len(event_dict)} events")
     
     # Get reference models
-    reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(system_path_dict)
+    # reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(system_path_dict)
+    reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_dir(args.reference_structure_dir)
+
     if Constants.DEBUG > 0: print(f"Found {len(reference_structure_dict)} reference models")
     
     # Filter events that have models

@@ -735,7 +735,20 @@ class ReferenceStructureDict:
     
     def as_dict(self):
         return self._dict            
+    
+    @staticmethod
+    def from_structure_dir(structure_dir: Path):
+        structure_path_list = structure_dir.glob("*")
         
+        reference_structure_dict = {}
+        for path in structure_path_list:
+            if path.suffix == "pdb":
+                dtag = Dtag.from_protein_code(path.stem)
+                structure = Structure.from_model_path(path)
+                reference_structure_dict[dtag] = structure
+                
+        return ReferenceStructureDict(reference_structure_dict)
+                
 
     @staticmethod
     def from_dir(pandda_dir: Path) -> Dict[Dtag, Structure]:
