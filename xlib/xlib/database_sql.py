@@ -568,8 +568,8 @@ class Database:
             system = self.session.query(System).filter(System.system == build_id.system.system).first()
             pandda = self.session.query(PanDDA).filter(PanDDA.system_id == system.id).first()
             dataset = self.session.query(Dataset).filter(Dataset.dtag == build_id.dtag.dtag ).first()
-            event = self.session.query(Event).filter(Event.system_id == system.id &
-                                                     Event.dataset_id == dataset.id &
+            event = self.session.query(Event).filter(Event.system_id == system.id,
+                                                     Event.dataset_id == dataset.id,
                                                      Event.event_idx == build_id.event_idx.event_idx
                                                      ).first()
             
