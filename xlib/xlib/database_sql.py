@@ -670,7 +670,7 @@ def main():
         )
     
     database.populate_systems(args.system_dirs_dir)
-    database.populate_models_reflections_compounds_datasets()
+    database.populate_models_reflections_compounds_smiles_datasets()
     database.populate_reference_models(args.reference_model_dir)
     
     database.populate_panddas_errors(args.pandda_dirs_dir)
