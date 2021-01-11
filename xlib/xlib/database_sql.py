@@ -134,7 +134,7 @@ class PanDDAError(base):
     __tablename__ = Constants.PANDDA_ERROR_TABLE
     id = Column(Integer, primary_key=True)
     path = Column(String(255))
-    error = Column(String(1023))
+    error = Column(String(2047))
     
     # Foreign keys
     system_id = Column(Integer, ForeignKey(System.id))
