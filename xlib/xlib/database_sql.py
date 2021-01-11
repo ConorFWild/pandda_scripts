@@ -28,6 +28,7 @@ class Constants:
     DATASET_TABLE = "dataset"
     SYSTEM_TABLE = "system"
     PANDDA_TABLE = "pandda"
+    PANDDA_ERROR_TABLE = "pandda_error"
     EVENT_TABLE = "event"
     REFERENCE_TABLE = "reference"
     AUTOBUILD_TABLE = "autobuild"
