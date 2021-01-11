@@ -5,6 +5,7 @@ import json
 import argparse
 import dataclasses
 from typing import *
+import subprocess
 
 from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean, create_engine, func
 from sqlalchemy.orm import relationship, sessionmaker
@@ -128,6 +129,18 @@ class PanDDA(base):
     # Relationships
     system = relationship(System)
     
+class PanDDAError(base):
+    __tablename__ = Constants.PANDDA_ERROR_TABLE
+    id = Column(Integer, primary_key=True)
+    path = Column(String(255))
+    
+    # Foreign keys
+    system_id = Column(Integer, ForeignKey(System.id))
+    pandda_id = Column(Integer, ForeignKey(PanDDA.id))
+
+    # Relationships
+    system = relationship(System)
+    pandda= relationship(PanDDA)
 
 class Event(base):
     __tablename__ = Constants.EVENT_TABLE
@@ -495,7 +508,18 @@ class Database:
         )
 
         
-    def populate_panddas(self, pandda_dirs_dir: Path):
+    def populate_panddas_errors(self, pandda_dirs_dir: Path):
+        
+        def tail(file: Path, n: int = 20) -> str:
+            command: str = f"tail -n {n} {str(file)}"
+            print(command)
+            p = subprocess.Popen(command,
+                                shell=True,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                )
+            stdout, stderr = p.communicate()
+            return str(stdout)
         
         for system in self.session.query(System).all():
             pandda_dir = pandda_dirs_dir / system.system
@@ -520,6 +544,16 @@ class Database:
                 runtime=0,
                 )
             self.session.add(pandda)
+            
+            if not success:
+                error_file = pandda_dir / xlib.data.Constants.PANDDA_JOB_ERROR_FILE.format(system_name=system.system)
+                pandda_error = PanDDAError(
+                    path=error_file,
+                    error=tail(Path(error_file)),
+                    pandda=pandda,
+                    system=system,
+                )
+                self.session.add(pandda_error)
         
         self.session.commit()
         
@@ -624,8 +658,9 @@ def main():
     
     database.populate_panddas(args.pandda_dirs_dir)
     database.populate_events()
+    database.populate_pandda_errors(args.pandda_dirs_dir)
     
-    # database.populate_autobuilds(args.autobuild_dirs_dir)
+    database.populate_autobuilds(args.autobuild_dirs_dir)
 
     # database.populate_autobuild_rmsds()
     # database.populate_autobuild_rsccs()
