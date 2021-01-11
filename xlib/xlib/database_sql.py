@@ -547,7 +547,7 @@ class Database:
             self.session.add(pandda)
             
             if not success:
-                error_file = pandda_dir / xlib.data.Constants.PANDDA_JOB_ERROR_FILE.format(system_name=system.system)
+                error_file = pandda_dirs_dir / xlib.data.Constants.PANDDA_JOB_ERROR_FILE.format(system_name=system.system)
                 pandda_error = PanDDAError(
                     path=str(error_file),
                     error=str(tail(Path(error_file))),
