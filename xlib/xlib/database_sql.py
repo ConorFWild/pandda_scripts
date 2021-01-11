@@ -657,9 +657,8 @@ def main():
     database.populate_reference_models(args.reference_model_dir)
     database.populate_resolution_spacegroup_unit_cell()
     
-    database.populate_panddas(args.pandda_dirs_dir)
+    database.populate_panddas_errors(args.pandda_dirs_dir)
     database.populate_events()
-    database.populate_pandda_errors(args.pandda_dirs_dir)
     
     database.populate_autobuilds(args.autobuild_dirs_dir)
 
