@@ -134,6 +134,7 @@ class PanDDAError(base):
     __tablename__ = Constants.PANDDA_ERROR_TABLE
     id = Column(Integer, primary_key=True)
     path = Column(String(255))
+    error = Column(String(1023))
     
     # Foreign keys
     system_id = Column(Integer, ForeignKey(System.id))
@@ -660,7 +661,7 @@ def main():
     
     database.populate_autobuilds(args.autobuild_dirs_dir)
 
-    database.populate_resolution_spacegroup_unit_cell()
+    database.populate_resolution_spacegroup_unit_cell()  # long
 
 
     # database.populate_autobuild_rmsds()
