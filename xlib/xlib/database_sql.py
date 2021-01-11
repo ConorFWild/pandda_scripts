@@ -364,7 +364,6 @@ class Database:
     def populate_models_reflections_compounds_datasets(self):
         
         for system in self.session.query(System).all():
-            print(system.system)
             system_path = Path(system.path)
             
             # dataset_dirs_dir = system_path / system.system
@@ -655,12 +654,14 @@ def main():
     database.populate_systems(args.system_dirs_dir)
     database.populate_models_reflections_compounds_datasets()
     database.populate_reference_models(args.reference_model_dir)
-    database.populate_resolution_spacegroup_unit_cell()
     
     database.populate_panddas_errors(args.pandda_dirs_dir)
     database.populate_events()
     
     database.populate_autobuilds(args.autobuild_dirs_dir)
+
+    database.populate_resolution_spacegroup_unit_cell()
+
 
     # database.populate_autobuild_rmsds()
     # database.populate_autobuild_rsccs()
