@@ -20,6 +20,7 @@ import xlib
 
 class Constants:
     COMPOUND_TABLE = "compound"
+    SMILES_TABLE = "smiles"
     REFLECTIONS_TABLE = "reflections"
     RESOLUTION_TABLE = "resolution"
     SPACEGROUP_TABLE = "spacegroup"
@@ -46,6 +47,11 @@ base = declarative_base()
         
 class Compound(base):
     __tablename__ = Constants.COMPOUND_TABLE
+    id = Column(Integer, primary_key=True)
+    path = Column(String(255))
+    
+class Smiles(base):
+    __tablename__ = Constants.SMILES_TABLE
     id = Column(Integer, primary_key=True)
     path = Column(String(255))
 
@@ -110,12 +116,14 @@ class Dataset(base):
     reflections_id = Column(Integer, ForeignKey(Reflections.id))
     model_id = Column(Integer, ForeignKey(Model.id))
     compound_id = Column(Integer, ForeignKey(Compound.id))
+    smiles_id = Column(Integer, ForeignKey(Smiles.id))
     
     # Relationships
     system = relationship(System)
     reflections = relationship(Reflections)
     model = relationship(Model)
     compound = relationship(Compound)
+    smiles = relationship(Smiles)
 
 class PanDDA(base):
     __tablename__ = Constants.PANDDA_TABLE
@@ -362,7 +370,7 @@ class Database:
         print("Populated systems")
         print(f"Got {self.session.query(func.count(System.id)).scalar()} systems")
         
-    def populate_models_reflections_compounds_datasets(self):
+    def populate_models_reflections_compounds_smiles_datasets(self):
         
         for system in self.session.query(System).all():
             system_path = Path(system.path)
@@ -395,12 +403,20 @@ class Database:
                 else: 
                     model_path = dataset_models[0]  
                     
+                dataset_smiles = list(dataset_dir.glob("*.smiles"))
+                if len(dataset_smiles) == 0:
+                    smiles_path = None
+                else: 
+                    smiles_path = dataset_smiles[0]  
+                    
                               
                 model = Model(path=str(model_path))
             
                 reflections = Reflections(path=str(reflections_path))
                 
                 compound = Compound(path=str(compound_path))
+                
+                smiles = Smiles(path=str(smiles_path))
                 
                 system = xlib.data.System.from_dtag(dataset_dir.name)            
 
@@ -411,6 +427,7 @@ class Database:
                                   system=system,
                                   reflections=reflections,
                                   compound=compound,
+                                  smiles=smiles,
                                   model=model,
                                   )
                 
