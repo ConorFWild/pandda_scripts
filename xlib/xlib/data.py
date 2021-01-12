@@ -180,6 +180,8 @@ class Constants:
     SKELETON_STRUCTURE_FILE_RECORD="structure_file"
     SKELETON_SCORE_RECORD="score"
     
+    IDENTITY_TABLE_FILE = "identity_table.csv"
+    
     
     
 
