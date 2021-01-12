@@ -51,6 +51,7 @@ def main():
     # Get models
     example_model_dict = {}
     for system in database.session.query(database_sql.System).all():
+        print(f"Getting model for system: {system.system}")
         example_dataset = database.session.query(
             database_sql.Dataset
             ).filter(
