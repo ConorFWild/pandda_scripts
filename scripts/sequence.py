@@ -82,6 +82,7 @@ def main():
             reference_res = reference_structure
             
             print([entity for entity in reference_structure.entities])
+            print(reference_structure.entities[0].full_sequence)
             
             reference_sequence = gemmi.one_letter_code(reference_structure.entities[0].full_sequence)
             moving_sequence = gemmi.one_letter_code(moving_structure.entities[0].full_sequence)
