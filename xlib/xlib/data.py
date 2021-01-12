@@ -131,7 +131,7 @@ class Constants:
     
     XCHEM_DTAG_REGEX = r"^([0-9a-zA-Z]+[-]+[0-9a-zA-Z]+)"
     # XCHEM_SYSTEM_REGEX = r"([^\-]+)\-[^\-]+"
-    XCHEM_SYSTEM_REGEX = r"(.+)\-x[0-9a-zA-Z]+"    
+    XCHEM_SYSTEM_REGEX = r"(.+)\-[xX][0-9a-zA-Z]+"    
     
     PHENIX_MAP_MODEL_CC_COMMAND = "phenix.map_model_cc {pdb_file} {event_map_file} resolution={resolution} ignore_symmetry_conflicts=True"
     PHENIX_MAP_MODEL_CC_LOG_FILE = "cc_per_residue.log"
