@@ -6,7 +6,6 @@ import argparse
 import dataclasses
 from typing import *
 import subprocess
-from xlib.xlib.database_sql import Database
 
 import pandas as pd
 
@@ -93,5 +92,5 @@ def main():
     
     table.to_csv(str(args.identity_table_dir / data.Constants.IDENTITY_TABLE_FILE))
             
-            
+    print(table)
             
