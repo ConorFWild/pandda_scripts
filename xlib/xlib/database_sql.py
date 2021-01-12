@@ -461,8 +461,9 @@ class Database:
             
             system = xlib.data.System.from_dtag(dtag)            
 
-            system = self.session.query(System).filter(System.system == system.system).first()
+            # system = self.session.query(System).filter(System.system == system.system).first()
             dataset = self.session.query(Dataset).filter(Dataset.dtag == dtag ).first()
+            system = dataset.system
         
             reference_model = ReferenceModel(
                 path=str(reference_model_path),
