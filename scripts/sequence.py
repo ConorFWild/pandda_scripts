@@ -76,7 +76,7 @@ def main():
         record = {}
         record["system"] = reference_system
         for moving_system, moving_structure in example_model_dict.items():
-            reference_sequence = gemmi.one_letter_code(reference_system.get_entity(0).full_sequence)
+            reference_sequence = gemmi.one_letter_code(reference_structure.get_entity(0).full_sequence)
             moving_sequence = gemmi.one_letter_code(moving_structure.get_entity(0).full_sequence)
             
             
