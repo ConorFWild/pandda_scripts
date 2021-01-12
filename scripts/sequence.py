@@ -82,6 +82,8 @@ def main():
             reference_sequence = gemmi.one_letter_code(reference_structure.entities[0].full_sequence)
             moving_sequence = gemmi.one_letter_code(moving_structure.entities[0].full_sequence)
             
+            print(reference_sequence)
+            print(moving_sequence)
             
             alignment = gemmi.align_string_sequences(
                 list(reference_sequence),
