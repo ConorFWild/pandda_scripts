@@ -418,14 +418,14 @@ class Database:
                 
                 smiles = Smiles(path=str(smiles_path))
                 
-                system_name = xlib.data.System.from_dtag(dataset_dir.name)   
+                # system_name = xlib.data.System.from_dtag(dataset_dir.name)   
                 print(system_name)         
 
-                system_obj = self.session.query(System).filter(System.system == system_name.system).first()
+                # system_obj = self.session.query(System).filter(System.system == system_name.system).first()
                 
                 dataset = Dataset(dtag=dataset_dir.name,
                                   path=str(dataset_dir),
-                                  system=system_obj,
+                                  system=system,
                                   reflections=reflections,
                                   compound=compound,
                                   smiles=smiles,
