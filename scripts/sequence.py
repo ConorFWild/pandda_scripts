@@ -79,6 +79,10 @@ def main():
         record = {}
         record["system"] = reference_system
         for moving_system, moving_structure in example_model_dict.items():
+            reference_res = reference_structure
+            
+            print([entity for entity in reference_structure.entities])
+            
             reference_sequence = gemmi.one_letter_code(reference_structure.entities[0].full_sequence)
             moving_sequence = gemmi.one_letter_code(moving_structure.entities[0].full_sequence)
             
