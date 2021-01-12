@@ -93,6 +93,7 @@ def main():
             
         record_list.append(record)            
     
+    print(len(record_list))
 
     table = pd.DataFrame(record_list)
     
