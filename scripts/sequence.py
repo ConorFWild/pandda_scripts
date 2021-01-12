@@ -76,8 +76,8 @@ def main():
         record = {}
         record["system"] = reference_system
         for moving_system, moving_structure in example_model_dict.items():
-            reference_sequence = gemmi.one_letter_code(reference_structure.get_entity(0).full_sequence)
-            moving_sequence = gemmi.one_letter_code(moving_structure.get_entity(0).full_sequence)
+            reference_sequence = gemmi.one_letter_code(reference_structure[0].full_sequence)
+            moving_sequence = gemmi.one_letter_code(moving_structure[0].full_sequence)
             
             
             alignment = gemmi.align_string_sequences(
