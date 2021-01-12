@@ -463,7 +463,7 @@ class Database:
 
             # system = self.session.query(System).filter(System.system == system.system).first()
             
-            dataset = self.session.query(Dataset).filter(Dataset.dtag == dtag ).first()
+            dataset = self.session.query(Dataset).filter(Dataset.dtag.contains(dtag) ).first()
             
             if not dataset:
                 continue
