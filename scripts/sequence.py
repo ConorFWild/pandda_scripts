@@ -65,6 +65,8 @@ def main():
         
         example_model_dict[system.id] = structure
         
+    print(f"Got {len(example_model_dict)} systems")
+        
     # Get identity matrix
     record_list = []
     blosum62 = gemmi.prepare_blosum62_scoring()
