@@ -459,7 +459,7 @@ class Database:
             
             dtag = reference_model_path.stem 
             
-            system = xlib.data.System.from_dtag(dtag)            
+            # system = xlib.data.System.from_dtag(dtag)            
 
             # system = self.session.query(System).filter(System.system == system.system).first()
             dataset = self.session.query(Dataset).filter(Dataset.dtag == dtag ).first()
