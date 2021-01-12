@@ -64,6 +64,9 @@ def main():
         
         structure = gemmi.read_structure(str(structure_path))
         
+        structure.setup_entities()
+        structure.assign_label_seq_id()
+        
         example_model_dict[system.id] = structure
         
     print(f"Got {len(example_model_dict)} systems")
