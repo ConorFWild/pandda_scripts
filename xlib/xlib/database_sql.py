@@ -1,19 +1,17 @@
-import os
-from pathlib import Path
-import json
-
 import argparse
 import dataclasses
-from typing import *
+import json
+import os
 import subprocess
-
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean, create_engine, func
-from sqlalchemy.orm import relationship, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from pathlib import Path
+from typing import *
 
 import gemmi
-
 import pandas as pd
+from sqlalchemy import (Boolean, Column, Float, ForeignKey, Integer, String,
+                        create_engine, func)
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, sessionmaker
 
 import xlib
 
@@ -420,13 +418,13 @@ class Database:
                 
                 smiles = Smiles(path=str(smiles_path))
                 
-                system = xlib.data.System.from_dtag(dataset_dir.name)            
+                system_name = xlib.data.System.from_dtag(dataset_dir.name)            
 
-                system = self.session.query(System).filter(System.system == system.system).first()
+                system_obj = self.session.query(System).filter(System.system == system_name.system).first()
                 
                 dataset = Dataset(dtag=dataset_dir.name,
                                   path=str(dataset_dir),
-                                  system=system,
+                                  system=system_obj,
                                   reflections=reflections,
                                   compound=compound,
                                   smiles=smiles,
