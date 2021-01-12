@@ -462,6 +462,8 @@ class Database:
             # system = xlib.data.System.from_dtag(dtag)            
 
             # system = self.session.query(System).filter(System.system == system.system).first()
+            print(dtag)
+            
             dataset = self.session.query(Dataset).filter(Dataset.dtag == dtag ).first()
             system = dataset.system
         
