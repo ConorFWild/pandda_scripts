@@ -84,8 +84,8 @@ def main():
             
             
             alignment = gemmi.align_string_sequences(
-                reference_sequence,
-                moving_sequence,
+                list(reference_sequence),
+                list(moving_sequence),
                 [], blosum62)
             
             identity = alignment.calculate_identity()
