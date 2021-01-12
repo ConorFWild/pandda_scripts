@@ -462,9 +462,12 @@ class Database:
             # system = xlib.data.System.from_dtag(dtag)            
 
             # system = self.session.query(System).filter(System.system == system.system).first()
-            print(dtag)
             
             dataset = self.session.query(Dataset).filter(Dataset.dtag == dtag ).first()
+            
+            if not dataset:
+                continue
+            
             system = dataset.system
         
             reference_model = ReferenceModel(
