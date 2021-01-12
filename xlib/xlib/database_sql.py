@@ -380,6 +380,8 @@ class Database:
             
             dataset_dir_list = list(path for path in system_path.glob("*") if path.is_dir())
             
+            print(f"Got {len(dataset_dir_list)} data dirs for system {system.system}")
+            
             for dataset_dir in dataset_dir_list:
                 # compound_path = dataset_dir / Constants.COMPOUND_FILE
                 # reflections_path = dataset_dir / Constants.REFLECTIONS_FILE
@@ -434,6 +436,7 @@ class Database:
                 self.session.add(model)
                 self.session.add(reflections)
                 self.session.add(compound)
+                self.session.add(smiles)
                 self.session.add(dataset)
                 
         self.session.commit()
