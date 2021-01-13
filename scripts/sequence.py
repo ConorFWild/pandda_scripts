@@ -74,7 +74,7 @@ def main():
         structure.setup_entities()
         structure.assign_label_seq_id()
         
-        example_model_dict[system.id] = structure
+        example_model_dict[system.system] = structure
         
     print(f"Got {len(example_model_dict)} systems")
         
