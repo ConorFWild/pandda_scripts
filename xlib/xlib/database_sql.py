@@ -698,6 +698,7 @@ class Args:
     autobuild_dirs_dir: Path
     database_file: Path
     reference_model_dir: Path
+    sequence_identity_dir: Path
     
     @staticmethod
     def from_cmd():
