@@ -19,6 +19,13 @@ from xlib import data
 from xlib import database_sql
 
 
+def all_residues(structure):
+    for model in structure:
+        for chain in model:
+            for residue in chain.get_polymer():
+                yield residue
+
+
 @dataclasses.dataclass()
 class Args:
     database_file: Path
@@ -79,13 +86,16 @@ def main():
         record = {}
         record["system"] = reference_system
         for moving_system, moving_structure in example_model_dict.items():
-            reference_res = reference_structure
+            reference_res = [res.name for res in all_residues(reference_structure)]
+            moving_res = [res.name for res in all_residues(moving_structure)]
             
             print([entity for entity in reference_structure.entities])
             print(reference_structure.entities[0].full_sequence)
             
-            reference_sequence = gemmi.one_letter_code(reference_structure.entities[0].full_sequence)
-            moving_sequence = gemmi.one_letter_code(moving_structure.entities[0].full_sequence)
+            # reference_sequence = gemmi.one_letter_code(reference_structure.entities[0].full_sequence)
+            # moving_sequence = gemmi.one_letter_code(moving_structure.entities[0].full_sequence)
+            reference_sequence = gemmi.one_letter_code(reference_res)
+            moving_sequence = gemmi.one_letter_code(moving_res)
             
             print(reference_sequence)
             print(moving_sequence)
