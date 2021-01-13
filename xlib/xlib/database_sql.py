@@ -26,6 +26,7 @@ class Constants:
     MODEL_TABLE = "model"
     DATASET_TABLE = "dataset"
     SYSTEM_TABLE = "system"
+    SEQUENCE_IDENTITY_TABLE = "system_identity"
     PANDDA_TABLE = "pandda"
     PANDDA_ERROR_TABLE = "pandda_error"
     EVENT_TABLE = "event"
@@ -101,6 +102,17 @@ class System(base):
     id = Column(Integer, primary_key=True)
     system = Column(String(255))
     path = Column(String(255))
+    
+class SequenceIdentity(base):
+    __tablename__ = Constants.SEQUENCE_IDENTITY_TABLE
+    id = Column(Integer, primary_key=True)
+    identity = Column(Float)
+    
+    system_1_id = Column(Integer, ForeignKey(System.id))
+    system_2_id = Column(Integer, ForeignKey(System.id))
+    
+    system_1 = relationship(System, foreign_keys=[system_1_id])
+    system_2 = relationship(System, foreign_keys=[system_2_id])
 
 
 class Dataset(base):
@@ -367,6 +379,38 @@ class Database:
         
         print("Populated systems")
         print(f"Got {self.session.query(func.count(System.id)).scalar()} systems")
+        
+    def populate_sequence_identity(self, sequence_identity_dir: Path):
+        sequence_identity_file = sequence_identity_dir / data.Constants.IDENTITY_TABLE_FILE
+        
+        table = pd.read_csv(str(sequence_identity_file))
+        
+        for index, row in table.iterrows():
+            system_name_1 = row["system"]
+            
+            for column_index, value in row.items():
+                if column_index == "system":
+                    continue
+                
+                system_name_2 = column_index
+                
+                identity = value
+                
+                system_1 = self.session.query(System).filter(System.system == system_name_1).first()
+                system_2 = self.session.query(System).filter(System.system == system_name_2).first()
+                
+                sequence_identity = SequenceIdentity(identity=identity,
+                                                     system_1=system_1,
+                                                     system_2=system_2,
+                                                     )
+                
+                self.session.add(sequence_identity)
+                
+        self.session.commit()
+        
+        print("Populated sequence identity")
+        print(f"Got {self.session.query(func.count(SequenceIdentity.id)).scalar()} systems")
+                
         
     def populate_models_reflections_compounds_smiles_datasets(self):
         
@@ -678,6 +722,9 @@ def main():
         )
     
     database.populate_systems(args.system_dirs_dir)
+    database.populate_sequence_identity(args.sequence_identity_dir)
+
+    
     database.populate_models_reflections_compounds_smiles_datasets()
     database.populate_reference_models(args.reference_model_dir)
     
@@ -687,6 +734,7 @@ def main():
     database.populate_autobuilds(args.autobuild_dirs_dir)
 
     database.populate_resolution_spacegroup_unit_cell()  # long
+    
 
 
     # database.populate_autobuild_rmsds()
