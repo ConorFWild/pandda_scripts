@@ -15,6 +15,7 @@ from sqlalchemy.orm import relationship, sessionmaker
 
 import xlib
 
+from xlib import data
 
 class Constants:
     COMPOUND_TABLE = "compound"
