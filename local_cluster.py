@@ -37,6 +37,7 @@ from joblib.externals.loky import set_loky_pickler
 set_loky_pickler('pickle')
 
 import plotly.graph_objects as go
+import plotly.figure_factory as ff
 
 
     
@@ -44,6 +45,7 @@ class Constants:
     RESIDUE_CLUSTER_PLOT_FILE = "{}_clustering.png"
     CLUSTERINGS_HTML_FILE = "clustering.html"
     RECORDS_JSON_FILE = "records.json"
+    DISTANCE_MATRIX_PLOT_FILE = "{}_distance_matrix.png"
 
 
 def select_partition(xmap: Xmap, partition):
@@ -148,9 +150,9 @@ def plot_clusterings(records, out_dir: Path):
     fig.write_html(str(out_dir / Constants.CLUSTERINGS_PLOT_FILE))
 
 def sample_residue(truncated_dataset: Dataset,
-                    point_position_dict: ResidueID,
+                   grid: Grid,
+                    point_position_dict,
                     alignment: Alignment, 
-                    grid: Grid,
                     structure_factors: StructureFactors, 
                     sample_rate: float, 
                     ) -> List[float]:
@@ -180,6 +182,7 @@ def sample_residue(truncated_dataset: Dataset,
         com_reference_list.append(com_reference)
     
     sampled_points = gemmi.interpolate_to_list(unaligned_xmap,
+                                               grid.grid,
                                     point_list,
                                  position_list,
                                  transform_list,
@@ -187,7 +190,31 @@ def sample_residue(truncated_dataset: Dataset,
                                  com_reference_list,           
                               )
     
-    return sampled_points
+    return np.array(sampled_points)
+
+def make_distance_matrix(sample_points_dict):
+    distance_matrix = np.zeros((len(sample_points_dict), len(sample_points_dict)))
+    
+    length = len(sample_points_dict)
+    
+    for i, sample_1 in enumerate(sample_points_dict.values()):
+        for j, sample_2 in enumerate(sample_points_dict.values()):
+            distance_matrix[i, j] = np.square(sample_1 - sample_2) / length
+    
+    return distance_matrix
+
+def plot_distance_matrix(distance_matrix, out_dir, residue_id, dtag_list):
+    
+
+    
+        fig = ff.create_annotated_heatmap(z, x=dtag_list, y=dtag_list, colorscale='Viridis')
+
+        fig.write_image(str(out_dir / Constants.DISTANCE_MATRIX_PLOT_FILE.format(residue_id)), 
+                    engine="kaleido", 
+                    width=1000,
+                    height=1000,
+                    scale=1)  
+    
 
 @dataclasses.dataclass()
 class Args:
@@ -304,6 +331,7 @@ def main():
 
 
     records = {}
+    distance_matrix_dict = {}
     # Iterate over residues
     for residue_id in reference.dataset.structure.protein_residue_ids():
         print((
@@ -315,6 +343,7 @@ def main():
             pandda_types.delayed(
                 sample_residue(
                     truncated_datasets[dtag],
+                    grid,
                     partition,
                     alignments[dtag][residue_id], 
                     args.structure_factors, 
@@ -325,19 +354,23 @@ def main():
             in truncated_datasets
             )
                 
-        sample_by_feature_matrix = make_sample_by_feature_matrix(selection_list_list)
+        # sample_by_feature_matrix = make_sample_by_feature_matrix(selection_list_list)
         
-        pca_matrix = embed_pca(sample_by_feature_matrix)
+        # pca_matrix = embed_pca(sample_by_feature_matrix)
         
-        tsne_matrix = embed_tsne(pca_matrix)
+        # tsne_matrix = embed_tsne(pca_matrix)
         
-        clustering = cluster(tsne_matrix)
+        # clustering = cluster(tsne_matrix)
         
-        plot_clustering(tsne_matrix, clustering, args.out_dir)
+        # plot_clustering(tsne_matrix, clustering, args.out_dir)
         
-        record = make_clustering_record(truncated_datasets.datasets.keys(), tsne_matrix, clustering)
+        # record = make_clustering_record(truncated_datasets.datasets.keys(), tsne_matrix, clustering)
         
-        records[residue_id] = record
+        # records[residue_id] = record
+        
+        distance_matrix_dict[residue_id] = make_distance_matrix(selection_list_list)
+        
+        plot_distance_matrix(distance_matrix_dict, args.out_dir, residue_id, [dtag.dtag for dtag in truncated_datasets])
 
 
     plot_clusterings(records)
