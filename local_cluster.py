@@ -1,14 +1,19 @@
 from __future__ import annotations
 
 import os
-from typing import Dict
+from typing import *
 import time
+from xlib.xlib import pandda_types
+from xlib.xlib.pandda_types import Alignment, ResidueID, StructureFactors
 import psutil
 import pickle
 from shlex import split
 from pprint import PrettyPrinter
 from pathlib import Path
 import json
+import dataclasses
+import argparse
+
 
 import numpy as np
 import pandas as pd
@@ -21,11 +26,11 @@ from hdbscan import HDBSCAN
 import gemmi
 
 
-from xlib.pandda_types import (JoblibMapper, PanDDAFSModel, Datasets, Reference, 
+from xlib.pandda_types import (JoblibMapper, PanDDAFSModel, Datasets, Reference, Dataset,
                                     Grid, Alignments, Shells, Xmaps, Xmap,
                                     XmapArray, Model, Dtag, Zmaps, Clusterings,
                                     Events, SiteTable, EventTable,
-                                    JoblibMapper, Event
+                                    JoblibMapper, Event, ResidueID
                                     )
 import joblib
 from joblib.externals.loky import set_loky_pickler
@@ -33,30 +38,12 @@ set_loky_pickler('pickle')
 
 import plotly.graph_objects as go
 
-        
-@dataclasses.dataclass()
-class Args:
-    system_dirs_dir: Path
-    out_dir: Path
-    
-    @staticmethod
-    def from_cmd():
-        
-        fields: Tuple[dataclasses.Field, ...] = dataclasses.fields(Args)
-        parser = argparse.ArgumentParser()
-        for field in fields:
-            parser.add_argument(f"--{field.name}")
-        args = parser.parse_args()
-        args_dict = vars(args)
-        typed_args = [field.type(args_dict[field.name]) for field in fields]
-        
-        return Args.from_args(args)
-    
+
     
 class Constants:
-    RESIDUE_CLUSTER_PLOT_FILE = ""
-    CLUSTERINGS_PLOT_FILE = ""
-    RECORDS_JSON_FILE = ""
+    RESIDUE_CLUSTER_PLOT_FILE = "{}_clustering.png"
+    CLUSTERINGS_HTML_FILE = "clustering.html"
+    RECORDS_JSON_FILE = "records.json"
 
 
 def select_partition(xmap: Xmap, partition):
@@ -71,8 +58,13 @@ def select_partition(xmap: Xmap, partition):
     
     return selected_values_array
 
-def make_sample_by_feature_matrix(selection_dict):
-    sample_by_feature_array = np.vstack([selection for selection in selection_dict.values()])
+# def make_sample_by_feature_matrix(selection_dict):
+#     sample_by_feature_array = np.vstack([selection for selection in selection_dict.values()])
+    
+#     return sample_by_feature_array
+
+def make_sample_by_feature_matrix(selection_list_list):
+    sample_by_feature_array = np.vstack([np.array(selection_list) for selection_list in selection_list_list])
     
     return sample_by_feature_array
 
@@ -114,7 +106,6 @@ def save_records(records, out_dir):
 def plot_clustering(residue_id, tsne_matrix, clustering, out_dir):
     fig = go.Figure()
 
-    
     fig.add_trace(
         go.Scatter(
             x=tsne_matrix[:,0],
@@ -127,7 +118,7 @@ def plot_clustering(residue_id, tsne_matrix, clustering, out_dir):
         )
     )
     
-    fig.write_html(str(out_dir / Constants.CLUSTERINGS_PLOT_FILE))
+    fig.write_html(str(out_dir / Constants.CLUSTERINGS_HTML_FILE))
 
 
 def plot_clusterings(records, out_dir: Path):
@@ -156,6 +147,76 @@ def plot_clusterings(records, out_dir: Path):
     
     fig.write_html(str(out_dir / Constants.CLUSTERINGS_PLOT_FILE))
 
+def sample_residue(truncated_dataset: Dataset,
+                    point_position_dict: ResidueID,
+                    alignment: Alignment, 
+                    grid: Grid,
+                    structure_factors: StructureFactors, 
+                    sample_rate: float, 
+                    ) -> List[float]:
+    
+    unaligned_xmap: gemmi.FloatGrid = truncated_dataset.reflections.reflections.transform_f_phi_to_map(structure_factors.f,
+                                                                                                structure_factors.phi,
+                                                                                                sample_rate=sample_rate,
+                                                                                                )    
+    # Unpack the points, poitions and transforms
+    point_list: List[Tuple[int, int, int]] = []
+    position_list: List[Tuple[float, float, float]] = []
+    transform_list: List[gemmi.transform] = []
+    com_moving_list: List[np.array] = []
+    com_reference_list: List[np.array] = []
+            
+    al = alignment
+    transform = al.transform.inverse()
+    com_moving = al.com_moving
+    com_reference = al.com_reference
+    
+    for point, position in point_position_dict.items():
+        
+        point_list.append(point)
+        position_list.append(position)
+        transform_list.append(transform)
+        com_moving_list.append(com_moving)
+        com_reference_list.append(com_reference)
+    
+    sampled_points = gemmi.interpolate_to_list(unaligned_xmap,
+                                    point_list,
+                                 position_list,
+                                 transform_list,
+                                 com_moving_list,
+                                 com_reference_list,           
+                              )
+    
+    return sampled_points
+
+@dataclasses.dataclass()
+class Args:
+    data_dirs: Path
+    out_dir: Path
+    structure_factors: StructureFactors = StructureFactors.from_string("FWT,PHWT")
+    low_resolution_completeness: float = 4.0
+    max_rfree: float = 0.4
+    max_wilson_plot_z_score: float = 5.0
+    max_rmsd_to_reference: float = 1.5
+    outer_mask: float = 6.0
+    inner_mask_symmetry: float = 3.0
+    sample_rate: float = 3.0
+    
+    @staticmethod
+    def from_cmd():
+        
+        fields = dataclasses.fields(Args)
+        parser = argparse.ArgumentParser()
+        for field in fields:
+            if field.default is None:
+                parser.add_argument(f"--{field.name}")
+        args = parser.parse_args()
+        
+        args_dict = vars(args)
+        
+        typed_args = [field.type(args_dict[field.name]) for field in fields if field.default is None]
+        
+        return Args(typed_args)
 
 def main():
     ###################################################################
@@ -175,8 +236,7 @@ def main():
     # Get datasets
     print("Loading datasets")
     datasets_initial: Datasets = Datasets.from_dir(args.data_dirs)
-    
-    # datasets_initial: Datasets = datasets_initial.trunate_num_datasets(100)
+    datasets_initial: Datasets = datasets_initial.trunate_num_datasets(100)
 
     # Initial filters
     print("Filtering invalid datasaets")
@@ -185,7 +245,7 @@ def main():
     datasets_low_res: Datasets = datasets_invalid.remove_low_resolution_datasets(
         args.low_resolution_completeness)
     
-    datasets_rfree: Datasets = datasets_low_res.remove_bad_rfree(args.filtering.max_rfree)
+    datasets_rfree: Datasets = datasets_low_res.remove_bad_rfree(args.max_rfree)
     
     datasets_wilson: Datasets = datasets_rfree.remove_bad_wilson(args.max_wilson_plot_z_score)  # TODO
     
@@ -242,24 +302,30 @@ def main():
                                                                 structure_factors=args.structure_factors,
                                                                 )
 
-    # Get maps
-    xmaps = Xmaps.from_aligned_datasets_c(
-        truncated_datasets, 
-        alignments, 
-        grid,
-        args.structure_factors, 
-        sample_rate=args.sample_rate,
-        mapper=mapper,
-        ) # n x (grid size) with total_mask > 0
-    
+
     records = {}
     # Iterate over residues
     for residue_id in reference.dataset.structure.protein_residue_ids():
+        print((
+            f"Working on residue: {residue_id}"
+        ))
         partition = grid.partitioning[residue_id]
         
-        selection_dict = {dtag: select_partition(xmap, partition) for dtag, xmap in xmaps.xmaps.items()}
-        
-        sample_by_feature_matrix = make_sample_by_feature_matrix(selection_dict)
+        selection_list_list = mapper(
+            pandda_types.delayed(
+                sample_residue(
+                    truncated_datasets[dtag],
+                    partition,
+                    alignments[dtag][residue_id], 
+                    args.structure_factors, 
+                    sample_rate=args.sample_rate,     
+                )
+            )
+            for dtag
+            in truncated_datasets
+            )
+                
+        sample_by_feature_matrix = make_sample_by_feature_matrix(selection_list_list)
         
         pca_matrix = embed_pca(sample_by_feature_matrix)
         
@@ -269,7 +335,7 @@ def main():
         
         plot_clustering(tsne_matrix, clustering, args.out_dir)
         
-        record = make_clustering_record(selection_dict, tsne_matrix, clustering)
+        record = make_clustering_record(truncated_datasets.datasets.keys(), tsne_matrix, clustering)
         
         records[residue_id] = record
 
