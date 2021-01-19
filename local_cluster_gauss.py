@@ -295,7 +295,7 @@ def main():
                                 scale=1)  
                 
                 results[residue_id][n_components][j]["num_distances"] = distances[distances<cutoff].size
-                results[residue_id][n_components][j]["dtags"] = [dtag.dtag for dtag in dtag_array[distances<cutoff].flatten()]
+                results[residue_id][n_components][j]["dtags"] = [dtag.dtag for dtag in dtag_array[(distances<cutoff).flatten()]]
                 
 if __name__ == "__main__":
     main()
