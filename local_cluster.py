@@ -235,7 +235,7 @@ class Args:
         fields = dataclasses.fields(Args)
         parser = argparse.ArgumentParser()
         for field in fields:
-            if field.default is None:
+            if type(field.default) is dataclasses.MISSING:
                 parser.add_argument(f"--{field.name}")
         args = parser.parse_args()
         
