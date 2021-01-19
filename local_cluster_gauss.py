@@ -245,11 +245,12 @@ def main():
         print(sample_by_features.shape)
 
         # Iterate over different models
-        for i in range(args.num_components+1):
-            results[residue_id][i] = {}
+        for i in range(args.num_components):
+            n_components = i + 1
+            results[residue_id][n_components] = {}
             
             # Fit the gmm
-            gm = mixture.GaussianMixture(n_components=i)
+            gm = mixture.GaussianMixture(n_components=n_components)
             start_fit_time = time.time()
             gm.fit(sample_by_features)
             finish_fit_time = time.time()
@@ -263,11 +264,11 @@ def main():
             means = gm.means_
             covs = gm.covariances_
             
-            results[residue_id][i]["aic"] = aic
+            results[residue_id][n_components]["aic"] = aic
 
             # Get the condifence intervals
             for j, mean, cov in zip(range(len(means)), means, covs):
-                results[residue_id][i][j] = {}
+                results[residue_id][n_components][j] = {}
                 
                 # Get the distance metric
                 dist = DistanceMetric.get_metric('mahalanobis', V=cov)
@@ -287,14 +288,14 @@ def main():
 
                 # Create a plot
                 fig = ff.create_distplot([distances.flatten()], ["distances"], bin_size=0.5)
-                fig.write_image(str(args.out_dir / f"test_{residue_id}_{i}_{j}_dist.png"),
+                fig.write_image(str(args.out_dir / f"test_{residue_id}_{n_components}_{j}_dist.png"),
                                 engine="kaleido", 
                                 width=2000,
                                 height=1000,
                                 scale=1)  
                 
-                results[residue_id][i][j]["num_distances"] = distances[distances<cutoff].size
-                results[residue_id][i][j]["dtags"] = [dtag.dtag for dtag in dtag_array[distances<cutoff].flatten()]
+                results[residue_id][n_components][j]["num_distances"] = distances[distances<cutoff].size
+                results[residue_id][n_components][j]["dtags"] = [dtag.dtag for dtag in dtag_array[distances<cutoff].flatten()]
                 
 if __name__ == "__main__":
     main()
