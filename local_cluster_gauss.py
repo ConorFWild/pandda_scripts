@@ -250,7 +250,7 @@ def main():
             results[residue_id][n_components] = {}
             
             # Fit the gmm
-            gm = mixture.GaussianMixture(n_components=n_components)
+            gm = mixture.GaussianMixture(n_components=n_components, covariance_type="diag")
             start_fit_time = time.time()
             gm.fit(sample_by_features)
             finish_fit_time = time.time()
