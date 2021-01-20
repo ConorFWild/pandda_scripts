@@ -271,13 +271,13 @@ def main():
                 results[residue_id][n_components][j] = {}
                 
                 # Get the distance metric
-                dist = DistanceMetric.get_metric('mahalanobis', V=cov)
+                dist = DistanceMetric.get_metric('mahalanobis', V=np.diag(cov))
                 
                 # Get the distance to known points
                 distances = dist.pairwise(sample_by_features, mean.reshape(1,mean.size))
                 
                 # Get the expected distance to points
-                sample = random.multivariate_normal(mean=mean, cov=cov, size = 1000)
+                sample = random.multivariate_normal(mean=mean, cov=np.diag(cov), size = 1000)
                 sample_distances = dist.pairwise(sample, mean.reshape(1,mean.size))
                 cutoff = np.quantile(sample_distances, 0.9)
 
