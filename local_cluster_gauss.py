@@ -306,18 +306,20 @@ def main():
                 
                 results[residue_id][n_components][j]["num_distances"] = distances[distances<cutoff].size
                 results[residue_id][n_components][j]["dtags"] = [dtag.dtag for dtag in dtag_array[(distances<cutoff).flatten()]]
-                
-        # Embed and save
-        embedding = embed(sample_by_features)
-        
-        print(f"Saving embed for {residue_id}")
-        out_file = args.out_dir / f"{residue_id}_scatter.png"
-        fig = go.Figure(data=go.Scatter(x=embedding[:,0], y=embedding[:,1], mode='markers'))
-        fig.write_image(str(out_file), 
-                        engine="kaleido", 
-                        width=2000,
-                        height=1000,
-                        scale=1)  
+                    
+            # Embed and save
+            embedding = embed(sample_by_features)
+            
+            print(f"Saving embed for {residue_id}")
+            out_file = args.out_dir / f"{residue_id}_{n_components}_scatter.png"
+            fig = go.Figure(data=go.Scatter(x=embedding[:,0], y=embedding[:,1], mode='markers',
+                                            marker_color=gm.predict(sample_by_features),
+                                            ))
+            fig.write_image(str(out_file), 
+                            engine="kaleido", 
+                            width=2000,
+                            height=1000,
+                            scale=1)  
 
                 
 if __name__ == "__main__":
