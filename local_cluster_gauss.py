@@ -73,7 +73,7 @@ class Args:
     outer_mask: float = 6.0
     inner_mask_symmetry: float = 3.0
     sample_rate: float = 3.0
-    num_components: int = 5
+    num_components: int = 10
     
     @staticmethod
     def from_cmd():
