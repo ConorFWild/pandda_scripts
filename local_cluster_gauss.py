@@ -17,9 +17,9 @@ import argparse
 import numpy as np
 import pandas as pd
 
-# from sklearn.decomposition import PCA
-# from sklearn.manifold import TSNE
-# from hdbscan import HDBSCAN
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+from hdbscan import HDBSCAN
 
 
 import gemmi
@@ -41,11 +41,21 @@ import plotly.graph_objects as go
 
 from plotly import figure_factory as ff
 
+from sklearn import decomposition
+from sklearn import manifold
+
 # from scipy import stats
 from numpy import random
 from sklearn import mixture
 from sklearn.neighbors import DistanceMetric
 
+
+def embed(distance_matrix):
+    pca = decomposition.PCA(n_components=50)
+    tsne = manifold.TSNE(n_components=2)
+    transform = pca.fit_transform(distance_matrix)
+    transform = tsne.fit_transform(transform)
+    return transform
 
 
 @dataclasses.dataclass()
@@ -230,7 +240,7 @@ def main():
             pandda_types.delayed(sample_residue)(
                     truncated_datasets[dtag],
                     grid,
-                residue_id,
+                    residue_id,
                     alignments[dtag],
                     args.structure_factors, 
                     args.sample_rate,     
@@ -243,7 +253,7 @@ def main():
             
         sample_by_features = np.vstack(selection_list_list)
         print(sample_by_features.shape)
-
+        
         # Iterate over different models
         for i in range(args.num_components):
             n_components = i + 1
@@ -296,6 +306,19 @@ def main():
                 
                 results[residue_id][n_components][j]["num_distances"] = distances[distances<cutoff].size
                 results[residue_id][n_components][j]["dtags"] = [dtag.dtag for dtag in dtag_array[(distances<cutoff).flatten()]]
+                
+        # Embed and save
+        embedding = embed(sample_by_features)
+        
+        print(f"Saving embed for {residue_id}")
+        out_file = args.out_dir / f"{residue_id}_scatter.png"
+        fig = go.Figure(data=go.Scatter(x=embedding[:,0], y=embedding[:,1], mode='markers'))
+        fig.write_image(str(out_file), 
+                        engine="kaleido", 
+                        width=2000,
+                        height=1000,
+                        scale=1)  
+
                 
 if __name__ == "__main__":
     main()
