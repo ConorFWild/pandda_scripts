@@ -136,17 +136,17 @@ def main():
                                                         )
 
                 
-    indexes = np.arange(0, len(datasets_initial), 1)
-    selection = np.random.choice(indexes, size=200, replace=False)
-    keys = list(datasets_initial.datasets.keys())
-    values = list(datasets_initial.datasets.values())
-    new_datasets = {}
-    for index in selection:
-        key = keys[index]
-        value = values[index]
-        new_datasets[key] = value
+    # indexes = np.arange(0, len(datasets_initial), 1)
+    # selection = np.random.choice(indexes, size=200, replace=False)
+    # keys = list(datasets_initial.datasets.keys())
+    # values = list(datasets_initial.datasets.values())
+    # new_datasets = {}
+    # for index in selection:
+    #     key = keys[index]
+    #     value = values[index]
+    #     new_datasets[key] = value
 
-    datasets_initial = Datasets(new_datasets)
+    # datasets_initial = Datasets(new_datasets)
     
 
     # Initial filters
