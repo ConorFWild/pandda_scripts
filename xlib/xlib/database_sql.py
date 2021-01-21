@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import *
 
 import gemmi
+import numpy as np
 import pandas as pd
 from sqlalchemy import (Boolean, Column, Float, ForeignKey, Integer, String,
                         create_engine, func)
@@ -341,6 +342,14 @@ class EventScore(base):
     dataset = relationship(Dataset)
     pandda = relationship(PanDDA)
     event = relationship(Event)
+    
+class Test(base):
+    system_id = Column(Integer, ForeignKey(System.id))
+    system = relationship(System)
+    
+class Train(base):
+    system_id = Column(Integer, ForeignKey(System.id))
+    system = relationship(System)
 
 class Database:
     
@@ -691,6 +700,59 @@ class Database:
         
         self.session.commit()
         
+    def populate_test_train(
+        self,
+        database_path: str,
+        out_dir: str,
+        split: float,
+        ):
+        
+        database_path = Path(database_path)
+        
+
+        # Get the systems
+        system_list = self.session.query(System).all()
+        
+        # Get number of systems to lample
+        num_systems = np.floor(len(system_list) * split)
+        
+        # Sample systems
+        train_system_list = np.choice(np.arrange(0, len(system_list)), num_systems, replace=False)
+        test_system_list = [x for x in np.arrange(0, len(system_list)) if x not in train_system_list]
+        
+        # Get the number of datasets for each
+        train_dataset_list = self.session.query(Dataset).filter(Dataset.system_id.in_(train_system_list)).all()
+        test_dataset_list = self.session.query(Dataset).filter(Dataset.system_id.in_(test_system_list)).all()
+        print(
+            (
+                f"Train dataset: {len(train_dataset_list)}; test datasets: {len(test_dataset_list)}"
+            )
+        )
+
+        
+        # Get the number of reference models for each
+        train_reference_list = self.session.query(ReferenceModel).filter(ReferenceModel.system_id.in_(train_system_list)).all()
+        test_reference_list = self.session.query(ReferenceModel).filter(ReferenceModel.system_id.in_(test_system_list)).all()
+        print(
+            (
+                f"Train reference models: {len(train_reference_list)}; test reference models: {len(test_reference_list)}"
+            )
+        )
+        
+        train_system_list = self.session.query(System).filter(System.id.in_(train_system_list)).all()
+        test_system_list = self.session.query(System).filter(System.id.in_(test_system_list)).all()
+
+        
+        for system in train_system_list:
+            train = Train(system=system)
+            self.session.add(train)
+        
+        for system in test_system_list:
+            test = Test(system=system)
+            self.session.add(test)
+        
+        self.session.commit()
+
         
 @dataclasses.dataclass()
 class Args:
@@ -700,6 +762,7 @@ class Args:
     database_file: Path
     reference_model_dir: Path
     sequence_identity_dir: Path
+    split: float
     
     @staticmethod
     def from_cmd():
@@ -737,7 +800,7 @@ def main():
 
     database.populate_resolution_spacegroup_unit_cell()  # long
     
-
+    database.populate_test_train(args.split)
 
     # database.populate_autobuild_rmsds()
     # database.populate_autobuild_rsccs()

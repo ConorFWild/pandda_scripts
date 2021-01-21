@@ -73,7 +73,7 @@ class Args:
     outer_mask: float = 6.0
     inner_mask_symmetry: float = 3.0
     sample_rate: float = 3.0
-    num_components: int = 10
+    num_components: int = 20
     
     @staticmethod
     def from_cmd():
@@ -260,7 +260,9 @@ def main():
             results[residue_id][n_components] = {}
             
             # Fit the gmm
-            gm = mixture.GaussianMixture(n_components=n_components, covariance_type="diag")
+            # gm = mixture.GaussianMixture(n_components=n_components, covariance_type="diag")
+            gm = mixture.GaussianMixture(n_components=n_components, covariance_type="full")
+
             start_fit_time = time.time()
             gm.fit(sample_by_features)
             finish_fit_time = time.time()
@@ -281,13 +283,15 @@ def main():
                 results[residue_id][n_components][j] = {}
                 
                 # Get the distance metric
-                dist = DistanceMetric.get_metric('mahalanobis', V=np.diag(cov))
+                # dist = DistanceMetric.get_metric('mahalanobis', V=np.diag(cov))
+                dist = DistanceMetric.get_metric('mahalanobis', V=cov)
                 
                 # Get the distance to known points
                 distances = dist.pairwise(sample_by_features, mean.reshape(1,mean.size))
                 
                 # Get the expected distance to points
-                sample = random.multivariate_normal(mean=mean, cov=np.diag(cov), size = 1000)
+                # sample = random.multivariate_normal(mean=mean, cov=np.diag(cov), size = 1000)
+                sample = random.multivariate_normal(mean=mean, cov=cov, size = 1000)
                 sample_distances = dist.pairwise(sample, mean.reshape(1,mean.size))
                 cutoff = np.quantile(sample_distances, 0.9)
 
