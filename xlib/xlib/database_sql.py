@@ -753,6 +753,32 @@ class Database:
         
         self.session.commit()
 
+    def populate_annotations(self, cutoff=5.0):
+        
+        reference_model_query = self.session.query(ReferenceModel)
+        
+        for event in self.session.query(Event).all():
+            reference_model = reference_model_query.filter(ReferenceModel.dataset_id == event.dataset_id).first()
+
+            if not reference_model:
+                ann= False
+            else:
+                reference_structure = 
+                reference_ligands = 
+                reference_ligand_distances = 
+                min_reference_ligand_distance = 
+                if min_reference_ligand_distance < cutoff:
+                    ann = True
+                else:
+                    ann = False
+                    
+            
+            annotation = Annotation(event=,
+                                    dataset=,)
+            
+            self.session.add(annotation)
+            
+        self.session.commit()
         
 @dataclasses.dataclass()
 class Args:
@@ -801,6 +827,8 @@ def main():
     database.populate_resolution_spacegroup_unit_cell()  # long
     
     database.populate_test_train(args.split)
+    
+    database.populate_annotations()
 
     # database.populate_autobuild_rmsds()
     # database.populate_autobuild_rsccs()
