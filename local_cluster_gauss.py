@@ -125,7 +125,8 @@ def main():
     #            )
 
     args = Args(Path("/dls/labxchem/data/2017/lb18145-17/processing/analysis/initial_model/"),
-            Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
+            # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
+            Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag")
             "dimple.pdb" ,
             "dimple.mtz",
             )
