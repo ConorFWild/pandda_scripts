@@ -237,18 +237,30 @@ def main():
             f"Working on residue: {residue_id}"
         ))
         
-        selection_list_list = mapper(
-            pandda_types.delayed(sample_residue)(
-                    truncated_datasets[dtag],
-                    grid,
-                    residue_id,
-                    alignments[dtag],
-                    args.structure_factors, 
-                    args.sample_rate,     
-                )
-            for dtag
-            in truncated_datasets
-            )
+        # selection_list_list = mapper(
+        #     pandda_types.delayed(sample_residue)(
+        #             truncated_datasets[dtag],
+        #             grid,
+        #             residue_id,
+        #             alignments[dtag],
+        #             args.structure_factors, 
+        #             args.sample_rate,     
+        #         )
+        #     for dtag
+        #     in truncated_datasets
+        #     )
+        
+        selection_list_list = [sample_residue(
+                            truncated_datasets[dtag],
+                            grid,
+                            residue_id,
+                            alignments[dtag],
+                            args.structure_factors, 
+                            args.sample_rate,     
+                        )
+                    for dtag
+                    in truncated_datasets
+        ]
 
         dtag_array = np.array([dtag for dtag in truncated_datasets])
             
