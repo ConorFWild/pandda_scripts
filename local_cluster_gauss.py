@@ -251,6 +251,7 @@ def main():
         #     in truncated_datasets
         #     )
         
+        start_interpolation = time.time()
         selection_list_list = [sample_residue(
                             truncated_datasets[dtag],
                             grid,
@@ -262,6 +263,8 @@ def main():
                     for dtag
                     in truncated_datasets
         ]
+        finish_interpolation = time.time()
+        print(f"Finished interpolation in: {}".format(finish_interpolation-start_interpolation))
 
         dtag_array = np.array([dtag for dtag in truncated_datasets])
             
