@@ -314,16 +314,16 @@ def main():
                 print(f"Cutoff: {cutoff}")
                 print(f"Number of distances less than {cutoff}: {distances[distances<cutoff].size}")
 
-                # Create a plot
-                fig = ff.create_distplot([distances.flatten()], ["distances"], bin_size=0.5)
-                fig.write_image(str(args.out_dir / f"test_{residue_id}_{n_components}_{j}_dist.png"),
-                                engine="kaleido", 
-                                width=2000,
-                                height=1000,
-                                scale=1)  
+                # # Create a plot
+                # fig = ff.create_distplot([distances.flatten()], ["distances"], bin_size=0.5)
+                # fig.write_image(str(args.out_dir / f"test_{residue_id}_{n_components}_{j}_dist.png"),
+                #                 engine="kaleido", 
+                #                 width=2000,
+                #                 height=1000,
+                #                 scale=1)  
                 
-                results[residue_id][n_components][j]["num_distances"] = distances[distances<cutoff].size
-                results[residue_id][n_components][j]["dtags"] = [dtag.dtag for dtag in dtag_array[(distances<cutoff).flatten()]]
+                # results[residue_id][n_components][j]["num_distances"] = distances[distances<cutoff].size
+                # results[residue_id][n_components][j]["dtags"] = [dtag.dtag for dtag in dtag_array[(distances<cutoff).flatten()]]
                     
             # Embed and save
             embedding = embed(sample_by_features)
