@@ -122,7 +122,6 @@ def main():
         Path("/dls/science/groups/i04-1/conor_dev/baz2b_test/data"),
             #    Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
                 Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_fast_baz2ba"),
-
                "*.dimple.pdb" ,
                "*.dimple.mtz",
                )
@@ -331,6 +330,7 @@ def main():
                 
                 # results[residue_id][n_components][j]["num_distances"] = distances[distances<cutoff].size
                 # results[residue_id][n_components][j]["dtags"] = [dtag.dtag for dtag in dtag_array[(distances<cutoff).flatten()]]
+                print([dtag.dtag for dtag in dtag_array[(distances<cutoff).flatten()]])
                     
             # Embed and save
             embedding = embed(sample_by_features)
