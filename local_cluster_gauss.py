@@ -64,8 +64,8 @@ class Args:
     out_dir: Path
     pdb_regex: str
     mtz_regex: str
-#     structure_factors: StructureFactors = StructureFactors.from_string("2FOFCWT,PH2FOFCWT")
-    structure_factors: StructureFactors = StructureFactors.from_string("FWT,PHWT")
+    structure_factors: StructureFactors = StructureFactors.from_string("2FOFCWT,PH2FOFCWT")
+    # structure_factors: StructureFactors = StructureFactors.from_string("FWT,PHWT")
     low_resolution_completeness: float = 4.0
     max_rfree: float = 0.4
     max_wilson_plot_z_score: float = 5.0
@@ -118,20 +118,23 @@ def main():
     ###################################################################
     print("Getting config")
     # args = Args.from_cmd(arg_list)
-    # args = Args(Path("/dls/science/groups/i04-1/conor_dev/baz2b_test/data"),
-    #            Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
-    #            "*.dimple.pdb" ,
-    #            "*.dimple.mtz",
-    #            )
+    args = Args(
+        Path("/dls/science/groups/i04-1/conor_dev/baz2b_test/data"),
+            #    Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
+                Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_fast_baz2ba"),
 
-    args = Args(Path("/dls/labxchem/data/2017/lb18145-17/processing/analysis/initial_model/"),
-            # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
-            # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag"),
-            # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_no_multi"),
-            Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_fast"),
-            "dimple.pdb" ,
-            "dimple.mtz",
-            )
+               "*.dimple.pdb" ,
+               "*.dimple.mtz",
+               )
+
+    # args = Args(Path("/dls/labxchem/data/2017/lb18145-17/processing/analysis/initial_model/"),
+    #         # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
+    #         # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag"),
+    #         # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_no_multi"),
+    #         # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_fast"),
+    #         "dimple.pdb" ,
+    #         "dimple.mtz",
+    #         )
 
     print("Getting multiprocessor")
     mapper = JoblibMapper.initialise()
