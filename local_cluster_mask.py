@@ -234,10 +234,10 @@ def get_dataset_distance_matrix(clustering_dict):
     
     dataset_connectivity_matrix = np.zeros((num_datasets, num_datasets))
     
-    for residue_id, residue_clustering in enumerate(clustering_dict.items()):
+    for residue_id, residue_clustering in clustering_dict.items():
         
         for x, cluster_index_x in enumerate(residue_clustering.values()):
-            for y, cluster_index_y in residue_clustering.values():
+            for y, cluster_index_y in enumerate(residue_clustering.values()):
                 if cluster_index_x == cluster_index_y:
                     dataset_connectivity_matrix[x,y] = dataset_connectivity_matrix[x,y] + 1
     
