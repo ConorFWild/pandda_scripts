@@ -398,7 +398,7 @@ def main():
         
         linkage = get_linkage_from_correlation_matrix(correlation_matrix)
         
-        cluster_ids = cluster_linkage(linkage, 0.75)
+        cluster_ids = cluster_linkage(linkage, 0.4)
         
         print(cluster_ids)
         
