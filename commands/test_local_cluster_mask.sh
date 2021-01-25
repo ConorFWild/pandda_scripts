@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python /data/share-2/conor/pandda/pandda_scripts/local_cluster_mask.py 
+python /dls/science/groups/i04-1/conor_dev/pandda_scripts/local_cluster_mask.py 
