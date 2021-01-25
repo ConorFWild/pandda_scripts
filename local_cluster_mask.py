@@ -224,6 +224,8 @@ def get_corr(reference_sample_mask, sample_mask, diag):
     else: 
 
         corr = np.sum(sample_mask[reference_sample_mask == 1]) / denominator
+        
+    return corr
 
 
 def get_dataset_distance_matrix(clustering_dict):
