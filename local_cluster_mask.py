@@ -244,6 +244,19 @@ def get_dataset_distance_matrix(clustering_dict):
     return dataset_connectivity_matrix / num_residues
     
     
+def save_num_clusters_bar_plot(clustering_dict, plot_file):
+    fig, ax = plt.subplots(figsize=(5*len(clustering_dict),20))
+    
+    x = np.arrange(len(clustering_dict))
+    y = [np.unique([cluster_id for cluster_id in cluster_dict.values()]).size for cluster_dict in clustering_dict.values()]
+    labels = [dtag.dtag for dtag in clustering_dict]
+    plt.bar(x, y)
+    plt.xticks(x, labels)
+    fig.savefig(str(plot_file))
+    fig.clear()
+    plt.close(fig)
+
+    
 def main():
         
     ###################################################################
@@ -432,6 +445,8 @@ def main():
                          labels=[dtag.dtag for dtag in dtag_list], 
                          dendrogram_plot_file=args.out_dir / f"global_connectivity_dendrogram.png",
                          )
+    
+    save_num_clusters_bar_plot(clustering_dict, args.out_dir / f"global_residue_cluster_bar.png")
                 
                 
 if __name__ == "__main__":
