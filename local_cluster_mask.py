@@ -128,8 +128,8 @@ class Args:
     out_dir: Path
     pdb_regex: str
     mtz_regex: str
-    structure_factors: StructureFactors = StructureFactors.from_string("2FOFCWT,PH2FOFCWT")
-    # structure_factors: StructureFactors = StructureFactors.from_string("FWT,PHWT")
+    # structure_factors: StructureFactors = StructureFactors.from_string("2FOFCWT,PH2FOFCWT")
+    structure_factors: StructureFactors = StructureFactors.from_string("FWT,PHWT")
     low_resolution_completeness: float = 4.0
     max_rfree: float = 0.4
     max_wilson_plot_z_score: float = 5.0
