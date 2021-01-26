@@ -305,7 +305,7 @@ def save_num_clusters_stacked_bar_plot(clustering_dict, plot_file):
     
     labels = [f"{residue_id.chain}_{residue_id.insertion}" for residue_id in clustering_dict]
     plt.xticks(x, labels, rotation='vertical', fontsize=8)
-    plt.legend([x[0] for x in cluster_bar_plot_dict.values()], [str(x) for x in cluster_bar_plot_dict.keys()])
+    # plt.legend([x[0] for x in cluster_bar_plot_dict.values()], [str(x) for x in cluster_bar_plot_dict.keys()])
     fig.savefig(str(plot_file))
     fig.clear()
     plt.close(fig)
@@ -317,22 +317,23 @@ def main():
     ###################################################################
     print("Getting config")
     # args = Args.from_cmd(arg_list)
-    args = Args(
-        Path("/dls/science/groups/i04-1/conor_dev/baz2b_test/data"),
-            #    Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
-                Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_mask_baz2ba"),
-               "*.dimple.pdb" ,
-               "*.dimple.mtz",
-               )
+    # args = Args(
+    #     Path("/dls/science/groups/i04-1/conor_dev/baz2b_test/data"),
+    #         #    Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
+    #             Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_mask_baz2ba"),
+    #            "*.dimple.pdb" ,
+    #            "*.dimple.mtz",
+    #            )
 
-    # args = Args(Path("/dls/labxchem/data/2017/lb18145-17/processing/analysis/initial_model/"),
-    #         # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
-    #         # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag"),
-    #         # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_no_multi"),
-    #         # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_fast"),
-    #         "dimple.pdb" ,
-    #         "dimple.mtz",
-    #         )
+    args = Args(Path("/dls/labxchem/data/2017/lb18145-17/processing/analysis/initial_model/"),
+            # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
+            # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag"),
+            # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_no_multi"),
+            # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_fast"),
+            Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_mask_xxkarlna02"),
+            "dimple.pdb" ,
+            "dimple.mtz",
+            )
 
     print("Getting multiprocessor")
     mapper = JoblibMapper.initialise()
