@@ -252,7 +252,7 @@ def save_num_clusters_bar_plot(clustering_dict, plot_file):
     
     x = np.arange(len(clustering_dict))
     y = [np.unique([cluster_id for cluster_id in cluster_dict.values()]).size for cluster_dict in clustering_dict.values()]
-    labels = [residue_id for residue_id in clustering_dict]
+    labels = [f"{residue_id.chain}_{residue_id.insertion}" for residue_id in clustering_dict]
     plt.bar(x, y)
     plt.xticks(x, labels, rotation='vertical', fontsize=8)
     fig.savefig(str(plot_file))
