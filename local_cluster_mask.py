@@ -288,7 +288,7 @@ def save_num_clusters_stacked_bar_plot(clustering_dict, plot_file):
         print(len(y_prev))
           
         p = plt.bar(x, y, bottom=y_prev)
-        y_prev = y_prev + y
+        y_prev = [ y_prev_item + y_item for y_prev_item, y_item in zip(y_prev, y)]
         cluster_bar_plot_dict[cluster_idx] = p
     
     labels = [f"{residue_id.chain}_{residue_id.insertion}" for residue_id in clustering_dict]
