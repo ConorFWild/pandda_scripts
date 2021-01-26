@@ -270,8 +270,8 @@ def save_num_clusters_stacked_bar_plot(clustering_dict, plot_file):
             # When a new cluster is discovered
             if not cluster_idx in cluster_idx_dict:
                 cluster_idx_dict[cluster_idx] = {}
-                for residue_id in clustering_dict.keys():
-                    cluster_idx_dict[cluster_idx][residue_id] = 0
+                for _residue_id in clustering_dict.keys():
+                    cluster_idx_dict[cluster_idx][_residue_id] = 0
                     
             cluster_idx_dict[cluster_idx][residue_id] = cluster_idx_dict[cluster_idx][residue_id] + 1
             
@@ -280,9 +280,13 @@ def save_num_clusters_stacked_bar_plot(clustering_dict, plot_file):
     
     cluster_bar_plot_dict = {}
     x = np.arange(len(clustering_dict))
-    y_prev = [0 for residue_id in clustering_dict.keys()]
+    y_prev = [0.0 for residue_id in clustering_dict.keys()]
     for cluster_idx, cluster_residue_dict in cluster_idx_dict.items():
-        y = [num_cluster_members for residue_id, num_cluster_members in cluster_residue_dict.items()]        
+        y = [num_cluster_members for residue_id, num_cluster_members in cluster_residue_dict.items()]      
+        print(len(x))
+        print(len(y))
+        print(len(y_prev))
+          
         p = plt.bar(x, y, bottom=y_prev)
         y_prev = y_prev + y
         cluster_bar_plot_dict[cluster_idx] = p
