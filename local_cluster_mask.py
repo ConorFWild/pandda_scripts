@@ -330,7 +330,7 @@ def main():
             # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag"),
             # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_no_multi"),
             # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_fast"),
-            Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_mask_xx02karlna"),
+            Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_mask_xx02kalrna"),
             "dimple.pdb" ,
             "dimple.mtz",
             )
