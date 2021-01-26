@@ -248,7 +248,7 @@ def save_num_clusters_bar_plot(clustering_dict, plot_file):
     
     dtag_list = list(list(clustering_dict.values())[0].keys())
 
-    fig, ax = plt.subplots(figsize=(0.1*len(clustering_dict),20))
+    fig, ax = plt.subplots(figsize=(20, 0.1*len(clustering_dict)))
     
     x = np.arange(len(clustering_dict))
     y = [np.unique([cluster_id for cluster_id in cluster_dict.values()]).size for cluster_dict in clustering_dict.values()]
