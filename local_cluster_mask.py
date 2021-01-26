@@ -259,6 +259,40 @@ def save_num_clusters_bar_plot(clustering_dict, plot_file):
     fig.clear()
     plt.close(fig)
 
+def save_num_clusters_stacked_bar_plot(clustering_dict, plot_file):
+    
+    dtag_list = list(list(clustering_dict.values())[0].keys())
+
+    cluster_idx_dict= {}
+    for residue_id, cluster_dict in clustering_dict.items():
+        
+        for dtag, cluster_idx in cluster_dict.items():
+            # When a new cluster is discovered
+            if not cluster_idx in cluster_idx_dict:
+                cluster_idx_dict[cluster_idx] = {}
+                for residue_id in clustering_dict.keys():
+                    cluster_idx_dict[cluster_idx][residue_id] = 0
+                    
+            cluster_idx_dict[cluster_idx][residue_id] = cluster_idx_dict[cluster_idx][residue_id] + 1
+            
+
+    fig, ax = plt.subplots(figsize=(20, 0.1*len(clustering_dict)))
+    
+    cluster_bar_plot_dict = {}
+    x = np.arange(len(clustering_dict))
+    y_prev = [0 for residue_id in clustering_dict.keys()]
+    for cluster_idx, cluster_residue_dict in cluster_idx_dict.items():
+        y = [num_cluster_members for residue_id, num_cluster_members in cluster_residue_dict.items()]        
+        p = plt.bar(x, y, bottom=y_prev)
+        y_prev = y
+        cluster_bar_plot_dict[cluster_idx] = p
+    
+    labels = [f"{residue_id.chain}_{residue_id.insertion}" for residue_id in clustering_dict]
+    plt.xticks(x, labels, rotation='vertical', fontsize=8)
+    plt.legend([x[0] for x in cluster_bar_plot_dict.values()], [str(x) for x in cluster_bar_plot_dict.keys()])
+    fig.savefig(str(plot_file))
+    fig.clear()
+    plt.close(fig)
     
 def main():
         
