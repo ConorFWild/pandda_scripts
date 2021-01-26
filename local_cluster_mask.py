@@ -484,6 +484,8 @@ def main():
                          )
     
     save_num_clusters_bar_plot(clustering_dict, args.out_dir / f"global_residue_cluster_bar.png")
+    
+    save_num_clusters_stacked_bar_plot(clustering_dict, args.out_dir / f"global_residue_cluster_stacked_bar.png")
                 
                 
 if __name__ == "__main__":
