@@ -275,6 +275,18 @@ def save_num_clusters_stacked_bar_plot(clustering_dict, plot_file):
                     
             cluster_idx_dict[cluster_idx][residue_id] = cluster_idx_dict[cluster_idx][residue_id] + 1
             
+    # 
+    for residue_id, cluster_dict in clustering_dict.items():
+        
+        residue_cluster_dict = {cluster_idx: cluster_idx_dict[cluster_idx[residue_id]] for cluster_idx in cluster_idx_dict}
+        
+        sorted_cluster_dict = {cluster_idx: sorted_cluster_val for cluster_idx, sorted_cluster_val 
+         in zip(residue_cluster_dict.keys(), sorted(residue_cluster_dict.values(), reverse=True))}
+                
+        for sorted_cluster_idx, sorted_cluster_value in sorted_cluster_dict.items():
+            cluster_idx_dict[sorted_cluster_idx][residue_id] = sorted_cluster_value
+            
+        
 
     fig, ax = plt.subplots(figsize=(20, 0.1*len(clustering_dict)))
     
