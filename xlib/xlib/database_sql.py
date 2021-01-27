@@ -41,6 +41,8 @@ class Constants:
     AUTOBUILD_HUMAN_TABLE = "autobuild_human"
     REAL_SPACE_CLUSTERING_TABLE = "real_space_clustering"
     EVENT_SCORE_TABLE = "event_score"
+    TEST_TABLE = "test"
+    TRAIN_TABLE = "train"
     
     
 
@@ -344,10 +346,14 @@ class EventScore(base):
     event = relationship(Event)
     
 class Test(base):
+    __tablename__ = Constants.TEST_TABLE
+
     system_id = Column(Integer, ForeignKey(System.id))
     system = relationship(System)
     
 class Train(base):
+    __tablename__ = Constants.TRAIN_TABLE
+
     system_id = Column(Integer, ForeignKey(System.id))
     system = relationship(System)
 
