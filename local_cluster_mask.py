@@ -17,9 +17,9 @@ import argparse
 import numpy as np
 import pandas as pd
 
-from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
-from hdbscan import HDBSCAN
+# from sklearn.decomposition import PCA
+# from sklearn.manifold import TSNE
+# from hdbscan import HDBSCAN
 
 
 import gemmi
