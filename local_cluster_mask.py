@@ -37,9 +37,9 @@ import joblib
 from joblib.externals.loky import set_loky_pickler
 set_loky_pickler('pickle')
 
-import plotly.graph_objects as go
+# import plotly.graph_objects as go
 
-from plotly import figure_factory as ff
+# from plotly import figure_factory as ff
 
 from sklearn import decomposition
 from sklearn import manifold
