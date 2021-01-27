@@ -347,12 +347,16 @@ class EventScore(base):
     
 class Test(base):
     __tablename__ = Constants.TEST_TABLE
+    id = Column(Integer, primary_key=True)
+
 
     system_id = Column(Integer, ForeignKey(System.id))
     system = relationship(System)
     
 class Train(base):
     __tablename__ = Constants.TRAIN_TABLE
+    id = Column(Integer, primary_key=True)
+
 
     system_id = Column(Integer, ForeignKey(System.id))
     system = relationship(System)
