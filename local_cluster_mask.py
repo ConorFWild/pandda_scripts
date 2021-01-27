@@ -334,6 +334,13 @@ def main():
             "dimple.pdb" ,
             "dimple.mtz",
             )
+    
+    args = Args(Path("/data/share-2/conor/pandda/data/pandda_inputs/XX02KALRNA"),
+            Path("/data/share-2/conor/pandda/output/cluster_xx"),
+            "dimple.pdb" ,
+            "dimple.mtz",
+            )
+    
 
     print("Getting multiprocessor")
     mapper = JoblibMapper.initialise()
