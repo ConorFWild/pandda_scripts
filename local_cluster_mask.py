@@ -371,7 +371,7 @@ def main():
     start = time.time()
     datasets_smoother: Datasets = datasets_wilson.smooth_datasets(reference, 
                                                 structure_factors=args.structure_factors,
-                                                mapper=mapper,
+                                                mapper=None,
                                                 )
     finish = time.time()
     print(f"Smoothed in {finish-start}")  
