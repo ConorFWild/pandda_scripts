@@ -180,7 +180,7 @@ def save_dendrogram_plot(linkage,
                          labels, 
                          dendrogram_plot_file,
                          ):
-    fig, ax = plt.subplots(figsize=(60,40))
+    fig, ax = plt.subplots(figsize=(0.2*len(labels),40))
     dn = spc.dendrogram(linkage, ax=ax, labels=labels, leaf_font_size=10)
     fig.savefig(str(dendrogram_plot_file))
     fig.clear()
@@ -248,7 +248,7 @@ def save_num_clusters_bar_plot(clustering_dict, plot_file):
     
     dtag_list = list(list(clustering_dict.values())[0].keys())
 
-    fig, ax = plt.subplots(figsize=(20, 0.1*len(clustering_dict)))
+    fig, ax = plt.subplots(figsize=(0.2*len(clustering_dict), 20))
     
     x = np.arange(len(clustering_dict))
     y = [np.unique([cluster_id for cluster_id in cluster_dict.values()]).size for cluster_dict in clustering_dict.values()]
@@ -288,7 +288,7 @@ def save_num_clusters_stacked_bar_plot(clustering_dict, plot_file):
             
         
 
-    fig, ax = plt.subplots(figsize=(20, 0.1*len(clustering_dict)))
+    fig, ax = plt.subplots(figsize=(0.2*len(clustering_dict), 20))
     
     cluster_bar_plot_dict = {}
     x = np.arange(len(clustering_dict))
@@ -306,6 +306,17 @@ def save_num_clusters_stacked_bar_plot(clustering_dict, plot_file):
     labels = [f"{residue_id.chain}_{residue_id.insertion}" for residue_id in clustering_dict]
     plt.xticks(x, labels, rotation='vertical', fontsize=8)
     # plt.legend([x[0] for x in cluster_bar_plot_dict.values()], [str(x) for x in cluster_bar_plot_dict.keys()])
+    fig.savefig(str(plot_file))
+    fig.clear()
+    plt.close(fig)
+    
+def save_global_embed_plot(dataset_connectivity_matrix, plot_file):
+    embedding = embed(dataset_connectivity_matrix)
+    
+    fig, ax = plt.subplots(figsize=(60,60))
+    
+    ax.scatter(embedding[:, 0], embedding[:, 1])
+
     fig.savefig(str(plot_file))
     fig.clear()
     plt.close(fig)
@@ -342,12 +353,13 @@ def main():
             )
     
     
-    # args = Args(
-    #     Path("/dls/labxchem/data/2020/lb25580-2/processing/analysis/model_building"),
-    #     Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3"),
-    #         "dimple.pdb" ,
-    #         "dimple.mtz",
-    #         )
+    args = Args(
+        Path("/dls/labxchem/data/2020/lb25580-2/processing/analysis/model_building"),
+# ?        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3"),
+        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_2"),
+            "dimple.pdb" ,
+            "dimple.mtz",
+            )
     
     print("Getting multiprocessor")
     mapper = JoblibMapper.initialise()
@@ -517,7 +529,8 @@ def main():
     save_num_clusters_bar_plot(clustering_dict, args.out_dir / f"global_residue_cluster_bar.png")
     
     save_num_clusters_stacked_bar_plot(clustering_dict, args.out_dir / f"global_residue_cluster_stacked_bar.png")
-                
+    
+    save_global_embed_plot(dataset_connectivity_matrix, args.out_dir / f"global_embed_scatter.png")
                 
 if __name__ == "__main__":
     main()
