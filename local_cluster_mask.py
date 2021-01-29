@@ -358,7 +358,8 @@ def main():
     args = Args(
         Path("/dls/labxchem/data/2020/lb25580-2/processing/analysis/model_building"),
 # ?        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3"),
-        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_2"),
+        # Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_2"),
+        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_ward"),
             "dimple.pdb" ,
             "dimple.mtz",
             )
