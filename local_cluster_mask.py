@@ -189,7 +189,9 @@ def save_dendrogram_plot(linkage,
     
 def get_linkage_from_correlation_matrix(correlation_matrix):
     condensed = distance.squareform(1.0-correlation_matrix)
-    linkage = spc.linkage(condensed, method='complete')
+    # linkage = spc.linkage(condensed, method='complete')
+    linkage = spc.linkage(condensed, method='ward')
+
 
     return linkage
 
