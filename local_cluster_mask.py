@@ -323,6 +323,23 @@ def save_global_embed_plot(dataset_connectivity_matrix, plot_file):
     fig.clear()
     plt.close(fig)
     
+def save_global_cut_curve(linkage, plot_file):
+    
+    fig, ax = plt.subplots(figsize=(60,60))
+    
+    x = np.linspace(0,1,100)
+    
+    cuts = hierarchy.cut_tree(linkage, height=x)
+    
+    num_clusters = [np.unique(cuts[:, i]).size for i in range(x.size)]
+    
+    ax.scatter(x, num_clusters)
+
+    fig.savefig(str(plot_file))
+    fig.clear()
+    plt.close(fig)
+    
+    
 def main():
         
     ###################################################################
@@ -534,6 +551,8 @@ def main():
     save_num_clusters_stacked_bar_plot(clustering_dict, args.out_dir / f"global_residue_cluster_stacked_bar.png")
     
     save_global_embed_plot(dataset_connectivity_matrix, args.out_dir / f"global_embed_scatter.png")
+    
+    save_global_cut_curve(connectivity_linkaged, args.out_dir / f"global_cut_curve.png")
                 
 if __name__ == "__main__":
     main()
