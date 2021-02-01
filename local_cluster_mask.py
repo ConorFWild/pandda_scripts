@@ -412,7 +412,7 @@ def save_global_cut_curve(linkage, plot_file):
     
 def save_hdbscan_dendrogram(connectivity_matrix, plot_file):
     
-    clusterer = hdbscan.HDBSCAN(metric='precomputed')
+    clusterer = hdbscan.HDBSCAN(metric='precomputed', allow_single_cluster=True, min_cluster_size=20)
     clusterer.fit(connectivity_matrix)
     print(clusterer.labels_)
     
