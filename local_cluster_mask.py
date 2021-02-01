@@ -17,6 +17,8 @@ import argparse
 import numpy as np
 import pandas as pd
 
+import fire
+
 # from sklearn.decomposition import PCA
 # from sklearn.manifold import TSNE
 # from hdbscan import HDBSCAN
@@ -428,47 +430,55 @@ def save_hdbscan_dendrogram(connectivity_matrix, plot_file):
     
     
     
-def main():
+def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors="FWT,PHWT"):
         
     ###################################################################
     # # Configuration
     ###################################################################
     print("Getting config")
-    # args = Args.from_cmd(arg_list)
-    # args = Args(
-    #     Path("/dls/science/groups/i04-1/conor_dev/baz2b_test/data"),
-    #         #    Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
-    #             Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_mask_baz2ba"),
-    #            "*.dimple.pdb" ,
-    #            "*.dimple.mtz",
-    #            )
+#     # args = Args.from_cmd(arg_list)
+#     # args = Args(
+#     #     Path("/dls/science/groups/i04-1/conor_dev/baz2b_test/data"),
+#     #         #    Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
+#     #             Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_mask_baz2ba"),
+#     #            "*.dimple.pdb" ,
+#     #            "*.dimple.mtz",
+#     #            )
 
-    args = Args(Path("/dls/labxchem/data/2017/lb18145-17/processing/analysis/initial_model/"),
-            # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
-            # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag"),
-            # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_no_multi"),
-            # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_fast"),
-            Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_mask_xx02kalrna"),
-            "dimple.pdb" ,
-            "dimple.mtz",
-            )
+#     args = Args(Path("/dls/labxchem/data/2017/lb18145-17/processing/analysis/initial_model/"),
+#             # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster"),
+#             # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag"),
+#             # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_no_multi"),
+#             # Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_gauss_diag_fast"),
+#             Path("/dls/science/groups/i04-1/conor_dev/experiments/test_local_cluster_mask_xx02kalrna"),
+#             "dimple.pdb" ,
+#             "dimple.mtz",
+#             )
     
-    args = Args(Path("/data/share-2/conor/pandda/data/pandda_inputs/XX02KALRNA"),
-            Path("/data/share-2/conor/pandda/output/cluster_xx"),
-            "dimple.pdb" ,
-            "dimple.mtz",
-            )
+#     args = Args(Path("/data/share-2/conor/pandda/data/pandda_inputs/XX02KALRNA"),
+#             Path("/data/share-2/conor/pandda/output/cluster_xx"),
+#             "dimple.pdb" ,
+#             "dimple.mtz",
+#             )
     
     
+#     args = Args(
+#         Path("/dls/labxchem/data/2020/lb25580-2/processing/analysis/model_building"),
+# # ?        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3"),
+#         # Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_2"),
+#         # Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_hdbscan"),
+#         Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_grid"),
+#             "dimple.pdb" ,
+#             "dimple.mtz",
+#             )
+
     args = Args(
-        Path("/dls/labxchem/data/2020/lb25580-2/processing/analysis/model_building"),
-# ?        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3"),
-        # Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_2"),
-        # Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_hdbscan"),
-        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_grid"),
-            "dimple.pdb" ,
-            "dimple.mtz",
-            )
+        Path(data_dirs),
+        Path(out_dir),
+        pdb_regex,
+        mtz_regex,
+        StructureFactors.from_string(structure_factors),
+    )
     
     print("Getting multiprocessor")
     mapper = JoblibMapper.initialise()
@@ -673,4 +683,4 @@ def main():
                 
                 
 if __name__ == "__main__":
-    main()
+    fire.Fire(main)
