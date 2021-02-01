@@ -516,7 +516,7 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors="FWT,PHWT")
     start = time.time()
     datasets_smoother: Datasets = datasets_wilson.smooth_datasets(reference, 
                                                 structure_factors=args.structure_factors,
-                                                mapper=None,
+                                                mapper=mapper,
                                                 )
     finish = time.time()
     print(f"Smoothed in {finish-start}")  
