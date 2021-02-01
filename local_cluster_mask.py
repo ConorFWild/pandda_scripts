@@ -430,7 +430,7 @@ def save_hdbscan_dendrogram(connectivity_matrix, plot_file):
     
     
     
-def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors="FWT,PHWT", mode="grid"):
+def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT","PHWT"), mode="grid"):
         
     ###################################################################
     # # Configuration
@@ -477,7 +477,7 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors="FWT,PHWT",
         Path(out_dir),
         pdb_regex,
         mtz_regex,
-        StructureFactors.from_string(structure_factors),
+        StructureFactors(structure_factors[0], structure_factors[1]),
     )
     
     print("Getting multiprocessor")
