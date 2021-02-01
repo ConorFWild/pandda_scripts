@@ -115,6 +115,74 @@ def sample_residue(truncated_dataset: Dataset,
     return np.array(sampled_points)
 
 
+def sample_residue_grid(truncated_dataset: Dataset,
+                #    grid: Grid,       
+                   residue_id,
+                    alignment, 
+                    structure_factors: StructureFactors, 
+                    sample_rate: float, 
+                    ) -> List[float]:
+        
+    # point_position_dict = grid.partitioning[residue_id]
+    
+    unaligned_xmap: gemmi.FloatGrid = truncated_dataset.reflections.reflections.transform_f_phi_to_map(structure_factors.f,
+                                                                                                structure_factors.phi,
+                                                                                                sample_rate=sample_rate,
+                                                                                                )    
+    
+    unaligned_xmap_array = np.array(unaligned_xmap, copy=False)
+
+
+    std = np.std(unaligned_xmap_array)
+    unaligned_xmap_array[:, :, :] = unaligned_xmap_array[:, :, :] / std
+
+    # Unpack the points, poitions and transforms
+    # point_list: List[Tuple[int, int, int]] = []
+    # position_list: List[Tuple[float, float, float]] = []
+    # transform_list: List[gemmi.transform] = []
+    # com_moving_list: List[np.array] = []
+    # com_reference_list: List[np.array] = []
+            
+    al = alignment[residue_id]
+    transform = al.transform.inverse()
+    com_moving = al.com_moving
+    # com_reference = al.com_reference
+    
+    # for point, position in point_position_dict.items():
+        
+    #     point_list.append(point)
+    #     position_list.append(position)
+    #     transform_list.append(transform)
+    #     com_moving_list.append(com_moving)
+    #     com_reference_list.append(com_reference)
+    
+    # sampled_points = gemmi.interpolate_to_list(unaligned_xmap,
+    #                                            grid.grid,
+    #                                 point_list,
+    #                              position_list,
+    #                              transform_list,
+    #                              com_moving_list,
+    #                              com_reference_list,           
+    #                           )
+    
+    tranform_vec = np.array(transform.vec.tolist())
+    transform_mat = np.array(transform.mat.tolist())
+    
+    transform_mat = transform_mat * (np.eye(3) * 0.5)
+    offset = np.matmul(transform_mat, np.array([8, 8, 8]).reshape(3, 1)).flatten()
+    tranform_vec = com_moving - offset
+    
+    tr = gemmi.Transform()
+    tr.mat.fromlist(transform_mat.tolist())
+    tr.vec.fromlist(tranform_vec.tolist())
+    
+    arr = np.zeros([16, 16, 16], dtype=np.float32)
+    
+    unaligned_xmap.interpolate_values(arr, tr)
+    
+    return arr.flatten()
+
+
 def embed(distance_matrix):
     pca = decomposition.PCA(n_components=50)
     tsne = manifold.TSNE(n_components=2)
@@ -396,7 +464,8 @@ def main():
         Path("/dls/labxchem/data/2020/lb25580-2/processing/analysis/model_building"),
 # ?        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3"),
         # Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_2"),
-        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_hdbscan"),
+        # Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_hdbscan"),
+        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_grid"),
             "dimple.pdb" ,
             "dimple.mtz",
             )
@@ -453,11 +522,11 @@ def main():
 
     # Grid
     print("Getting grid")
-    grid: Grid = Grid.from_reference(reference,
-                            args.outer_mask,
-                                args.inner_mask_symmetry,
-                                    sample_rate=args.sample_rate,
-                                )
+    # grid: Grid = Grid.from_reference(reference,
+    #                         args.outer_mask,
+    #                             args.inner_mask_symmetry,
+    #                                 sample_rate=args.sample_rate,
+    #                             )
 
     print("Getting alignments")
     alignments: Alignments = Alignments.from_datasets(
@@ -492,10 +561,22 @@ def main():
             f"Working on residue: {residue_id}"
         ))
 
-        samples = {dtag:
-        sample_residue(
+        # samples = {dtag:
+        # sample_residue(
+        #             truncated_datasets[dtag],
+        #             grid,
+        #         residue_id,
+        #             alignments[dtag],
+        #             args.structure_factors, 
+        #             args.sample_rate,     
+        # )
+        # for dtag in datasets
+        #     }
+        
+        samples = {
+            dtag:
+            sample_residue_grid(
                     truncated_datasets[dtag],
-                    grid,
                 residue_id,
                     alignments[dtag],
                     args.structure_factors, 
@@ -537,7 +618,8 @@ def main():
         
         save_dendrogram_plot(linkage, 
                              labels=[dtag.dtag for dtag in samples.keys()], 
-                             dendrogram_plot_file=args.out_dir / f"{residue_id}_dendrogram.png")
+                             dendrogram_plot_file=args.out_dir / f"{residue_id}_dendrogram.png",
+                             )
         
         save_hdbscan_dendrogram(
             correlation_matrix, 
