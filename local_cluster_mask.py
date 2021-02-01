@@ -190,8 +190,8 @@ def save_dendrogram_plot(linkage,
     
 def get_linkage_from_correlation_matrix(correlation_matrix):
     condensed = distance.squareform(1.0-correlation_matrix)
-    # linkage = spc.linkage(condensed, method='complete')
-    linkage = spc.linkage(condensed, method='ward')
+    linkage = spc.linkage(condensed, method='complete')
+    # linkage = spc.linkage(condensed, method='ward')
 
 
     return linkage
@@ -396,7 +396,7 @@ def main():
         Path("/dls/labxchem/data/2020/lb25580-2/processing/analysis/model_building"),
 # ?        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3"),
         # Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_2"),
-        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_ward"),
+        Path("/dls/science/groups/i04-1/conor_dev/experiments/LchARH3_hdbscan"),
             "dimple.pdb" ,
             "dimple.mtz",
             )
