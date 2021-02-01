@@ -430,7 +430,7 @@ def save_hdbscan_dendrogram(connectivity_matrix, plot_file):
     
     
     
-def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors="FWT,PHWT"):
+def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors="FWT,PHWT", mode="grid"):
         
     ###################################################################
     # # Configuration
@@ -531,12 +531,13 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors="FWT,PHWT")
     datasets = datasets_diss_space
 
     # Grid
-    print("Getting grid")
-    # grid: Grid = Grid.from_reference(reference,
-    #                         args.outer_mask,
-    #                             args.inner_mask_symmetry,
-    #                                 sample_rate=args.sample_rate,
-    #                             )
+    if mode == "default":
+        print("Getting grid")
+        grid: Grid = Grid.from_reference(reference,
+                                args.outer_mask,
+                                    args.inner_mask_symmetry,
+                                        sample_rate=args.sample_rate,
+                                    )
 
     print("Getting alignments")
     alignments: Alignments = Alignments.from_datasets(
@@ -571,29 +572,31 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors="FWT,PHWT")
             f"Working on residue: {residue_id}"
         ))
 
-        # samples = {dtag:
-        # sample_residue(
-        #             truncated_datasets[dtag],
-        #             grid,
-        #         residue_id,
-        #             alignments[dtag],
-        #             args.structure_factors, 
-        #             args.sample_rate,     
-        # )
-        # for dtag in datasets
-        #     }
+        if mode=="default":
+            samples = {dtag:
+            sample_residue(
+                        truncated_datasets[dtag],
+                        grid,
+                    residue_id,
+                        alignments[dtag],
+                        args.structure_factors, 
+                        args.sample_rate,     
+            )
+            for dtag in datasets
+                }
         
-        samples = {
-            dtag:
-            sample_residue_grid(
-                    truncated_datasets[dtag],
-                residue_id,
-                    alignments[dtag],
-                    args.structure_factors, 
-                    args.sample_rate,     
-        )
-        for dtag in datasets
-            }
+        elif mode == "grid":
+            samples = {
+                dtag:
+                sample_residue_grid(
+                        truncated_datasets[dtag],
+                    residue_id,
+                        alignments[dtag],
+                        args.structure_factors, 
+                        args.sample_rate,     
+            )
+            for dtag in datasets
+                }
 
         correlation_matrix = np.zeros((len(samples), len(samples)))
         
