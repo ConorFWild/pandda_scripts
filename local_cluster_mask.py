@@ -58,6 +58,7 @@ from scipy.spatial import distance
 from numpy import random
 from sklearn import mixture
 from sklearn.neighbors import DistanceMetric
+import hdbscan
 
 
 
@@ -312,7 +313,7 @@ def save_num_clusters_stacked_bar_plot(clustering_dict, plot_file):
     fig.clear()
     plt.close(fig)
     
-def save_global_embed_plot(dataset_connectivity_matrix, plot_file):
+def save_embed_plot(dataset_connectivity_matrix, plot_file):
     embedding = embed(dataset_connectivity_matrix)
     
     fig, ax = plt.subplots(figsize=(60,60))
@@ -338,6 +339,25 @@ def save_global_cut_curve(linkage, plot_file):
     fig.savefig(str(plot_file))
     fig.clear()
     plt.close(fig)
+    
+def save_hdbscan_dendrogram(connectivity_matrix, plot_file):
+    
+    clusterer = hdbscan.HDBSCAN(metric='precomputed')
+    clusterer.fit(connectivity_matrix)
+    print(clusterer.labels_)
+    
+    fig, ax = plt.subplots(figsize=(60,60))
+
+    
+    clusterer.condensed_tree_.plot(
+        select_clusters=True,
+                               axis=ax,
+                               )
+    
+    fig.savefig(str(plot_file))
+    fig.clear()
+    plt.close(fig)
+    
     
     
 def main():
@@ -519,6 +539,16 @@ def main():
                              labels=[dtag.dtag for dtag in samples.keys()], 
                              dendrogram_plot_file=args.out_dir / f"{residue_id}_dendrogram.png")
         
+        save_hdbscan_dendrogram(
+            correlation_matrix, 
+            args.out_dir / f"{residue_id}_hdbscan_dendrogram.png",
+        )
+        
+        save_embed_plot(
+            correlation_matrix,
+            args.out_dir / f"{residue_id}_embed.png"
+        )
+        
         clustering_dict[residue_id] = {dtag: cluster_id for dtag, cluster_id in zip(samples.keys(), cluster_ids)}
         
         print(f"Found {np.unique(cluster_ids).size} clusters")
@@ -550,9 +580,15 @@ def main():
     
     save_num_clusters_stacked_bar_plot(clustering_dict, args.out_dir / f"global_residue_cluster_stacked_bar.png")
     
-    save_global_embed_plot(dataset_connectivity_matrix, args.out_dir / f"global_embed_scatter.png")
+    save_embed_plot(dataset_connectivity_matrix, args.out_dir / f"global_embed_scatter.png")
     
     save_global_cut_curve(connectivity_linkaged, args.out_dir / f"global_cut_curve.png")
+    
+    save_hdbscan_dendrogram(
+        dataset_connectivity_matrix, 
+        args.out_dir / f"global_hdbscan_dendrogram.png",
+    )
+                
                 
 if __name__ == "__main__":
     main()
