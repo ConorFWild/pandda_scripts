@@ -4,6 +4,8 @@ import os
 from typing import *
 import time
 
+from numpy.core.fromnumeric import reshape
+
 import psutil
 import pickle
 from shlex import split
@@ -412,7 +414,7 @@ def save_global_cut_curve(linkage, plot_file):
     
 def save_hdbscan_dendrogram(connectivity_matrix, plot_file):
     
-    clusterer = hdbscan.HDBSCAN(metric='precomputed', allow_single_cluster=True, min_cluster_size=20)
+    clusterer = hdbscan.HDBSCAN(metric='precomputed', allow_single_cluster=True, min_cluster_size=10)
     clusterer.fit(connectivity_matrix)
     print(clusterer.labels_)
     
@@ -428,6 +430,77 @@ def save_hdbscan_dendrogram(connectivity_matrix, plot_file):
     fig.clear()
     plt.close(fig)
     
+    
+# 
+    
+def copy_grid(grid):
+    new_grid = gemmi.FloatGrid()
+    new_grid.spacegroup = grid.spacegroup
+    new_grid.set_unit_cell(grid.unitcell)
+    return new_grid
+    
+
+def get_grid_points_around(grid, origin, radius):
+    grid.set_points_around(gemmi.Position(origin[0], origin[1], origin[2]), origin, radius=5,value=1)
+    grid_array = np.array(grid, copy=False)
+    
+    grid_indicies = np.argwhere(grid_array == 1)
+    
+    grid.fill(0)
+    
+    return grid_indicies
+
+def get_positions_from_points(grid, points_to_interpolate):
+    unit_cell = grid.unit_cell
+    orthoganalisation_matrix = unit_cell.orthogonalization_matrix
+    grid_shape = np.array(grid.a, grid.b, grid.c)
+    
+    fraction_position_matrix = points_to_interpolate / grid_shape
+    
+    orthogonal_poistion_matrix = np.matmul(orthoganalisation_matrix, fraction_position_matrix.T).T
+    
+    return orthogonal_poistion_matrix
+
+def fill_grid(new_grid, points_to_interpolate_at, values_interpolated):
+    
+    new_grid_array = np.array(new_grid, copy=False)
+    new_grid_array[points_to_interpolate_at] = values_interpolated
+    
+    return new_grid
+    
+def interpolate_onto_grid(array, grid, origin, scale, radius=5.0):
+    
+    from scipy.interpolate import griddata, LinearNDInterpolator
+    
+    # New grid
+    new_grid = copy_grid(grid)
+    
+    # Get the grid points you want to know
+    points_to_interpolate_at = get_grid_points_around(grid, origin, radius)
+    
+    positions_to_interpolate_at = get_positions_from_points(grid, points_to_interpolate_at)
+    
+    # Get the array points in grid space
+    values_at_points = np.flatten(array)
+
+    points_to_interpolate = np.hstack(
+        [
+            np.reshape(x, (-1,1)) 
+            for x 
+            in np.unravel_index(np.arange(values_at_points), array.shape)
+            ]
+        ) * scale
+    
+    positions_to_interpolate = get_positions_from_points(grid, points_to_interpolate) + (origin - (np.array(array.shape)/2))
+    
+    # Interpolate
+    interp = LinearNDInterpolator(positions_to_interpolate, values_at_points)
+    
+    values_interpolated = interp(positions_to_interpolate_at)
+    
+    fill_grid(new_grid, points_to_interpolate_at, values_interpolated)
+    
+    return new_grid
     
     
 def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT","PHWT"), mode="grid"):
@@ -627,6 +700,11 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT","PHW
         
         cluster_ids = cluster_linkage(linkage, 0.4)
         
+        for cluster_id in np.unique(cluster_ids):
+            print(f"Cluster: {cluster_id}: {[dtag.dtag for dtag in np.array(list(samples.keys()))[cluster_ids == cluster_id]]}")
+            
+        #     cluster_samples = cluster_samples[cluster_ids == cluster_id]
+        
         print(cluster_ids)
         
         save_dendrogram_plot(linkage, 
@@ -647,7 +725,33 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT","PHW
         clustering_dict[residue_id] = {dtag: cluster_id for dtag, cluster_id in zip(samples.keys(), cluster_ids)}
         
         print(f"Found {np.unique(cluster_ids).size} clusters")
+        
+        # #################################
+        # Mean maps
+        # #################################
+        # cluster_samples = np.empty(len(samples), dtype=object)
+        
+        # reference_alignment = alignments[reference.dtag][residue_id]
+        
+        # scale = 0.5
+        
+        # referene_grid = reference.dataset.reflections.transform_f_phi_to_map(args.structure_factors.f,
+        #                                                                     args.structure_factors.phi,
+        #                                                                     sample_rate=args.sample_rate,
+        #                                                                                         )    
+        
+        # for i, value in enumerate(samples.values()): 
+        #     cluster_samples[i] = value
 
+        # for cluster_id in np.unique(cluster_ids):
+            
+        #     cluster_samples = cluster_samples[cluster_ids == cluster_id]
+        #     stacked_samples = np.stack(cluster_samples.tolist(), 0)
+        #     mean_map_array = np.mean(stacked_samples, axis=0)
+            
+        #     interpolate_onto_grid(mean_map_array, referene_grid, reference_alignment.com_reference, scale, radius=5.0)
+
+            
 
     # #############################
     # Summary
