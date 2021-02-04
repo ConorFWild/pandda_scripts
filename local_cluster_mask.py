@@ -172,7 +172,7 @@ def sample_residue_grid(truncated_dataset: Dataset,
     tranform_vec = np.array(transform.vec.tolist())
     transform_mat = np.array(transform.mat.tolist())
     
-    transform_mat = transform_mat * (np.eye(3) * 0.5)
+    transform_mat = np.matmul(transform_mat, np.eye(3) * 0.5)
     offset = np.matmul(transform_mat, np.array([8, 8, 8]).reshape(3, 1)).flatten()
     tranform_vec = com_moving - offset
     
@@ -503,6 +503,25 @@ def interpolate_onto_grid(array, grid, origin, scale, radius=5.0):
     return new_grid
     
     
+def save_aoc(clustering_dict, out_file):
+    
+    largest_cluster_fraction_list = []
+    for residue_id, cluster_dict in clustering_dict.items():
+        
+        num_in_cluster_dict = {}
+        for dtag, cluster_idx in clustering_dict.items():
+            if not cluster_idx in num_in_cluster_dict:
+                num_in_cluster_dict[cluster_idx] = 0
+            num_in_cluster_dict[cluster_idx] = num_in_cluster_dict[cluster_idx] + 1
+            
+        largest_cluster_fraction_list.append(max(list(num_in_cluster_dict.values())) / len(cluster_dict))
+        
+    aoc =  np.mean(largest_cluster_fraction_list)
+    
+    with open(str(out_file)) as f:
+        json.dump({"aoc": float(aoc)}, f)
+
+    
 def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT","PHWT"), mode="grid"):
         
     ###################################################################
@@ -787,6 +806,8 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT","PHW
         dataset_connectivity_matrix, 
         args.out_dir / f"global_hdbscan_dendrogram.png",
     )
+    
+    save_aoc(clustering_dict, args.out_dir / f"aoc.json")
                 
                 
 if __name__ == "__main__":
