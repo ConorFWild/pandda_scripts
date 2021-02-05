@@ -80,7 +80,7 @@ def main(data_dirs, out_dirs, debug=True):
         job_script = Constants.JOB.format(out_dir=str(out_dir), system=system_name)
         if debug: print(f"Job script: {job_script}")
         
-        script = Constants.SCRIPT.format(data_dir=str(data_dir), system=system_name)
+        script = Constants.SCRIPT.format(data_dir=str(data_dir), out_dir=str(out_dir), system=system_name)
         if debug: print(f"Script: {script}")
         
         script_file = out_dirs_path / f"{system_name}.sh"
