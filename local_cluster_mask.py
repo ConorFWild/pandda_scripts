@@ -711,9 +711,9 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT","PHW
                 correlation_matrix[x, y] = get_corr(reference_sample_mask, sample_mask, x==y)
 
         
-        save_correlation_plot(correlation_matrix, 
-                              args.out_dir / f"{residue_id}_correlation.png",
-                              )
+        # save_correlation_plot(correlation_matrix, 
+        #                       args.out_dir / f"{residue_id}_correlation.png",
+        #                       )
         
         linkage = get_linkage_from_correlation_matrix(correlation_matrix)
         
