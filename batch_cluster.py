@@ -73,14 +73,14 @@ def main(data_dirs, out_dirs, debug=True):
         system_name = data_dir.name
         if debug: print(f"System name: {system_name}")
         
-        out_dir = out_dirs_path / system_name
-        make_dir(out_dir)
-        if debug: print(f"Out_dir: {out_dir}")
+        clustering_dir = out_dirs_path / system_name
+        make_dir(clustering_dir)
+        if debug: print(f"Out_dir: {clustering_dir}")
         
-        job_script = Constants.JOB.format(out_dir=str(out_dir), system=system_name)
+        job_script = Constants.JOB.format(out_dir=str(out_dirs_path), system=system_name)
         if debug: print(f"Job script: {job_script}")
         
-        script = Constants.SCRIPT.format(data_dir=str(data_dir), out_dir=str(out_dir), system=system_name)
+        script = Constants.SCRIPT.format(data_dir=str(data_dir), out_dir=str(out_dirs_path), system=system_name)
         if debug: print(f"Script: {script}")
         
         script_file = out_dirs_path / f"{system_name}.sh"
