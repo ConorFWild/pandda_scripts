@@ -9,7 +9,7 @@ class Constants:
     SCRIPT = (
         "#!/bin/bash\n"
         ". /data/share-2/conor/anaconda3/etc/profile.d/conda.sh; conda activate env_rdkit; source /data/share-2/conor/xtal_software/ccp4-7.1/bin/ccp4.setup-sh; source /data/share-2/conor/xtal_software/phenix/phenix-1.18.2-3874/phenix_env.sh; source /data/share-2/conor/xtal_software/buster-2.10/setup.sh\n"
-        "python /data/share-2/conor/pandda/pandda_scripts/local_cluster_mask.py {data_dir}/{system} {out_dir}/{system} \"*.pdb\" \"*.mtz\" \"FWT,PHWT\" \"grid\"\n"
+        "python /data/share-2/conor/pandda/pandda_scripts/local_cluster_mask.py {data_dir} {out_dir}/{system} \"*.pdb\" \"*.mtz\" \"FWT,PHWT\" \"grid\"\n"
     )
     
     JOB = (
