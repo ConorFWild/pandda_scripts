@@ -54,7 +54,7 @@ def write_script(script, file):
     
     
 def submit(job_file):
-    command = Constants.SUBMIT.format(str(job_file))
+    command = Constants.SUBMIT.format(job_file=str(job_file))
     execute(command)
     
     
