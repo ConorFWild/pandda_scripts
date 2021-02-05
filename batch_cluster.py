@@ -67,6 +67,7 @@ def main(data_dirs, out_dirs, debug=True):
     out_dirs_path = Path(out_dirs)
     
     for data_dir in data_dirs_path.glob("*"):
+        if debug: print("#################################################")
         if debug: print(data_dir)
         
         system_name = data_dir.name
