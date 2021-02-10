@@ -510,13 +510,14 @@ def save_aoc(clustering_dict, out_file):
         
         num_in_cluster_dict = {}
         for dtag, cluster_idx in clustering_dict.items():
-            if not cluster_idx in num_in_cluster_dict:
+            print(cluster_idx)
+            if cluster_idx not in num_in_cluster_dict:
                 num_in_cluster_dict[cluster_idx] = 0
             num_in_cluster_dict[cluster_idx] = num_in_cluster_dict[cluster_idx] + 1
             
         largest_cluster_fraction_list.append(max(list(num_in_cluster_dict.values())) / len(cluster_dict))
         
-    aoc =  np.mean(largest_cluster_fraction_list)
+    aoc = np.mean(largest_cluster_fraction_list)
     
     with open(str(out_file)) as f:
         json.dump({"aoc": float(aoc)}, f)
