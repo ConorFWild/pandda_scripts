@@ -742,7 +742,8 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT","PHW
             args.out_dir / f"{residue_id}_embed.png"
         )
         
-        clustering_dict[residue_id] = {dtag: cluster_id for dtag, cluster_id in zip(samples.keys(), cluster_ids)}
+        clustering_dict[residue_id] = {dtag: cluster_id for dtag, cluster_id in zip(samples.keys(),
+                                                                                    cluster_ids.flatten().tolist())}
         
         print(f"Found {np.unique(cluster_ids).size} clusters")
         
