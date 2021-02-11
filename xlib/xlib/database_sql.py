@@ -707,7 +707,8 @@ class Database:
 
                 event_map = event_dir / xlib.data.Constants.PANDDA_EVENT_MAP_FILE.format(dtag=dataset.dtag,
                                                                                          event_idx=row["event_idx"],
-                                                                                         bdc=row["bdc"])
+                                                                                         bdc=round(row["bdc"], 2),
+                                                                                         )
 
                 event = Event(
                     event_idx=row["event_idx"],
