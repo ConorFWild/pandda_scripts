@@ -717,7 +717,7 @@ class Database:
                     y=row["y"],
                     z=row["z"],
                     analysed_Resolution=row["analysed_resolution"],
-                    event_map=event_map,
+                    event_map=str(event_map),
                     system=system,
                     dataset=dataset,
                     pandda=pandda,
