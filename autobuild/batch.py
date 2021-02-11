@@ -27,10 +27,19 @@ def dispatch(event: database_sql.Event, out_dir: Path):
     try_make_dir(event_dir)
 
     # Write the script that will call python to autobuild the event
-    executable_script = Constants.EXECUTABLE.format(event_dir=str(event_dir),
+    model = event.dataset.model.path
+    xmap = event.event_map
+    mtz = event.dataset.reflections.path
+    smiles= event.dataset.smiles.path
+
+    executable_script = Constants.EXECUTABLE.format(model,
+                                                    xmap,
+                                                    mtz,
+                                                    smiles=smiles,
                                                     x=event.x,
                                                     y=event.y,
                                                     z=event.z,
+                                                    out_dir = str(event_dir)
                                                     )
     executable_script_file = event_dir / Constants.EXECUTABLE_SCRIPT_FILE.format(dtag=event.dataset.dtag,
                                                                                  event_idx=event.event_idx)
