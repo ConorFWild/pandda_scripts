@@ -23,6 +23,7 @@ import gemmi
 
 from xlib import *
 
+
 # ########
 # debug
 # #########
@@ -36,7 +37,8 @@ def summarise_grid(grid: gemmi.FloatGrid):
         f"Grid min: {np.min(grid_array)} \n"
         f"Grid mean: {np.mean(grid_array)} \n"
     ))
-    
+
+
 def summarise_mtz(mtz: gemmi.Mtz):
     mtz_array = np.array(mtz, copy=False)
     print(
@@ -45,13 +47,14 @@ def summarise_mtz(mtz: gemmi.Mtz):
             f"Mtz spacegroup: {mtz.spacegroup} \n"
         )
     )
-    
+
+
 def summarise_structure(structure: gemmi.Structure):
     num_models: int = 0
     num_chains: int = 0
-    num_residues: int = 0 
+    num_residues: int = 0
     num_atoms: int = 0
-    
+
     for model in structure:
         num_models += 1
         for chain in model:
@@ -60,24 +63,25 @@ def summarise_structure(structure: gemmi.Structure):
                 num_residues += 1
                 for atom in residue:
                     num_atoms += 1
-    
+
     print(
         (
             f"Num models: {num_models}"
             f"Num chains: {num_chains}"
             f"Num residues: {num_residues}"
             f"Num atoms: {num_atoms}"
-            )
+        )
     )
-    
+
+
 def summarise_event(event: Event):
     print(
-    (
-        f"Event system: {event.system}\n"
-        f"Event dtag: {event.dtag}\n"
-        f"Event xyz: {event.x} {event.y} {event.z}\n"
+        (
+            f"Event system: {event.system}\n"
+            f"Event dtag: {event.dtag}\n"
+            f"Event xyz: {event.x} {event.y} {event.z}\n"
+        )
     )
-)
 
 
 # ########
@@ -87,18 +91,18 @@ def summarise_event(event: Event):
 class Constants:
     DEBUG: int = 0
     JOB_SCRIPT = (
-        "#################### \n"                                                    
+        "#################### \n"
         "# \n"
-        "# Example 1                                   \n"                          
-        "# Simple HTCondor submit description file \n"                                    
-        "#                          \n"                                             
+        "# Example 1                                   \n"
+        "# Simple HTCondor submit description file \n"
+        "#                          \n"
         "####################    \n"
 
-        "Executable   = {executable_file} \n"                                                    
-        "Log          = {log_file} \n"   
+        "Executable   = {executable_file} \n"
+        "Log          = {log_file} \n"
         "Output = {output_file} \n"
         "Error = {error_file} \n"
-                                                                                
+
         "request_memory = {request_memory} GB \n"
 
         "Queue"
@@ -113,7 +117,7 @@ class Constants:
     CHANGE_PERMISSION_COMMAND = "chmod 777 {path}"
 
     SUBMIT_COMMAND = "condor_submit {job_script_file}"
-        
+
     STRIPPED_RECEPTOR_FILE = "stripped_receptor.pdb"
     LIGAND_FILE = "autobuilding_ligand.cif"
     EVENT_MTZ_FILE = "event.mtz"
@@ -128,7 +132,6 @@ class Constants:
     RSCC_TABLE_FILE = "rscc_table.csv"
 
     BUILD_DIR_PATTERN = "{pandda_name}_{dtag}_{event_idx}"
-
 
     CUMULATIVE_HITS_PLOT_FILE = "cumulative_hits.png"
 
@@ -158,19 +161,19 @@ class Constants:
     PANDDA_EVENT_MAP_FILE = "{dtag}-event_{event_idx}_1-BDC_{bdc}_map.native.ccp4"
 
     PANDDA_LOG_FILE = "pandda_log.json"
-    
-    ELBOW_COMMAND = "cd {event_dir.event_dir}; phenix. {smiles_file.smiles_file} --output=\"{autobuilding_ligand}\""
+
+    ELBOW_COMMAND = "cd {event_dir.event_dir}; phenix. {smiles_file.smiles_file} --output=\"{prefix}\""
     FINAL_LIGAND_CIF_FILE = "final_ligand_cif.cif"
-    
+
     MASKED_PDB_FILE = "masked.pdb"
-    
+
     CUT_OUT_EVENT_MAP_FILE = "cut_out_event_map.ccp4"
-    
+
     RHOFIT_LOG_FILE = "rhofit.log"
     RHOFIT_OUTPUT_FILE = "rhofit.out"
     RHOFIT_ERROR_FILE = "rhofit.err"
     RHOFIT_JOB_SCRIPT_FILE = "rhofit.job"
-    
+
     RHOFIT_SCRIPT = (
         "#!/bin/bash \n"
         "conda activate pandda \n"
@@ -191,18 +194,18 @@ class Constants:
     )
     PANDDA_RHOFIT_SCRIPT_FILE = "/data/share-2/conor/pandda/pandda_scripts/pandda_rhofit.sh"
     RHOFIT_SCRIPT_FILE = "run_rhofit.sh"
-    
+
     PHASE_GRAFTED_MTZ_FILE = "phase_grafted_mtz.mtz"
-    
+
     RHOFIT_HIT_REGEX = "(Hit_[^\s]+)[\s]+[^\s]+[\s]+[^\s]+[\s]+([^\s]+)"
     RHOFIT_CLUSTER_BUILD_REGEX = "Hit_([^_]+)_[^_]+_([^_]+).pdb"
-    
+
     RHOFIT_EVENT_BUILD_RESULT_FILE = "result.json"
-    
+
     CLUSTER = "CONDOR"
     CONDOR_JOB_ID_REGEX = r"[0-9]+\."
     CONDOR_STATUS_COMMAND = r"condor_q"
-    
+
 
 @dataclasses.dataclass()
 class Args:
@@ -210,21 +213,21 @@ class Args:
     autobuild_dirs_dir: Path
     reference_structure_dir: Path
     debug: int
-    
+
     @staticmethod
     def from_args(args: Any):
         pandda_dirs_dir = Path(args.pandda_dirs_dir)
         autobuild_dirs_dir = Path(args.autobuild_dirs_dir)
         reference_structure_dir = Path(args.reference_structure_dir)
         debug: int = int(args.debug)
-        
+
         return Args(
             pandda_dirs_dir,
             autobuild_dirs_dir,
             reference_structure_dir,
             debug,
         )
-    
+
     @staticmethod
     def from_cmd():
         parser = argparse.ArgumentParser()
@@ -238,7 +241,7 @@ class Args:
                             default=2,
                             )
         args = parser.parse_args()
-        
+
         return Args.from_args(args)
 
 
@@ -288,7 +291,8 @@ class Reflection:
         data = row[3:]
         return Reflection(hkl,
                           data)
-    
+
+
 @dataclasses.dataclass()
 class ReflectionsDict:
     reflections_dict: Dict[HKL, Reflection]
@@ -322,44 +326,47 @@ class ReflectionsDict:
         array = np.vstack(rows)
 
         return array
-        
 
 
 @dataclasses.dataclass()
 class System:
     system: str
-    
+
     def __hash__(self) -> int:
         return hash(self.system)
+
 
 @dataclasses.dataclass()
 class Dtag:
     dtag: str
-    
+
     def __hash__(self) -> int:
         return hash(self.dtag)
+
 
 @dataclasses.dataclass()
 class EventIDX:
     event_idx: str
-    
+
     def __hash__(self) -> int:
         return hash(self.event_idx)
+
 
 @dataclasses.dataclass()
 class EventID:
     system: System
     dtag: Dtag
     event_idx: EventIDX
-    
+
     def __hash__(self) -> int:
         return hash(
             (self.system,
-                     self.dtag,
-                     self.event_idx,
-                     )
-                    )
-    
+             self.dtag,
+             self.event_idx,
+             )
+        )
+
+
 @dataclasses.dataclass()
 class Event:
     event_input_dir: Path
@@ -372,7 +379,8 @@ class Event:
     y: float
     z: float
 
-@dataclasses.dataclass()    
+
+@dataclasses.dataclass()
 class BuildNumberID:
     build_number_id: int
 
@@ -393,8 +401,6 @@ class Build:
     build_file: Path
     build_rscc: float
 
-
-    
 
 @dataclasses.dataclass()
 class ClusterBuildResults:
@@ -422,11 +428,11 @@ class EventBuildResults:
 
     @classmethod
     def from_event(cls, event: Event):
-            
-        rhofit_dir:Path = event.event_output_dir / Constants.RHOFIT_DIR
-        
+
+        rhofit_dir: Path = event.event_output_dir / Constants.RHOFIT_DIR
+
         rhofit_results_file: Path = rhofit_dir / Constants.RHOFIT_RESULTS_FILE
-        
+
         if not rhofit_results_file.exists():
             return EventBuildResults(False, {})
 
@@ -465,7 +471,7 @@ class EventBuildResults:
             event_clusters[cluster_id] = ClusterBuildResults(cluster_builds)
 
         return EventBuildResults(True, event_clusters)
-    
+
     def to_json_file(self, event: Event):
         builds = {}
         clusters = self.build_results
@@ -479,37 +485,39 @@ class EventBuildResults:
                     build_number.build_number_id] = {
                     "build_file": str(build_results[build_number].build_file),
                     "build_rscc": float(build_results[build_number].build_rscc),
-                        }
-                    
+                }
+
         result_json_file: Path = event.event_output_dir / Constants.RHOFIT_RESULT_JSON_FILE
-        
+
         with open(result_json_file, "w") as f:
             json.dump(builds, f)
 
         return result_json_file
-        
-    
-    
+
+
 # ########
 # Get Files functions
 # #########
 
 def get_event_input_dir(system: System, dtag: Dtag, event_idx: EventIDX, pandda_dirs_dir: Path) -> Path:
-    return pandda_dirs_dir / system.system /Constants.PANDDA_PROCESSED_DATASETS_DIR / dtag.dtag
-    
+    return pandda_dirs_dir / system.system / Constants.PANDDA_PROCESSED_DATASETS_DIR / dtag.dtag
+
+
 def get_pdb_file(event: Event) -> Path:
     event_dir: Path = event.event_input_dir
     pdb_file: Path = event_dir / Constants.PANDDA_PDB_FILE.format(event.dtag.dtag)
     return pdb_file
-    
+
+
 def get_ligand_cif_file(event: Event) -> Union[Path, None]:
     event_dir: Path = event.event_input_dir
-    ligand_cif_file = event_dir/ Constants.PANDDA_LIGAND_CIF_FILE
+    ligand_cif_file = event_dir / Constants.PANDDA_LIGAND_CIF_FILE
     if ligand_cif_file.exists():
         return ligand_cif_file
     else:
         return None
-        
+
+
 def get_ligand_smiles_file(event: Event) -> Union[Path, None]:
     event_dir: Path = event.event_input_dir
     compound_dir: Path = event_dir / Constants.PANDDA_LIGAND_FILES_DIR
@@ -518,7 +526,8 @@ def get_ligand_smiles_file(event: Event) -> Union[Path, None]:
         return ligand_smiles_file
     else:
         return None
-        
+
+
 def get_ligand_pdb_file(event: Event) -> Union[Path, None]:
     event_dir: Path = event.event_input_dir
     compound_dir: Path = event_dir / Constants.PANDDA_LIGAND_FILES_DIR
@@ -527,21 +536,24 @@ def get_ligand_pdb_file(event: Event) -> Union[Path, None]:
         return ligand_pdb_file
     else:
         return None
-        
+
+
 def get_mtz_file(event: Event) -> Path:
     event_dir: Path = event.event_input_dir
     mtz_file: Path = event_dir / Constants.PANDDA_MTZ_FILE.format(event.dtag.dtag)
     return mtz_file
-        
+
+
 def get_event_map_file(event: Event) -> Path:
     event_dir: Path = event.event_input_dir
     event_map_file: Path = event_dir / Constants.PANDDA_EVENT_MAP_FILE.format(
         dtag=event.dtag.dtag,
         event_idx=event.event_idx.event_idx,
         bdc=event.bdc,
-        )
+    )
     return event_map_file
-        
+
+
 # ########
 # Make inpuit files
 # #########
@@ -553,6 +565,7 @@ def get_event_output_dir(system: System, dtag: Dtag, event_idx: EventIDX, autobu
 def get_pdb(pdb_file: Path) -> gemmi.Structure:
     structure: gemmi.Structure = gemmi.read_structure(str(pdb_file))
     return structure
+
 
 def get_event_map(event_map_file: Path) -> gemmi.FloatGrid:
     m = gemmi.read_ccp4_map(str(event_map_file))
@@ -566,19 +579,21 @@ def get_event_map(event_map_file: Path) -> gemmi.FloatGrid:
 
     new_grid_array = np.array(new_grid, copy=False)
     new_grid_array[:, :, :] = grid_array[:, :, :]
-    
+
     return new_grid
+
 
 def get_mtz(mtz_file: Path) -> gemmi.Mtz:
     mtz: gemmi.Mtz = gemmi.read_mtz_file(str(mtz_file))
     return mtz
-    
+
+
 def get_masked_pdb(pdb: gemmi.Structure, event: Event, radius: float = 7.0) -> gemmi.Structure:
     event_centoid = gemmi.Position(
         event.x,
         event.y,
         event.z,
-        )
+    )
 
     new_structure = gemmi.Structure()
 
@@ -610,13 +625,15 @@ def get_masked_pdb(pdb: gemmi.Structure, event: Event, radius: float = 7.0) -> g
 
     return pdb
 
+
 def get_masked_pdb_file(masked_pdb: gemmi.Structure, event: Event) -> Path:
     masked_pdb_file: Path = event.event_output_dir / Constants.MASKED_PDB_FILE
     masked_pdb.write_minimal_pdb(str(masked_pdb_file))
-    
+
     return masked_pdb_file
 
-def get_cut_out_event_map(event: Event, event_map: gemmi.FloatGrid, radius:float = 10.0) -> gemmi.FloatGrid:
+
+def get_cut_out_event_map(event: Event, event_map: gemmi.FloatGrid, radius: float = 10.0) -> gemmi.FloatGrid:
     event_centroid = gemmi.Position(event.x, event.y, event.z)
 
     xmap_array = np.array(event_map, copy=True)
@@ -644,24 +661,26 @@ def get_cut_out_event_map(event: Event, event_map: gemmi.FloatGrid, radius:float
 
     return new_grid
 
+
 def get_cut_out_event_mtz(cut_out_event_map: gemmi.FloatGrid, mtz: gemmi.Mtz) -> gemmi.Mtz:
-        # cut_out_event_map.spacegroup = mtz.spacegroup
-        cut_out_event_map.spacegroup = mtz.spacegroup
+    # cut_out_event_map.spacegroup = mtz.spacegroup
+    cut_out_event_map.spacegroup = mtz.spacegroup
 
-        cut_out_event_map.symmetrize_max()
+    cut_out_event_map.symmetrize_max()
 
-        sf = gemmi.transform_map_to_f_phi(cut_out_event_map, half_l=False)
-        data = sf.prepare_asu_data(dmin=mtz.resolution_high(), with_000=True)
+    sf = gemmi.transform_map_to_f_phi(cut_out_event_map, half_l=False)
+    data = sf.prepare_asu_data(dmin=mtz.resolution_high(), with_000=True)
 
-        cut_out_event_mtz = gemmi.Mtz(with_base=True)
-        cut_out_event_mtz.spacegroup = sf.spacegroup
-        cut_out_event_mtz.cell = sf.unit_cell
-        cut_out_event_mtz.add_dataset('unknown')
-        cut_out_event_mtz.add_column('FWT', 'F')
-        cut_out_event_mtz.add_column('PHWT', 'P')
-        cut_out_event_mtz.set_data(data)
+    cut_out_event_mtz = gemmi.Mtz(with_base=True)
+    cut_out_event_mtz.spacegroup = sf.spacegroup
+    cut_out_event_mtz.cell = sf.unit_cell
+    cut_out_event_mtz.add_dataset('unknown')
+    cut_out_event_mtz.add_column('FWT', 'F')
+    cut_out_event_mtz.add_column('PHWT', 'P')
+    cut_out_event_mtz.set_data(data)
 
-        return cut_out_event_mtz
+    return cut_out_event_mtz
+
 
 def phase_graft(mtz: gemmi.Mtz, cut_out_event_mtz: gemmi.Mtz) -> gemmi.Mtz:
     initial_mtz = mtz
@@ -734,7 +753,8 @@ def phase_graft(mtz: gemmi.Mtz, cut_out_event_mtz: gemmi.Mtz) -> gemmi.Mtz:
 
     return initial_mtz
 
-def get_cut_out_event_map_file(event: Event, get_cut_out_event_map: gemmi.FloatGrid, p1: bool=True) -> Path:
+
+def get_cut_out_event_map_file(event: Event, get_cut_out_event_map: gemmi.FloatGrid, p1: bool = True) -> Path:
     cut_out_event_file: Path = event.event_output_dir / Constants.CUT_OUT_EVENT_MAP_FILE
     ccp4 = gemmi.Ccp4Map()
     ccp4.grid = get_cut_out_event_map
@@ -744,22 +764,25 @@ def get_cut_out_event_map_file(event: Event, get_cut_out_event_map: gemmi.FloatG
         ccp4.grid.symmetrize_max()
     ccp4.update_ccp4_header(2, True)
     ccp4.write_ccp4_map(str(cut_out_event_file))
-    
+
     return cut_out_event_file
 
 
 def write_mtz(mtz: gemmi.Mtz, path: Path):
     mtz.write_to_file(str(path))
 
+
 def get_phase_grafted_mtz_file(event: Event, phase_grafted_mtz: gemmi.Mtz) -> Path:
     phase_grafted_mtz_file: Path = event.event_output_dir / Constants.PHASE_GRAFTED_MTZ_FILE
     phase_grafted_mtz.write_to_file(str(phase_grafted_mtz_file))
     return phase_grafted_mtz_file
-    
+
+
 def get_elbow_command(input_file: Path) -> str:
-    command = Constants.ELBOW_COMMAND 
+    command = Constants.ELBOW_COMMAND
     return command
-    
+
+
 def submit(command: str) -> Tuple[str, str]:
     p = subprocess.Popen(
         command,
@@ -768,16 +791,16 @@ def submit(command: str) -> Tuple[str, str]:
         stderr=subprocess.PIPE,
     )
     stdin, stderr = p.communicate()
-    
+
     return str(stdin), str(stderr)
-    
-    
+
+
 def get_final_ligand_cif_file(
-    event: Event,
-    ligand_cif_file: Union[Path, None],
-    ligand_smiles_file: Union[Path, None],
-    ligand_pdb_file: Union[Path, None],
-    ) -> Union[Path, None]:
+        event: Event,
+        ligand_cif_file: Union[Path, None],
+        ligand_smiles_file: Union[Path, None],
+        ligand_pdb_file: Union[Path, None],
+) -> Union[Path, None]:
     event_output_dir: Path = event.event_output_dir
     final_ligand_cif_file: Path = event_output_dir / Constants.FINAL_LIGAND_CIF_FILE
 
@@ -785,36 +808,38 @@ def get_final_ligand_cif_file(
         command: str = get_elbow_command(ligand_pdb_file)
         stdout, stderr = submit(command)
         return final_ligand_cif_file
-        
+
     elif ligand_smiles_file:
         command: str = get_elbow_command(ligand_smiles_file)
         stdout, stderr = submit(command)
         return final_ligand_cif_file
-        
-        
+
+
     elif ligand_cif_file:
         final_ligand_cif_file: Path = cast(Path, ligand_cif_file)
         return Path(ligand_cif_file)
-    
+
     else:
         # raise Exception("No ligand!")
         return None
-    
+
+
 def change_permission(path: Path):
     command: str = Constants.CHANGE_PERMISSION_COMMAND.format(path=path)
     submit(command)
+
 
 # ########
 # Get run rhofit
 # #########
 
 def get_rhofit_script_clemens(
-    event: Event,
-        event_map_file: Path, 
-            mtz_file: Path,
+        event: Event,
+        event_map_file: Path,
+        mtz_file: Path,
         masked_pdb_file: Path,
         ligand_cif_file: Path,
-        ) -> str:
+) -> str:
     event_output_dir: Path = event.event_output_dir
     # rhofit_dir: Path = event_output_dir / Constants.RHOFIT_DIR 
     out_dir: Path = event_output_dir
@@ -828,12 +853,14 @@ def get_rhofit_script_clemens(
     )
     return rhofit_command
 
+
 def get_rhofit_script_file(event: Event, rhofit_script: str) -> Path:
     rhofit_script_file: Path = event.event_output_dir / Constants.RHOFIT_SCRIPT_FILE
     with open(str(rhofit_script_file), "w") as f:
         f.write(rhofit_script)
-        
+
     return rhofit_script_file
+
 
 def get_job_script(event: Event, rhofit_script_file: Path, request_memory: int = 15) -> str:
     event_output_dir: Path = event.event_output_dir
@@ -841,7 +868,7 @@ def get_job_script(event: Event, rhofit_script_file: Path, request_memory: int =
     log_file = event_output_dir / Constants.RHOFIT_LOG_FILE
     output_file = event_output_dir / Constants.RHOFIT_OUTPUT_FILE
     error_file = event_output_dir / Constants.RHOFIT_ERROR_FILE
-    
+
     job_script: str = Constants.JOB_SCRIPT.format(
         executable_file=executable_file,
         log_file=log_file,
@@ -849,10 +876,10 @@ def get_job_script(event: Event, rhofit_script_file: Path, request_memory: int =
         error_file=error_file,
         request_memory=request_memory,
     )
-    
-    
+
     return job_script
-    
+
+
 def get_job_script_file(job_script: str, event: Event) -> Path:
     event_output_dir: Path = event.event_output_dir
     job_script_file: Path = event_output_dir / Constants.RHOFIT_JOB_SCRIPT_FILE
@@ -861,54 +888,59 @@ def get_job_script_file(job_script: str, event: Event) -> Path:
 
     return job_script_file
 
+
 def get_submit_command(job_script_file: Path) -> str:
     submit_command: str = Constants.SUBMIT_COMMAND.format(job_script_file=job_script_file)
     return submit_command
+
 
 def get_condor_jobid(stdout: str) -> str:
     pattern: Pattern = re.compile(Constants.CONDOR_JOB_ID_REGEX)
     job_id_match_list: List[str] = pattern.findall(stdout)
     return job_id_match_list[0]
-    
-def get_condor_cluster_status()->str:
-    command:str = Constants.CONDOR_STATUS_COMMAND
+
+
+def get_condor_cluster_status() -> str:
+    command: str = Constants.CONDOR_STATUS_COMMAND
     stdout, stderr = submit(command)
-    
+
     return stdout
 
-def get_job_running(jobid_str:str, cluster_status_str:str) -> bool:
+
+def get_job_running(jobid_str: str, cluster_status_str: str) -> bool:
     pattern: Pattern = re.compile(jobid_str)
     matches: List[str] = pattern.findall(cluster_status_str)
-    
+
     if len(matches) == 0:
         return False
-    
-    else: 
+
+    else:
         return True
-    
+
 
 def check_job(stdout: str):
-    if Constants.CLUSTER== "CONDOR":
+    if Constants.CLUSTER == "CONDOR":
         jobid_str: str = get_condor_jobid(stdout)
 
-    if Constants.DEBUG >0: print(f"Jobid is: {jobid_str}")
-        
+    if Constants.DEBUG > 0: print(f"Jobid is: {jobid_str}")
+
     while True:
-        if Constants.CLUSTER== "CONDOR":
+        if Constants.CLUSTER == "CONDOR":
             cluster_status_str: str = get_condor_cluster_status()
-            
-        if Constants.DEBUG >0: print(f"cluster_status_str is: {cluster_status_str}")
-            
+
+        if Constants.DEBUG > 0: print(f"cluster_status_str is: {cluster_status_str}")
+
         if get_job_running(jobid_str, cluster_status_str):
-            if Constants.DEBUG >0: print(f"\tNot yet finished!")
+            if Constants.DEBUG > 0: print(f"\tNot yet finished!")
             time.sleep(5)
         else:
             break
 
+
 # ########
 # Script functions
 # #########
-    
+
 def build_event(event: Event):
     # ########
     # Debug event info
@@ -919,17 +951,17 @@ def build_event(event: Event):
     # Check if there is already an event
     # #########    
     build_result_file: Path = event.event_output_dir / Constants.RHOFIT_RESULT_JSON_FILE
-    if Constants.DEBUG >0: print(f"Build result file is {build_result_file}")
+    if Constants.DEBUG > 0: print(f"Build result file is {build_result_file}")
     if build_result_file.exists():
         with open(str(build_result_file), "r") as f:
             result_dict = json.load(f)
-        
+
         return EventBuildResults.from_dict(result_dict)
 
     # ########
     # Get Files
     # #########
-    
+
     # Get pdb path
     pdb_file: Path = get_pdb_file(event)
     if Constants.DEBUG > 0: print(f"pdb_file is: {pdb_file}")
@@ -941,56 +973,54 @@ def build_event(event: Event):
     # Get ligand smile paths
     ligand_smiles_file: Union[Path, None] = get_ligand_smiles_file(event)
     if Constants.DEBUG > 0: print(f"ligand_smiles_file is: {ligand_smiles_file}")
-    
+
     # Get ligand pdb paths
     ligand_pdb_file: Union[Path, None] = get_ligand_pdb_file(event)
     if Constants.DEBUG > 0: print(f"ligand_pdb_file is: {ligand_pdb_file}")
-    
+
     # Get original mtz paths
     mtz_file: Path = get_mtz_file(event)
     if Constants.DEBUG > 0: print(f"mtz_file is: {mtz_file}")
-    
+
     # Event map file
     event_map_file: Path = get_event_map_file(event)
     if Constants.DEBUG > 0: print(f"event_map_file is: {event_map_file}")
-    
+
     # copy over if debug
     if Constants.DEBUG > 0:
         initial_pdb_file: Path = event.event_output_dir / "initial_pdb.pdb"
         initial_mtz_file: Path = event.event_output_dir / "initial_mtz.mtz"
         initial_event_map_file: Path = event.event_output_dir / "event_map.ccp4"
-        
+
         shutil.copyfile(pdb_file, initial_pdb_file)
         shutil.copyfile(mtz_file, initial_mtz_file)
         shutil.copyfile(event_map_file, initial_event_map_file)
-        
 
     # ########
     # Make input files
     # #########
-    
+
     # Get pdb
     pdb: gemmi.Structure = get_pdb(pdb_file)
-    if Constants.DEBUG > 0: 
+    if Constants.DEBUG > 0:
         print("# initial pdb")
         summarise_structure(pdb)
-    
+
     # Get event map 
     event_map: gemmi.FloatGrid = get_event_map(event_map_file)
-    if Constants.DEBUG > 0: 
+    if Constants.DEBUG > 0:
         print("# Event map")
         summarise_grid(event_map)
 
-
     # Cut out events:
     cut_out_event_map: gemmi.FloatGrid = get_cut_out_event_map(event, event_map)
-    if Constants.DEBUG > 0: 
+    if Constants.DEBUG > 0:
         print("# Cut event map")
         summarise_grid(cut_out_event_map)
-        
+
     # Save cut out event
     cut_out_event_map_file: Path = get_cut_out_event_map_file(event, cut_out_event_map)
-    
+
     # Get ligand file
     final_ligand_cif_file: Union[Path, None] = get_final_ligand_cif_file(
         event,
@@ -998,37 +1028,37 @@ def build_event(event: Event):
         ligand_smiles_file,
         ligand_pdb_file,
     )
-    
+
     if final_ligand_cif_file is None:
         return None
     else:
         cast(Path, final_ligand_cif_file)
-    
+
     # ########
     # Run Rhofit
     # #########
-    
+
     # Make rhofit commands
     rhofit_script: str = get_rhofit_script_clemens(
         event,
         cut_out_event_map_file,
-        mtz_file, 
+        mtz_file,
         pdb_file,
         final_ligand_cif_file,
-        )
+    )
     if Constants.DEBUG > 0: print(f"rhofit_command is: {rhofit_script}")
 
     # Rhofit script file
     rhofit_script_file: Path = get_rhofit_script_file(event, rhofit_script)
     if Constants.DEBUG > 0: print(f"rhofit_script_file is: {rhofit_script_file}")
-    
+
     # Change permissions
     change_permission(rhofit_script_file)
 
     # Make job script
     job_script: str = get_job_script(event, rhofit_script_file)
     if Constants.DEBUG > 0: print(f"job_script is: {job_script}")
-    
+
     # Write job script
     job_script_file: Path = get_job_script_file(job_script, event)
     if Constants.DEBUG > 0: print(f"job_script_file is: {job_script_file}")
@@ -1037,37 +1067,36 @@ def build_event(event: Event):
     submit_command: str = get_submit_command(job_script_file)
     if Constants.DEBUG > 0: print(f"submit_command is: {submit_command}")
 
-    
     # Execute job script
     stdout, stderr = submit(submit_command)
     if Constants.DEBUG > 0: print(f"stdin is: {stdout}")
     if Constants.DEBUG > 0: print(f"stderr is: {stderr}")
-    
+
     # Check if job is finished
     check_job(stdout)
-    
+
     # Parse Rhofit result
     result: EventBuildResults = EventBuildResults.from_event(event)
     if Constants.DEBUG > 0: print(f"result is: {result}")
-    
+
     # Save result
     result_json_file: Path = result.to_json_file(event)
     if Constants.DEBUG > 0: print(f"result_json_file is: {result_json_file}")
 
     # return
     return result_json_file
-    
-    
+
+
 def get_event_table_dict(path_list: List[Path]) -> Dict[System, pd.DataFrame]:
     event_table_dict = {}
-    
-    for path in path_list:    
+
+    for path in path_list:
         system: System = System(path.name)
-        
+
         event_table_file: Path = path / Constants.PANDDA_ANALYSES_DIR / Constants.PANDDA_ANALYSE_EVENTS_FILE
-        
-        if Constants.DEBUG >0: print(event_table_file)
-        
+
+        if Constants.DEBUG > 0: print(event_table_file)
+
         if event_table_file.exists():
             # try:
             event_table: pd.DataFrame = pd.read_csv(str(event_table_file))
@@ -1076,8 +1105,9 @@ def get_event_table_dict(path_list: List[Path]) -> Dict[System, pd.DataFrame]:
             #     print(e)
             #     print(f"event_table_file seems empty?")
             #     continue
-    
+
     return event_table_dict
+
 
 def get_event_id(system: System, row: pd.Series) -> EventID:
     dtag: Dtag = Dtag(row["dtag"])
@@ -1086,20 +1116,20 @@ def get_event_id(system: System, row: pd.Series) -> EventID:
         system=system,
         dtag=dtag,
         event_idx=event_idx,
-        )
-    
-def get_event(system: System, row: pd.Series, pandda_dirs_dir: Path, autobuild_dirs_dir: Path) -> Event:
+    )
 
+
+def get_event(system: System, row: pd.Series, pandda_dirs_dir: Path, autobuild_dirs_dir: Path) -> Event:
     dtag: Dtag = Dtag(row["dtag"])
     event_idx: EventIDX = EventIDX(str(row["event_idx"]))
     bdc = row["1-BDC"]
     x = row["x"]
     y = row["y"]
     z = row["z"]
-    
+
     event_input_dir: Path = get_event_input_dir(system, dtag, event_idx, pandda_dirs_dir)
     event_output_dir: Path = get_event_output_dir(system, dtag, event_idx, autobuild_dirs_dir)
-    
+
     return Event(
         event_input_dir,
         event_output_dir,
@@ -1111,69 +1141,73 @@ def get_event(system: System, row: pd.Series, pandda_dirs_dir: Path, autobuild_d
         y=y,
         z=z,
     )
-    
 
-def get_event_dict(event_table_dict: Dict[System, pd.DataFrame], pandda_dirs_dir: Path, autobuild_dirs_dir: Path) -> Dict[EventID, Event]:
+
+def get_event_dict(event_table_dict: Dict[System, pd.DataFrame], pandda_dirs_dir: Path, autobuild_dirs_dir: Path) -> \
+Dict[EventID, Event]:
     event_dict: Dict[EventID, Event] = {}
-    
+
     for system, event_table in event_table_dict.items():
         for index, row in event_table.iterrows():
             event_id: EventID = get_event_id(system, row)
             event: Event = get_event(system, row, pandda_dirs_dir, autobuild_dirs_dir)
-            
+
             event_dict[event_id] = event
-            
+
     return event_dict
-    
+
 
 def make_system_dir(autobuild_dirs_dir: Path, event: Event):
-    system_dir = autobuild_dirs_dir / event.system.system 
-    
+    system_dir = autobuild_dirs_dir / event.system.system
+
     if system_dir.exists():
         return
-    
+
     else:
         mkdir(str(system_dir))
-    
-    
+
+
 def make_dtag_dir(autobuild_dirs_dir: Path, event: Event):
-    dtag_dir = autobuild_dirs_dir / event.system.system / event.dtag.dtag 
-    
+    dtag_dir = autobuild_dirs_dir / event.system.system / event.dtag.dtag
+
     if dtag_dir.exists():
         return
-    
+
     else:
         mkdir(str(dtag_dir))
 
-    
+
 def make_event_idx_dir(autobuild_dirs_dir: Path, event: Event):
     event_idx_dir = autobuild_dirs_dir / event.system.system / event.dtag.dtag / event.event_idx.event_idx
-    
+
     if event_idx_dir.exists():
         return
-    
+
     else:
         mkdir(str(event_idx_dir))
 
+
 def make_rhofit_dir(autobuild_dirs_dir: Path, event: Event):
     event_rhofit_dir: Path = autobuild_dirs_dir / event.system.system / event.dtag.dtag / event.event_idx.event_idx / Constants.RHOFIT_DIR
-    
+
     if event_rhofit_dir.exists():
         return
-    
+
     else:
         mkdir(str(event_rhofit_dir))
+
 
 def make_event_output_dir(event: Event, autobuild_dirs_dir: Path):
     make_system_dir(autobuild_dirs_dir, event)
     make_dtag_dir(autobuild_dirs_dir, event)
     make_event_idx_dir(autobuild_dirs_dir, event)
     # make_rhofit_dir(autobuild_dirs_dir, event)
-    
-    
+
+
 def make_autobuild_output_dir(event_dict: Dict[EventID, Event], autobuild_dirs_dir: Path):
     for event_id, event in event_dict.items():
         make_event_output_dir(event, autobuild_dirs_dir)
+
 
 def map_dict(func: Callable, dictionary: Dict[EventID, Event]):
     # if Constants.DEBUG > 0:
@@ -1193,18 +1227,20 @@ def map_dict(func: Callable, dictionary: Dict[EventID, Event]):
         for value
         in values
     )
-    
+
+
 def get_event_with_reference_dict(
-    event_dict,
-    reference_structure_dict: ReferenceStructureDict,
-    ) -> Dict[EventID, Event]:
+        event_dict,
+        reference_structure_dict: ReferenceStructureDict,
+) -> Dict[EventID, Event]:
     new_events: Dict[EventID, Event] = {}
     for dtag in reference_structure_dict:
         for event_id in event_dict:
             if event_id.dtag.dtag == dtag.dtag:
                 new_events[event_id] = event_dict[event_id]
-                
+
     return new_events
+
 
 # ########
 # Script
@@ -1221,21 +1257,21 @@ def main():
     if Constants.DEBUG > 0: print(f"Found {len(system_path_list)} systems")
     system_path_dict: SystemPathDict = SystemPathDict.from_dir(args.pandda_dirs_dir)
 
-
     # Get events tables: List[Path] -> Dict[EventID, Event]
     event_table_dict: Dict[System, pd.DataFrame] = get_event_table_dict(system_path_list)
     if Constants.DEBUG > 0: print(f"Found {len(event_table_dict)} system tables")
-    
+
     # Get events
     event_dict: Dict[EventID, Event] = get_event_dict(event_table_dict, args.pandda_dirs_dir, args.autobuild_dirs_dir)
     if Constants.DEBUG > 0: print(f"Found {len(event_dict)} events")
-    
+
     # Get reference models
     # reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_system_path_dict(system_path_dict)
-    reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_structure_dir(args.reference_structure_dir)
+    reference_structure_dict: ReferenceStructureDict = ReferenceStructureDict.from_structure_dir(
+        args.reference_structure_dir)
 
     if Constants.DEBUG > 0: print(f"Found {len(reference_structure_dict)} reference models")
-    
+
     # Filter events that have models
     event_with_reference_dict: Dict[EventID, Event] = get_event_with_reference_dict(
         event_dict,
@@ -1245,17 +1281,16 @@ def main():
 
     # Make output directory
     make_autobuild_output_dir(
-        event_with_reference_dict, 
+        event_with_reference_dict,
         args.autobuild_dirs_dir,
-        )
-
+    )
 
     # Map over all events
     map_dict(
-        build_event, 
+        build_event,
         event_with_reference_dict,
-        )
-        
+    )
+
 
 if __name__ == "__main__":
     main()

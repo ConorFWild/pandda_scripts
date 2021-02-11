@@ -22,27 +22,32 @@ def try_make_dir(path: Path):
 
 
 def dispatch(event: database_sql.Event, out_dir: Path):
-    # Event dir
+    # Create the Event dir
     event_dir = out_dir / f"{event.dataset.dtag}_{event.event_idx}"
     try_make_dir(event_dir)
 
-    # Write the executable
+    # Write the script that will call python to autobuild the event
     executable_script = Constants.EXECUTABLE.format(event_dir=str(event_dir),
                                                     x=event.x,
                                                     y=event.y,
                                                     z=event.z,
                                                     )
-    executable_script_file = event_dir / Constants.EXECUTABLE_SCRIPT_FILE
+    executable_script_file = event_dir / Constants.EXECUTABLE_SCRIPT_FILE.format(dtag=event.dataset.dtag,
+                                                                                 event_idx=event.event_idx)
     with open(executable_script_file, "w") as f:
         f.write(executable_script)
 
+    # Generate a job script file for a condor cluster
     job_script = Constants.JOB.format(executable_script_file=str(executable_script_file))
-    job_script_file = event_dir / Constants.JOB_SCRIPT_FILE
+    job_script_file = event_dir / Constants.JOB_SCRIPT_FILE.format(dtag=event.dataset.dtag,
+                                                                   event_idx=event.event_idx)
     with open(job_script_file, "w") as f:
         f.write(job_script)
 
-    command = Constants.COMMAND.format()
+    # Generate a shell command to submit the job to run the python script
+    command = Constants.COMMAND.format(job_script_file=job_script_file)
 
+    # Submit the job
     execute(command)
 
 
@@ -59,7 +64,10 @@ def main(database_file: str, output_dir: str):
     event_list = event_query.all()
 
     # Dispatch to run
-    map(lambda event: dispatch(event, output_dir_path), event_list)
+    map(
+        lambda event: dispatch(event, output_dir_path),
+        event_list,
+    )
 
 
 if __name__ == "__main__":
