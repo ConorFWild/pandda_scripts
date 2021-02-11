@@ -1,7 +1,8 @@
 class Constants:
     EXECUTABLE = (
         "#!/bin/bash \n"
-        "conda activate pandda \n"
+        ". /data/share-2/conor/anaconda3/etc/profile.d/conda.sh\n" 
+        "conda activate env_rdkit\n"
         "source ~/.bashrc \n"
         "source /data/share-2/conor/xtal_software/ccp4-7.1/bin/ccp4.setup-sh \n"
         "source /data/share-2/conor/xtal_software/phenix/phenix-1.18.2-3874/phenix_env.sh \n"
@@ -44,8 +45,9 @@ class Constants:
     PANDDA_RHOFIT_SCRIPT_FILE = "/data/share-2/conor/pandda/pandda_scripts/pandda_rhofit.sh"
     RHOFIT_COMMAND = (
         "#!/bin/bash \n"
-        "conda activate pandda \n"
         "source ~/.bashrc \n"
+        ". /data/share-2/conor/anaconda3/etc/profile.d/conda.sh\n" 
+        "conda activate env_rdkit\n"  
         "source /data/share-2/conor/xtal_software/ccp4-7.1/bin/ccp4.setup-sh \n"
         "source /data/share-2/conor/xtal_software/phenix/phenix-1.18.2-3874/phenix_env.sh \n"
         "source /data/share-2/conor/xtal_software/buster-2.10/setup.sh \n"
