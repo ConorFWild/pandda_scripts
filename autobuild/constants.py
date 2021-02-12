@@ -44,7 +44,7 @@ class Constants:
 
     LIGAND_PREFIX = "ligand"
     LIGAND_CIF_FILE = "ligand.cif"
-    ELBOW_COMMAND = "cd {out_dir}; phenix. {smiles_file} --output=\"{prefix}\""
+    ELBOW_COMMAND = "cd {out_dir}; phenix.elbow {smiles_file} --output=\"{prefix}\"; cd -"
 
     PANDDA_RHOFIT_SCRIPT_FILE = "/data/share-2/conor/pandda/pandda_scripts/pandda_rhofit.sh"
     RHOFIT_COMMAND = (
