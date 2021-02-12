@@ -22,15 +22,17 @@ def try_make_dir(path: Path):
 
 
 def dispatch(event: database_sql.Event, out_dir: Path):
+    event_id = f"{event.dataset.dtag}_{event.event_idx}"
+
     # Create the Event dir
-    event_dir = out_dir / f"{event.dataset.dtag}_{event.event_idx}"
+    event_dir = out_dir / event_id
     try_make_dir(event_dir)
 
     # Write the script that will call python to autobuild the event
     model = event.dataset.model.path
     xmap = event.event_map
     mtz = event.dataset.reflections.path
-    smiles= event.dataset.smiles.path
+    smiles = event.dataset.smiles.path
 
     executable_script = Constants.EXECUTABLE.format(model,
                                                     xmap,
@@ -39,7 +41,7 @@ def dispatch(event: database_sql.Event, out_dir: Path):
                                                     x=event.x,
                                                     y=event.y,
                                                     z=event.z,
-                                                    out_dir = str(event_dir)
+                                                    out_dir=str(event_dir)
                                                     )
     executable_script_file = event_dir / Constants.EXECUTABLE_SCRIPT_FILE.format(dtag=event.dataset.dtag,
                                                                                  event_idx=event.event_idx)
@@ -47,7 +49,18 @@ def dispatch(event: database_sql.Event, out_dir: Path):
         f.write(executable_script)
 
     # Generate a job script file for a condor cluster
-    job_script = Constants.JOB.format(executable_script_file=str(executable_script_file))
+    executable_file = str(executable_script_file)
+    log_file = Constants.LOG_FILE.format(event_id=event_id)
+    output_file = Constants.OUTPUT_FILE.format(event_id=event_id)
+    error_file = Constants.ERROR_FILE.format(event_id=event_id)
+    request_memory = Constants.REQUEST_MEMORY
+    job_script = Constants.JOB.format(
+        executable_file=executable_file,
+        log_file=log_file,
+        output_file=output_file,
+        error_file=error_file,
+        request_memory=request_memory,
+    )
     job_script_file = event_dir / Constants.JOB_SCRIPT_FILE.format(dtag=event.dataset.dtag,
                                                                    event_idx=event.event_idx)
     with open(job_script_file, "w") as f:

@@ -18,6 +18,8 @@ import xlib
 
 from xlib import data
 
+import fire
+
 
 class Constants:
     COMPOUND_TABLE = "compound"
@@ -863,6 +865,62 @@ def main():
     # database.populate_event_scores()
 
 
+def make_database(database_file: str):
+    database_file = Path(database_file)
+    database = Database(database_file, overwrite=True)
+
+
+def update_systems(database_file: str, system_dirs_dir: str):
+    database_file = Path(database_file)
+    system_dirs_dir = Path(system_dirs_dir)
+    database = Database(database_file)
+
+    database.populate_systems(system_dirs_dir)
+
+
+def update_datasets(database_file: str):
+    database_file = Path(database_file)
+    database = Database(database_file)
+
+    database.populate_models_reflections_compounds_smiles_datasets()
+    database.populate_resolution_spacegroup_unit_cell()  # long
+
+
+def update_panddas(database_file: str, pandda_dirs_dir: str):
+    database_file = Path(database_file)
+    pandda_dirs_dir = Path(pandda_dirs_dir)
+    database = Database(database_file)
+
+    database.populate_panddas_errors(pandda_dirs_dir)
+    database.populate_events()
+
+
+def update_clusters(database_file: str, cluster_dirs_dir: str):
+    database_file = Path(database_file)
+    cluster_dirs_dir = Path(cluster_dirs_dir)
+    database = Database(database_file)
+
+    database.populate_clusters(cluster_dirs_dir)
+
+
+def update_autobuilds(database_file: str, autobuild_dirs_dir: str):
+    database_file = Path(database_file)
+    autobuild_dirs_dir = Path(autobuild_dirs_dir)
+    database = Database(database_file)
+
+    database.populate_autobuilds(autobuild_dirs_dir)
+
+
 if __name__ == "__main__":
     # If run as a script creates and populates database
-    main()
+    fire.Fire(
+        {
+            "make": make_database,
+            "update_systems": update_systems,
+            "update_datasets": update_datasets,
+            "update_panddas": update_panddas,
+            "update_clusters": update_clusters,
+            "update_autobuilds": update_autobuilds,
+            "update_all": main,
+        }
+    )

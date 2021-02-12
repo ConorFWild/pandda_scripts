@@ -12,6 +12,10 @@ class Constants:
 
     EXECUTABLE_SCRIPT_FILE = "{dtag}_{event_idx}.sh"
 
+    LOG_FILE = "{event_id}.log"
+    OUTPUT_FILE = "{event_id}.out"
+    ERROR_FILE = "{event_id}.err"
+    REQUEST_MEMORY = "20G"
     JOB = (
         "#################### \n"
         "# \n"
