@@ -14,8 +14,8 @@ import numpy as np
 import pandas as pd
 import gemmi
 
-from fragalysis_api.xcextracter.getdata import GetPdbData
-from fragalysis_api.xcextracter.xcextracter import xcextracter
+# from fragalysis_api.xcextracter.getdata import GetPdbData
+# from fragalysis_api.xcextracter.xcextracter import xcextracter
 
 
 class Constants:
