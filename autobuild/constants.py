@@ -15,7 +15,7 @@ class Constants:
     LOG_FILE = "{event_id}.log"
     OUTPUT_FILE = "{event_id}.out"
     ERROR_FILE = "{event_id}.err"
-    REQUEST_MEMORY = "20G"
+    REQUEST_MEMORY = "20"
     JOB = (
         "#################### \n"
         "# \n"
