@@ -36,7 +36,7 @@ class Constants:
 
     JOB_SCRIPT_FILE = "{dtag}_{event_idx}.job"
 
-    COMMAND = "condor_q {job_script_file}"
+    COMMAND = "condor_submit {job_script_file}"
 
     MASKED_PDB_FILE = "masked.pdb"
 
