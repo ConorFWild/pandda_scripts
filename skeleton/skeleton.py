@@ -106,7 +106,7 @@ def skeleton(structure: str, event_map: str, out_dir: str, selection: str = "//*
     # Type the input arguments
     structure_path = Path(structure)
     event_map_path = Path(event_map)
-    out_file = Path(out_file)
+    out_dir = Path(out_dir)
 
     # Load the model
     structure = get_structure(structure_path)

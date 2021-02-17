@@ -130,8 +130,6 @@ def get_cut_out_event_map(event_map: gemmi.FloatGrid, coord: Coord, radius: floa
     return new_grid
 
 
-
-
 def get_event_map(event_map_file: Path) -> gemmi.FloatGrid:
     m = gemmi.read_ccp4_map(str(event_map_file))
     m.setup()
@@ -215,8 +213,8 @@ def get_bounding_box(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 5
     box.extend(box_lower_bound_fractional)
     box.extend(box_upper_bound_fractional)
 
-
     return box
+
 
 def save_cut_xmap(event_ccp4,
                   bounding_box,
@@ -312,8 +310,6 @@ def autobuild(model: str, xmap: str, mtz: str, smiles: str, x: float, y: float, 
 
     # Call rhofit
     rhofit(truncated_model_path, truncated_xmap_path, mtz_path, cif_path, out_dir)
-
-
 
 
 # #####################
