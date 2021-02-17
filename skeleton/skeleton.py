@@ -102,7 +102,7 @@ def write_output(structure_path,
         json.dump(out_dict, f)
 
 
-def skeleton(structure: str, event_map: str, out_dir: str, selection: str = "*/LIG"):
+def skeleton(structure: str, event_map: str, out_dir: str, selection: str = "(LIG)"):
     # Type the input arguments
     structure_path = Path(structure)
     event_map_path = Path(event_map)
