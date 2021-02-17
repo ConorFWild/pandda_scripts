@@ -53,7 +53,10 @@ def get_sample_positions(structure, atoms, xmap, radius=1.8):
         ref = np.array([pos.x, pos.y, pos.z])
         print(f"ref: {ref}")
         for mark in ns.find_atoms(atom.pos):
-            moving = np.array([mark.x, mark.y, mark.z])
+            moving_atom = structure.find_cra(mark.to_cra(structure[0]))
+            moving_pos = moving_atom.pos
+
+            moving = np.array([moving_pos.x, moving_pos.y, moving_pos.z])
             print(f"moving: {moving}")
 
             if np.allclose(ref, moving):
