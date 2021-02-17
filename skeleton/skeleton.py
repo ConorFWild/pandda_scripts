@@ -44,14 +44,14 @@ def select(structure, selection):
 
 
 def get_sample_positions(structure, atoms, radius=2.0):
-    ns = gemmi.NeighborSearch(structure[0], structure.cell, min_dist = 0.5, max_dist=radius).populate()
+    ns = gemmi.NeighborSearch(structure[0], structure.cell, radius).populate()
 
     positions = []
     for atom in atoms:
         pos = atom.pos
         positions.append(pos)
         ref = np.array([pos.x, pos.y, pos.z])
-        for mark in ns.find_atoms(atom.pos):
+        for mark in ns.find_atoms(atom.pos, min_dist = 0.5, max_dist=radius):
             moving = np.array([mark.x, mark.y, mark.z])
 
             half_way = (ref + moving) / 2
