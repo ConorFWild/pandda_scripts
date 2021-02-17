@@ -101,7 +101,7 @@ def truncate_model(model_path: Path, coords: Coord, out_dir: Path):
 # #####################
 
 
-def get_cut_out_event_map(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 10.0) -> gemmi.FloatGrid:
+def get_cut_out_event_map_dep(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 10.0) -> gemmi.FloatGrid:
     event_centroid = gemmi.Position(coord.x, coord.y, coord.z)
 
     xmap_array = np.array(event_map, copy=True)
@@ -130,6 +130,20 @@ def get_cut_out_event_map(event_map: gemmi.FloatGrid, coord: Coord, radius: floa
     return new_grid
 
 
+def get_bounding_box(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 5.0) -> gemmi.FloatGrid:
+    event_centroid = gemmi.Position(coord.x, coord.y, coord.z)
+
+    box_lower_bound = gemmi.Position(coord.x - radius, coord.y - radius, coord.z - radius)
+    box_upper_bound = gemmi.Position(coord.x + radius, coord.y + radius, coord.z + radius)
+
+    box = gemmi.PositionBox()
+
+    box.extend(box_lower_bound)
+    box.extend(box_upper_bound)
+
+    return box
+
+
 def get_event_map(event_map_file: Path) -> gemmi.FloatGrid:
     m = gemmi.read_ccp4_map(str(event_map_file))
     m.setup()
@@ -146,9 +160,9 @@ def get_event_map(event_map_file: Path) -> gemmi.FloatGrid:
     return new_grid
 
 
-def save_xmap(cut_out_event_map,
-              path,
-              ):
+def save_xmap_dep(cut_out_event_map,
+                  path,
+                  ):
     ccp4 = gemmi.Ccp4Map()
     ccp4.grid = cut_out_event_map
 
@@ -160,14 +174,46 @@ def save_xmap(cut_out_event_map,
     return path
 
 
+def save_xmap(event_map,
+              bounding_box,
+              path,
+              ):
+    ccp4 = gemmi.Ccp4Map()
+    ccp4.grid = event_map
+
+    ccp4.grid.spacegroup = gemmi.find_spacegroup_by_name("P 1")
+
+    ccp4.set_extent(bounding_box)
+
+    ccp4.update_ccp4_header(2, True)
+    ccp4.write_ccp4_map(str(path))
+
+    return path
+
+
+def truncate_xmap_dep(xmap_path: Path, coords: Coord, out_dir: Path):
+    event_map: gemmi.FloatGrid = get_event_map(xmap_path)
+
+    # Cut out events:
+    cut_out_event_map: gemmi.FloatGrid = get_cut_out_event_map_dep(event_map, coords)
+
+    # Save cut out event
+    cut_out_event_map_file: Path = save_xmap_dep(cut_out_event_map,
+                                             out_dir / Constants.TRUNCATED_EVENT_MAP_FILE,
+                                             )
+
+    return cut_out_event_map_file
+
+
 def truncate_xmap(xmap_path: Path, coords: Coord, out_dir: Path):
     event_map: gemmi.FloatGrid = get_event_map(xmap_path)
 
     # Cut out events:
-    cut_out_event_map: gemmi.FloatGrid = get_cut_out_event_map(event_map, coords)
+    bounding_box = get_bounding_box(event_map, coords)
 
     # Save cut out event
-    cut_out_event_map_file: Path = save_xmap(cut_out_event_map,
+    cut_out_event_map_file: Path = save_xmap(event_map,
+                                             bounding_box,
                                              out_dir / Constants.TRUNCATED_EVENT_MAP_FILE,
                                              )
 
