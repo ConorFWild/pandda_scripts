@@ -43,7 +43,7 @@ def select(structure, selection):
     return selected_atoms
 
 
-def get_sample_positions(structure, atoms, radius=1.8):
+def get_sample_positions(structure, atoms, xmap, radius=1.8):
     ns = gemmi.NeighborSearch(structure[0], structure.cell, radius).populate()
 
     positions = []
@@ -63,7 +63,9 @@ def get_sample_positions(structure, atoms, radius=1.8):
 
             positions.append(half_way_pos)
 
-    return positions
+    fractional_positions = [xmap.unitcell.fractionalize(position) for position in positions]
+
+    return fractional_positions
 
 
 def sample(positions, xmap):
@@ -77,7 +79,7 @@ def sample(positions, xmap):
 
 def skeleton_score(structure, atoms, xmap, threshold=1.0):
     # Get positions of atoms and bonds in order to sample at them
-    sample_positions = get_sample_positions(structure, atoms)
+    sample_positions = get_sample_positions(structure, atoms, xmap)
     print(f"Got {len(sample_positions)} samples")
     print(f"Got positions: {sample_positions}")
 
