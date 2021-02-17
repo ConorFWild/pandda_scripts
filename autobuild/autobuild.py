@@ -130,7 +130,7 @@ def get_cut_out_event_map_dep(event_map: gemmi.FloatGrid, coord: Coord, radius: 
     return new_grid
 
 
-def get_bounding_box(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 5, margin: float = 5.0) -> gemmi.FloatGrid:
+def get_bounding_box(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 5.0, margin: float = 5.0) -> gemmi.FloatGrid:
     event_centroid = gemmi.Position(coord.x, coord.y, coord.z)
 
     box_lower_bound = gemmi.Position(coord.x - radius, coord.y - radius, coord.z - radius)
