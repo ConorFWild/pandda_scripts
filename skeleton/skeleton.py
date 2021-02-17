@@ -56,7 +56,7 @@ def get_sample_positions(structure, atoms, radius=2.0):
 
             half_way = (ref + moving) / 2
 
-            half_way_pos = gemmi.Position(half_way)
+            half_way_pos = gemmi.Position(half_way[0], half_way[1], half_way[2])
 
             positions.append(half_way_pos)
 
