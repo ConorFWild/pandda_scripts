@@ -24,6 +24,8 @@ def try_make_dir(path: Path):
 def dispatch(event: database_sql.Event, out_dir: Path):
     event_id = f"{event.dataset.dtag}_{event.event_idx}"
 
+    print(f"Event id: {event_id}")
+
     # Create the Event dir
     event_dir = out_dir / event_id
     try_make_dir(event_dir)
