@@ -54,6 +54,9 @@ def get_sample_positions(structure, atoms, radius=1.8):
         for mark in ns.find_atoms(atom.pos,):
             moving = np.array([mark.x, mark.y, mark.z])
 
+            if np.allclose(ref, moving):
+                continue
+
             half_way = (ref + moving) / 2
 
             half_way_pos = gemmi.Position(half_way[0], half_way[1], half_way[2])
