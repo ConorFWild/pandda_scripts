@@ -195,6 +195,8 @@ def save_xmap(event_map,
 
     ccp4.grid.spacegroup = gemmi.find_spacegroup_by_name("P 1")
 
+    ccp4.setup()
+
     ccp4.set_extent(bounding_box)
 
     ccp4.update_ccp4_header(2, True)
