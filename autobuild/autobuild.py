@@ -136,10 +136,13 @@ def get_bounding_box(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 5
     box_lower_bound = gemmi.Position(coord.x - radius, coord.y - radius, coord.z - radius)
     box_upper_bound = gemmi.Position(coord.x + radius, coord.y + radius, coord.z + radius)
 
-    box = gemmi.PositionBox()
+    box_lower_bound_fractional = event_map.unit_cell.fractionalize(box_lower_bound)
+    box_upper_bound_fractional = event_map.unit_cell.fractionalize(box_upper_bound)
 
-    box.extend(box_lower_bound)
-    box.extend(box_upper_bound)
+    box = gemmi.FractionalBox()
+
+    box.extend(box_lower_bound_fractional)
+    box.extend(box_upper_bound_fractional)
 
     return box
 
