@@ -52,7 +52,7 @@ def get_sample_positions(structure, atoms, radius=2.0):
         positions.append(pos)
         ref = np.array([pos.x, pos.y, pos.z])
         for mark in ns.find_atoms(atom.pos):
-            moving = np.array(mark.x, mark.y, mark.z)
+            moving = np.array([mark.x, mark.y, mark.z])
 
             half_way = (ref + moving) / 2
 
