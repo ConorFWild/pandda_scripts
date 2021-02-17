@@ -44,7 +44,7 @@ def select(structure, selection):
 
 
 def get_sample_positions(structure, atoms, radius=2.0):
-    ns = gemmi.NeighborSearch(structure[0], structure.cell, radius).populate()
+    ns = gemmi.NeighborSearch(structure[0], structure.cell, min_dist = 0.5, max_dist=radius).populate()
 
     positions = []
     for atom in atoms:
