@@ -105,6 +105,7 @@ def main(database_file: str, output_dir: str):
         reference = reference_query.filter(database_sql.ReferenceModel.dataset_id == event.dataset.id).all()
         if len(reference) == 0:
             print("No references: continuing")
+            continue
 
         dispatch(event, output_dir_path)
 
