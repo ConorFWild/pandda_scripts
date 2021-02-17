@@ -93,10 +93,12 @@ def main(database_file: str, output_dir: str):
     print(f"Got {len(event_list)} events")
 
     # Dispatch to run
-    map(
-        lambda event: dispatch(event, output_dir_path),
-        event_list,
-    )
+    # map(
+    #     lambda event: dispatch(event, output_dir_path),
+    #     event_list,
+    # )
+    for event in event_list:
+        dispatch(event, output_dir_path)
 
 
 if __name__ == "__main__":
