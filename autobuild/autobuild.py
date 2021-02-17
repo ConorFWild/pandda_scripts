@@ -101,7 +101,7 @@ def truncate_model(model_path: Path, coords: Coord, out_dir: Path):
 # #####################
 
 
-def get_cut_out_event_map_dep(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 10.0) -> gemmi.FloatGrid:
+def get_cut_out_event_map(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 10.0) -> gemmi.FloatGrid:
     event_centroid = gemmi.Position(coord.x, coord.y, coord.z)
 
     xmap_array = np.array(event_map, copy=True)
@@ -130,7 +130,8 @@ def get_cut_out_event_map_dep(event_map: gemmi.FloatGrid, coord: Coord, radius: 
     return new_grid
 
 
-def get_bounding_box(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 5.0, margin: float = 5.0) -> gemmi.FloatGrid:
+def get_bounding_box(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 5.0,
+                     margin: float = 5.0) -> gemmi.FloatGrid:
     event_centroid = gemmi.Position(coord.x, coord.y, coord.z)
 
     box_lower_bound = gemmi.Position(float(coord.x) - radius, float(coord.y) - radius, float(coord.z) - radius)
@@ -170,7 +171,7 @@ def get_event_map(event_map_file: Path) -> gemmi.FloatGrid:
     new_grid_array = np.array(new_grid, copy=False)
     new_grid_array[:, :, :] = grid_array[:, :, :]
 
-    return new_grid, m
+    return new_grid
 
 
 def save_xmap_dep(cut_out_event_map,
@@ -188,61 +189,64 @@ def save_xmap_dep(cut_out_event_map,
 
 
 def save_xmap(event_map,
-              m,
-              bounding_box,
               path,
               ):
     ccp4 = gemmi.Ccp4Map()
     ccp4.grid = event_map
 
-    # ccp4.grid.spacegroup = gemmi.find_spacegroup_by_name("P 1")
+    ccp4.grid.spacegroup = gemmi.find_spacegroup_by_name("P 1")
 
-    ccp4.setup()
-
-    m.set_extent(bounding_box)
-
-    # ccp4.set_extent(bounding_box)
-
-    m.update_ccp4_header(2, True)
-    m.write_ccp4_map(str(path))
+    ccp4.update_ccp4_header(2, True)
+    ccp4.write_ccp4_map(str(path))
 
     return path
 
 
-def truncate_xmap_dep(xmap_path: Path, coords: Coord, out_dir: Path):
+def truncate_xmap(xmap_path: Path, coords: Coord, out_dir: Path):
     event_map: gemmi.FloatGrid = get_event_map(xmap_path)
 
     # Cut out events:
-    cut_out_event_map: gemmi.FloatGrid = get_cut_out_event_map_dep(event_map, coords)
+    cut_out_event_map: gemmi.FloatGrid = get_cut_out_event_map(event_map, coords)
 
     # Save cut out event
-    cut_out_event_map_file: Path = save_xmap_dep(cut_out_event_map,
+    cut_out_event_map_file: Path = save_xmap(cut_out_event_map,
                                              out_dir / Constants.TRUNCATED_EVENT_MAP_FILE,
                                              )
 
     return cut_out_event_map_file
 
 
-def truncate_xmap(xmap_path: Path, coords: Coord, out_dir: Path):
-    event_map, m = get_event_map(xmap_path)
+# #####################
+# # Cut out map
+# #####################
+def get_ccp4_map(xmap_path):
+    m = gemmi.read_ccp4_map(str(xmap_path))
+    m.setup()
+
+    return m
+
+
+def save_cut_xmap(event_ccp4,
+                  bounding_box,
+                  path,
+                  ):
+    event_ccp4.set_extent(bounding_box)
+    event_ccp4.write_ccp4_map(str(path))
+
+    return path
+
+
+def cut_out_xmap(xmap_path: Path, coords: Coord, out_dir: Path):
+    ccp4_map = get_ccp4_map(xmap_path)
 
     # Cut out events:
-    bounding_box = get_bounding_box(event_map, coords)
-    print(f"Box size: {bounding_box.get_size()}")
-    print(f"Box minimum: {bounding_box.minimum}")
-    print(f"Box maximum: {bounding_box.maximum}")
-
-    print([bounding_box.minimum.x * event_map.nu, bounding_box.minimum.y * event_map.nv, bounding_box.minimum.z * event_map.nw,])
-    print([bounding_box.maximum.x * event_map.nu, bounding_box.maximum.y * event_map.nv, bounding_box.maximum.z * event_map.nw,])
-
-
+    bounding_box = get_bounding_box(ccp4_map, coords)
 
     # Save cut out event
-    cut_out_event_map_file: Path = save_xmap(event_map,
-                                             m,
-                                             bounding_box,
-                                             out_dir / Constants.TRUNCATED_EVENT_MAP_FILE,
-                                             )
+    cut_out_event_map_file: Path = save_cut_xmap(ccp4_map,
+                                                 bounding_box,
+                                                 out_dir / Constants.CUT_EVENT_MAP_FILE,
+                                                 )
 
     return cut_out_event_map_file
 
@@ -313,6 +317,9 @@ def autobuild(model: str, xmap: str, mtz: str, smiles: str, x: float, y: float, 
 
     # Call rhofit
     rhofit(truncated_model_path, truncated_xmap_path, mtz_path, cif_path, out_dir)
+
+    # Make cut out map
+    cut_out_xmap(xmap_path, coords, out_dir)
 
 
 # #####################

@@ -42,6 +42,8 @@ class Constants:
 
     TRUNCATED_EVENT_MAP_FILE = "truncated.ccp4"
 
+    CUT_EVENT_MAP_FILE = "cut.ccp4"
+
     LIGAND_PREFIX = "ligand"
     LIGAND_CIF_FILE = "ligand.cif"
     ELBOW_COMMAND = "cd {out_dir}; phenix.elbow {smiles_file} --output=\"{prefix}\"; cd -"
