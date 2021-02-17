@@ -36,9 +36,9 @@ def dispatch(event: database_sql.Event, out_dir: Path):
     mtz = event.dataset.reflections.path
     smiles = event.dataset.smiles.path
 
-    executable_script = Constants.EXECUTABLE.format(model,
-                                                    xmap,
-                                                    mtz,
+    executable_script = Constants.EXECUTABLE.format(model=model,
+                                                    xmap=xmap,
+                                                    mtz=mtz,
                                                     smiles=smiles,
                                                     x=event.x,
                                                     y=event.y,
