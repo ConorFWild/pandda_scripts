@@ -136,6 +136,8 @@ def get_bounding_box(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 5
     box_lower_bound = gemmi.Position(coord.x - radius, coord.y - radius, coord.z - radius)
     box_upper_bound = gemmi.Position(coord.x + radius, coord.y + radius, coord.z + radius)
 
+    print(f"unit cell: {event_map.unit_cell}")
+
     print(f"box lower bound: {box_lower_bound}")
     print(f"box upper bound: {box_upper_bound}")
 
