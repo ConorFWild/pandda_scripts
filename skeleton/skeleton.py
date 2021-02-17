@@ -51,7 +51,7 @@ def get_sample_positions(structure, atoms, xmap, radius=1.8):
         pos = atom.pos
         positions.append(pos)
         ref = np.array([pos.x, pos.y, pos.z])
-        for mark in ns.find_atoms(atom.pos,):
+        for mark in ns.find_atoms(atom.pos):
             moving = np.array([mark.x, mark.y, mark.z])
 
             if np.allclose(ref, moving):
@@ -125,6 +125,8 @@ def skeleton(structure: str, event_map: str, out_dir: str, selection: str = "(LI
 
     # Perform selection
     atoms = select(structure, selection)
+    print(f"Got {len(atoms)} atoms")
+    print(f"At positions: {[atom.pos for atom in atoms]}")
 
     # Calculate the skeleton score
     score = skeleton_score(structure, atoms, xmap)
