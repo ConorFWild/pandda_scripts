@@ -89,6 +89,8 @@ def main(database_file: str, output_dir: str):
 
     # Select which datasets to build
     event_query = database.session.query(database_sql.Event)
+    reference_query = database.session.query(database_sql.Database)
+    # built_events = event_query.filter(database_sql.Event == )
     event_list = event_query.all()
     print(f"Got {len(event_list)} events")
 
@@ -97,7 +99,13 @@ def main(database_file: str, output_dir: str):
     #     lambda event: dispatch(event, output_dir_path),
     #     event_list,
     # )
+    # for reference in reference_query.all():
     for event in event_list:
+
+        reference = reference_query.filter(database_sql.Reference.dataset_id == event.dataset.id).all()
+        if len(reference) ==0:
+            print("No references: continuing")
+
         dispatch(event, output_dir_path)
 
 
