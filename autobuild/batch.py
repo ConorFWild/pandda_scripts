@@ -5,7 +5,7 @@ from pathlib import Path
 import fire
 
 from constants import Constants
-from xlib.xlib import database_sql
+from xlib import database_sql
 
 
 def execute(command: str):
