@@ -51,7 +51,7 @@ def get_sample_positions(structure, atoms, radius=2.0):
         pos = atom.pos
         positions.append(pos)
         ref = np.array([pos.x, pos.y, pos.z])
-        for mark in ns.find_atoms(atom):
+        for mark in ns.find_atoms(atom.pos):
             moving = np.array(mark.x, mark.y, mark.z)
 
             half_way = (ref + moving) / 2
@@ -75,12 +75,15 @@ def sample(positions, xmap):
 def skeleton_score(structure, atoms, xmap, threshold=1.0):
     # Get positions of atoms and bonds in order to sample at them
     sample_positions = get_sample_positions(structure, atoms)
+    print(f"Got {len(sample_positions)} samples")
 
     # Get samples of electron density
     samples = sample(sample_positions, xmap)
+    print(f"Got samples: {samples}")
 
     # Get the skeleton score from samples
     score = len([x for x in samples if x > threshold]) / len(samples)
+    print(f"Got score: {score}")
 
     return score
 
