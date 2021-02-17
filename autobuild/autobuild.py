@@ -229,6 +229,11 @@ def truncate_xmap(xmap_path: Path, coords: Coord, out_dir: Path):
     print(f"Box minimum: {bounding_box.minimum}")
     print(f"Box maximum: {bounding_box.maximum}")
 
+    print([bounding_box.minimum.x * event_map.nu, bounding_box.minimum.y * event_map.nv, bounding_box.minimum.z * event_map.nw,])
+    print([bounding_box.maximum.x * event_map.nu, bounding_box.maximum.y * event_map.nv, bounding_box.maximum.z * event_map.nw,])
+
+
+
     # Save cut out event
     cut_out_event_map_file: Path = save_xmap(event_map,
                                              bounding_box,
