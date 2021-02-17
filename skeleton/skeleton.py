@@ -63,7 +63,7 @@ def get_sample_positions(structure, atoms, xmap, radius=1.8):
 
             positions.append(half_way_pos)
 
-    fractional_positions = [xmap.unitcell.fractionalize(position) for position in positions]
+    fractional_positions = [xmap.unit_cell.fractionalize(position) for position in positions]
 
     return fractional_positions
 
