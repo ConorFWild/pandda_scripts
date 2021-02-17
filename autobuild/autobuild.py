@@ -130,32 +130,6 @@ def get_cut_out_event_map(event_map: gemmi.FloatGrid, coord: Coord, radius: floa
     return new_grid
 
 
-def get_bounding_box(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 5.0,
-                     margin: float = 5.0) -> gemmi.FloatGrid:
-    event_centroid = gemmi.Position(coord.x, coord.y, coord.z)
-
-    box_lower_bound = gemmi.Position(float(coord.x) - radius, float(coord.y) - radius, float(coord.z) - radius)
-    box_upper_bound = gemmi.Position(float(coord.x) + radius, float(coord.y) + radius, float(coord.z) + radius)
-
-    print(f"unit cell: {event_map.unit_cell}")
-    print([event_map.nu, event_map.nv, event_map.nw])
-
-    print(f"box lower bound: {box_lower_bound}")
-    print(f"box upper bound: {box_upper_bound}")
-
-    box_lower_bound_fractional = event_map.unit_cell.fractionalize(box_lower_bound)
-    box_upper_bound_fractional = event_map.unit_cell.fractionalize(box_upper_bound)
-    print(f"box lower bound fractional: {box_lower_bound_fractional}")
-    print(f"box upper bound fractional : {box_upper_bound_fractional}")
-
-    box = gemmi.FractionalBox()
-
-    box.extend(box_lower_bound_fractional)
-    box.extend(box_upper_bound_fractional)
-
-    # box.add_margin(margin)
-
-    return box
 
 
 def get_event_map(event_map_file: Path) -> gemmi.FloatGrid:
@@ -225,6 +199,32 @@ def get_ccp4_map(xmap_path):
 
     return m
 
+
+def get_bounding_box(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 5.0,
+                     margin: float = 5.0) -> gemmi.FloatGrid:
+    event_centroid = gemmi.Position(coord.x, coord.y, coord.z)
+
+    box_lower_bound = gemmi.Position(float(coord.x) - radius, float(coord.y) - radius, float(coord.z) - radius)
+    box_upper_bound = gemmi.Position(float(coord.x) + radius, float(coord.y) + radius, float(coord.z) + radius)
+
+    print(f"unit cell: {event_map.unit_cell}")
+    print([event_map.nu, event_map.nv, event_map.nw])
+
+    print(f"box lower bound: {box_lower_bound}")
+    print(f"box upper bound: {box_upper_bound}")
+
+    box_lower_bound_fractional = event_map.grid.unit_cell.fractionalize(box_lower_bound)
+    box_upper_bound_fractional = event_map.grid.unit_cell.fractionalize(box_upper_bound)
+    print(f"box lower bound fractional: {box_lower_bound_fractional}")
+    print(f"box upper bound fractional : {box_upper_bound_fractional}")
+
+    box = gemmi.FractionalBox()
+
+    box.extend(box_lower_bound_fractional)
+    box.extend(box_upper_bound_fractional)
+
+
+    return box
 
 def save_cut_xmap(event_ccp4,
                   bounding_box,
@@ -312,14 +312,16 @@ def autobuild(model: str, xmap: str, mtz: str, smiles: str, x: float, y: float, 
     # Truncate the ed map
     truncated_xmap_path = truncate_xmap(xmap_path, coords, out_dir)
 
+    # Make cut out map
+    cut_out_xmap(xmap_path, coords, out_dir)
+
     # Generate the cif
     cif_path = generate_cif(smiles_path, out_dir)
 
     # Call rhofit
     rhofit(truncated_model_path, truncated_xmap_path, mtz_path, cif_path, out_dir)
 
-    # Make cut out map
-    cut_out_xmap(xmap_path, coords, out_dir)
+
 
 
 # #####################
