@@ -68,6 +68,7 @@ def dispatch(event: database_sql.Event, out_dir: Path):
 
     # Generate a shell command to submit the job to run the python script
     command = Constants.COMMAND.format(job_script_file=job_script_file)
+    print(f"Command: {command}")
 
     # Submit the job
     execute(command)
