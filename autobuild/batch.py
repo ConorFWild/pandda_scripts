@@ -78,12 +78,16 @@ def main(database_file: str, output_dir: str):
     database_file_path = Path(database_file)
     output_dir_path = Path(output_dir)
 
+    print(f"Database file path: {database_file_path}")
+    print(f"Database file path: {output_dir_path}")
+
     # Load database
     database: database_sql.Database = database_sql.Database(database_file_path)
 
     # Select which datasets to build
     event_query = database.session.query(database_sql.Event)
     event_list = event_query.all()
+    print(f"Got {len(event_list)} events")
 
     # Dispatch to run
     map(
