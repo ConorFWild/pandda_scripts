@@ -76,6 +76,7 @@ def skeleton_score(structure, atoms, xmap, threshold=1.0):
     # Get positions of atoms and bonds in order to sample at them
     sample_positions = get_sample_positions(structure, atoms)
     print(f"Got {len(sample_positions)} samples")
+    print(f"Got positions: {sample_positions}")
 
     # Get samples of electron density
     samples = sample(sample_positions, xmap)
