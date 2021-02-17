@@ -66,7 +66,7 @@ def get_sample_positions(structure, atoms, radius=2.0):
 def sample(positions, xmap):
     samples = []
     for position in positions:
-        sample = xmap.interpolate_point(position)
+        sample = xmap.interpolate_value(position)
         samples.append(sample)
 
     return samples
