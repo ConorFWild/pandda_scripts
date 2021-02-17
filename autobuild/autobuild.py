@@ -213,6 +213,7 @@ def truncate_xmap(xmap_path: Path, coords: Coord, out_dir: Path):
 
     # Cut out events:
     bounding_box = get_bounding_box(event_map, coords)
+    print(bounding_box.get_size())
 
     # Save cut out event
     cut_out_event_map_file: Path = save_xmap(event_map,
