@@ -194,7 +194,7 @@ def save_xmap(event_map,
     ccp4 = gemmi.Ccp4Map()
     ccp4.grid = event_map
 
-    ccp4.grid.spacegroup = gemmi.find_spacegroup_by_name("P 1")
+    # ccp4.grid.spacegroup = gemmi.find_spacegroup_by_name("P 1")
 
     ccp4.setup()
 
