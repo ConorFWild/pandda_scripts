@@ -932,9 +932,17 @@ def update_clusters(database_file: str, cluster_dirs_dir: str):
 
 
 def update_autobuilds(database_file: str, autobuild_dirs_dir: str):
+
     database_file = Path(database_file)
     autobuild_dirs_dir = Path(autobuild_dirs_dir)
     database = Database(database_file)
+
+    try:
+        num_rows_deleted = database.session.query(Autobuild).delete()
+        database.session.commit()
+    except Exception as e:
+        print(e)
+        raise Exception(e)
 
     database.populate_autobuilds(autobuild_dirs_dir)
 
