@@ -53,7 +53,7 @@ def dispatch(autobuild: database_sql.Autobuild, out_dir: Path):
     job_script_file = out_dir / Constants.JOB_SCRIPT_FILE
     write(job_script, job_script_file)
 
-    submit_command = Constants.SUBMIT_COMMAND.format()
+    submit_command = Constants.SUBMIT_COMMAND.format(job_script_file=str(job_script_file))
 
     submit(submit_command)
 

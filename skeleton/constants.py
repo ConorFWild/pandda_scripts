@@ -36,6 +36,6 @@ class Constants:
     SCORE_SCRIPT_FILE = "{build_id}.sh"
     JOB_SCRIPT_FILE = "{build_id}.job"
 
-    SUBMIT_COMMAND = "condor_q {job_script_file}"
+    SUBMIT_COMMAND = "condor_submit {job_script_file}"
 
     REQUEST_MEMORY = "20G"
