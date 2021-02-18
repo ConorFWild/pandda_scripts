@@ -5,9 +5,7 @@ import fire
 
 from constants import Constants
 
-
 from xlib import database_sql
-
 
 
 def write(string: str, file: Path):
@@ -73,7 +71,6 @@ def main(database_file: str, out_dir: str):
     for autobuild in autobuild_list:
         print(f"Scoring: {autobuild.event.dataset.dtag} {autobuild.event.event_idx}")
         dispatch(autobuild, out_dir)
-
 
 
 if __name__ == "__main__":
