@@ -696,7 +696,6 @@ class Database:
 
             build_file = path / "rhofit" / "best.pdb"
 
-
             system = self.session.query(System).filter(System.system == event_system).first()
             pandda = self.session.query(PanDDA).filter(PanDDA.system_id == system.id).first()
             dataset = self.session.query(Dataset).filter(Dataset.dtag == event_dtag).first()
