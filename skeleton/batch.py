@@ -53,7 +53,7 @@ def dispatch(autobuild: database_sql.Autobuild, out_dir: Path):
     log_file = out_dir / Constants.LOG_FILE.format(build_id=build_id)
     output_file = out_dir / Constants.OUTPUT_FILE.format(build_id=build_id)
     error_file = out_dir / Constants.ERROR_FILE.format(build_id=build_id)
-    request_memory = out_dir / Constants.REQUEST_MEMORY
+    request_memory = Constants.REQUEST_MEMORY
     job_script = Constants.JOB_SCRIPT.format(
         executable_file=executable_file,
         log_file=log_file,
