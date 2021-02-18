@@ -939,6 +939,7 @@ def update_autobuilds(database_file: str, autobuild_dirs_dir: str):
 
     try:
         num_rows_deleted = database.session.query(Autobuild).delete()
+        print(num_rows_deleted)
         database.session.commit()
     except Exception as e:
         print(e)
