@@ -38,4 +38,4 @@ class Constants:
 
     SUBMIT_COMMAND = "condor_submit {job_script_file}"
 
-    REQUEST_MEMORY = "20G"
+    REQUEST_MEMORY = "20"
