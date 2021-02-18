@@ -21,6 +21,15 @@ def try_make_dir(path: Path):
         os.mkdir(str(path))
 
 
+def chmod(path: Path):
+    p = subprocess.Popen(
+        f"chmod 777 {str(path)}",
+        shell=True,
+    )
+
+    p.communicate()
+
+
 def dispatch(event: database_sql.Event, out_dir: Path):
     event_id = f"{event.dataset.dtag}_{event.event_idx}"
 
@@ -50,11 +59,13 @@ def dispatch(event: database_sql.Event, out_dir: Path):
     with open(executable_script_file, "w") as f:
         f.write(executable_script)
 
+    chmod(executable_script_file)
+
     # Generate a job script file for a condor cluster
     executable_file = str(executable_script_file)
-    log_file = Constants.LOG_FILE.format(event_id=event_id)
-    output_file = Constants.OUTPUT_FILE.format(event_id=event_id)
-    error_file = Constants.ERROR_FILE.format(event_id=event_id)
+    log_file = event_dir / Constants.LOG_FILE.format(event_id=event_id)
+    output_file = event_dir / Constants.OUTPUT_FILE.format(event_id=event_id)
+    error_file = event_dir / Constants.ERROR_FILE.format(event_id=event_id)
     request_memory = Constants.REQUEST_MEMORY
     job_script = Constants.JOB.format(
         executable_file=executable_file,
