@@ -68,11 +68,12 @@ def main(database_file: str, out_dir: str):
 
     autobuild_query = database.session.query(database_sql.Autobuild)
     autobuild_list = autobuild_query.all()
+    print(f"Found {len(autobuild_list)} ")
 
-    map(
-        lambda autobuild: dispatch(autobuild, out_dir),
-        autobuild_list,
-    )
+    for autobuild in autobuild_list:
+        print(f"Scoring: {autobuild.event.dataset.dtag} {autobuild.event.event_idx}")
+        dispatch(autobuild, out_dir)
+
 
 
 if __name__ == "__main__":
