@@ -22,6 +22,15 @@ def submit(command):
     p.communicate()
 
 
+def chmod(path: Path):
+    p = subprocess.Popen(
+        f"chmod 777 {str(path)}",
+        shell=True,
+    )
+
+    p.communicate()
+
+
 def dispatch(autobuild: database_sql.Autobuild, out_dir: Path):
     structure = autobuild.path
     event_map = autobuild.event.event_map
@@ -37,6 +46,8 @@ def dispatch(autobuild: database_sql.Autobuild, out_dir: Path):
     )
     score_script_file = out_dir / Constants.SCORE_SCRIPT_FILE.format(build_id=build_id)
     write(score_script, score_script_file)
+
+    chmod(score_script_file)
 
     executable_file = str(score_script_file)
     log_file = Constants.LOG_FILE.format(build_id=build_id)
