@@ -661,7 +661,7 @@ class Database:
 
         self.session.commit()
 
-    def populate_autobuilds(self, autobuild_dirs_dir: Path):
+    def populate_autobuilds_dep(self, autobuild_dirs_dir: Path):
 
         build_dict: xlib.data.BuildDict = xlib.data.BuildDict.from_autobuild_dir(autobuild_dirs_dir)
 
@@ -677,6 +677,34 @@ class Database:
                                                      ).first()
 
             autobuild = Autobuild(path=str(build.build_file),
+                                  system=system,
+                                  dataset=dataset,
+                                  pandda=pandda,
+                                  event=event,
+                                  )
+
+            self.session.add(autobuild)
+
+    def populate_autobuilds(self, autobuild_dirs_dir: Path):
+
+        for path in autobuild_dirs_dir.glob("*"):
+            event_dir = path.name
+            event_dtag = re.match("[^\_]+", event_dir).group(0)
+            event_system = re.match("([^\-]+)-x[0-9]+", event_dtag).group(1)
+            event_idx = re.match("[^\_]+_([0-9]+)", event_dir).group(1)
+
+            build_file = path / "rhofit" / "best.pdb"
+
+
+            system = self.session.query(System).filter(System.system == event_system).first()
+            pandda = self.session.query(PanDDA).filter(PanDDA.system_id == system.id).first()
+            dataset = self.session.query(Dataset).filter(Dataset.dtag == event_dtag).first()
+            event = self.session.query(Event).filter(Event.system_id == system.id,
+                                                     Event.dataset_id == dataset.id,
+                                                     Event.event_idx == event_idx
+                                                     ).first()
+
+            autobuild = Autobuild(path=str(build_file),
                                   system=system,
                                   dataset=dataset,
                                   pandda=pandda,
