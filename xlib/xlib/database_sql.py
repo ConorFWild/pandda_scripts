@@ -712,6 +712,7 @@ class Database:
                                   )
 
             self.session.add(autobuild)
+        self.session.commit()
 
     def populate_events(self):
 
@@ -942,7 +943,7 @@ def update_autobuilds(database_file: str, autobuild_dirs_dir: str):
         print(num_rows_deleted)
         database.session.commit()
     except Exception as e:
-        print(e)
+        print(f"Commit failed: {e}")
         raise Exception(e)
 
     database.populate_autobuilds(autobuild_dirs_dir)
