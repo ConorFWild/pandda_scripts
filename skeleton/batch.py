@@ -3,9 +3,11 @@ import subprocess
 
 import fire
 
+from constants import Constants
+
+
 from xlib import database_sql
 
-from constants import Constants
 
 
 def write(string: str, file: Path):
