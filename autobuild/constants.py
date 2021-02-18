@@ -2,7 +2,7 @@ class Constants:
     EXECUTABLE = (
         "#!/bin/bash \n"
         ". /data/share-2/conor/anaconda3/etc/profile.d/conda.sh\n" 
-        "conda activate env_rdkit\n"
+        "conda activate lab\n"
         "source ~/.bashrc \n"
         "source /data/share-2/conor/xtal_software/ccp4-7.1/bin/ccp4.setup-sh \n"
         "source /data/share-2/conor/xtal_software/phenix/phenix-1.18.2-3874/phenix_env.sh \n"
