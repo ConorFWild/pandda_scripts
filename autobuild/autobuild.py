@@ -42,7 +42,7 @@ def save_pdb_file(masked_pdb: gemmi.Structure, path: Path) -> Path:
     return path
 
 
-def get_masked_pdb(pdb: gemmi.Structure, coord: Coord, radius: float = 7.0) -> gemmi.Structure:
+def get_masked_pdb(pdb: gemmi.Structure, coord: Coord, radius: float = 8.0) -> gemmi.Structure:
     event_centoid = gemmi.Position(
         coord.x,
         coord.y,
@@ -198,7 +198,7 @@ def get_ccp4_map(xmap_path):
     return m
 
 
-def get_bounding_box(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 5.0,
+def get_bounding_box(event_map: gemmi.FloatGrid, coord: Coord, radius: float = 8.0,
                      margin: float = 5.0) -> gemmi.FloatGrid:
     event_centroid = gemmi.Position(coord.x, coord.y, coord.z)
 
