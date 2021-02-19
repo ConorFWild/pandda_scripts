@@ -948,7 +948,7 @@ def update_autobuilds(database_file: str, autobuild_dirs_dir: str):
 
     database.populate_autobuilds(autobuild_dirs_dir)
 
-def update_scores(database_file: str, autobuild_dirs_dir: str):
+# def update_scores(database_file: str, autobuild_dirs_dir: str):
 
 
 if __name__ == "__main__":
@@ -961,7 +961,7 @@ if __name__ == "__main__":
             "update_panddas": update_panddas,
             "update_clusters": update_clusters,
             "update_autobuilds": update_autobuilds,
-            "update_scores": update_scores,
+            # "update_scores": update_scores,
             "update_all": main,
         }
     )

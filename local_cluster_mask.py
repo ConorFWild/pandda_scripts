@@ -808,7 +808,8 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT","PHW
         dataset_connectivity_matrix, 
         args.out_dir / f"global_hdbscan_dendrogram.png",
     )
-    
+
+    print(clustering_dict)
     save_aoc(clustering_dict, args.out_dir / f"aoc.json")
                 
                 
