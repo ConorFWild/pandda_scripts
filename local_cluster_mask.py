@@ -322,7 +322,9 @@ def save_num_clusters_bar_plot(clustering_dict, plot_file):
     x = np.arange(len(clustering_dict))
     y = [np.unique([cluster_id for cluster_id in cluster_dict.values()]).size for cluster_dict in
          clustering_dict.values()]
-    labels = [f"{residue_id.chain}_{residue_id.insertion}" for residue_id in clustering_dict]
+    # labels = [f"{residue_id.chain}_{residue_id.insertion}" for residue_id in clustering_dict]
+    labels = [f"{residue_id}" for residue_id in clustering_dict]
+
     plt.bar(x, y)
     plt.xticks(x, labels, rotation='vertical', fontsize=8)
     fig.savefig(str(plot_file))
@@ -372,7 +374,9 @@ def save_num_clusters_stacked_bar_plot(clustering_dict, plot_file):
         y_prev = [y_prev_item + y_item for y_prev_item, y_item in zip(y_prev, y)]
         cluster_bar_plot_dict[cluster_idx] = p
 
-    labels = [f"{residue_id.chain}_{residue_id.insertion}" for residue_id in clustering_dict]
+    # labels = [f"{residue_id.chain}_{residue_id.insertion}" for residue_id in clustering_dict]
+    labels = [f"{residue_id}" for residue_id in clustering_dict]
+
     plt.xticks(x, labels, rotation='vertical', fontsize=8)
     # plt.legend([x[0] for x in cluster_bar_plot_dict.values()], [str(x) for x in cluster_bar_plot_dict.keys()])
     fig.savefig(str(plot_file))
@@ -499,7 +503,7 @@ def interpolate_onto_grid(array, grid, origin, scale, radius=5.0):
     return new_grid
 
 
-def save_parallel_cat(clustering_dict, out_file):
+def save_parallel_cat_plot(clustering_dict, out_file):
     dimensions = []
 
     for residue_id, cluster_dict in clustering_dict.items():
@@ -542,6 +546,19 @@ def save_aoc(clustering_dict, out_file):
 
     with open(str(out_file)) as f:
         json.dump({"aoc": float(aoc)}, f)
+
+
+def save_json(clustering_dict, path):
+    with open(str(path), "w") as f:
+        json.dump(clustering_dict, f)
+
+
+def residue_id_to_string(residue_id):
+    return f"{residue_id.model}_{residue_id.chain}_{residue_id.insertion}"
+
+
+def dtag_to_string(dtag):
+    return f"{dtag.dtag}"
 
 
 def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT", "PHWT"), mode="grid"):
@@ -730,9 +747,9 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT", "PH
 
         cluster_ids = cluster_linkage(linkage, 0.4)
 
-        for cluster_id in np.unique(cluster_ids):
-            print(
-                f"Cluster: {cluster_id}: {[dtag.dtag for dtag in np.array(list(samples.keys()))[cluster_ids == cluster_id]]}")
+        # for cluster_id in np.unique(cluster_ids):
+        #     print(
+        #         f"Cluster: {cluster_id}: {[dtag.dtag for dtag in np.array(list(samples.keys()))[cluster_ids == cluster_id]]}")
 
         #     cluster_samples = cluster_samples[cluster_ids == cluster_id]
 
@@ -753,7 +770,7 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT", "PH
             args.out_dir / f"{residue_id}_embed.png"
         )
 
-        clustering_dict[residue_id] = {dtag: cluster_id for dtag, cluster_id in zip(samples.keys(),
+        clustering_dict[residue_id_to_string(residue_id)] = {dtag.dtag: cluster_id for dtag, cluster_id in zip(samples.keys(),
                                                                                     cluster_ids.flatten().tolist())}
 
         print(f"Found {np.unique(cluster_ids).size} clusters")
@@ -786,6 +803,11 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT", "PH
     # #############################
     # Summary
     # #############################
+    # Save json
+    save_json(clustering_dict,
+              args.out_dir / f"clusterings.json",
+              )
+
     # # Get dtag list
     dtag_list = list(list(clustering_dict.values())[0].keys())
 
@@ -816,6 +838,11 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT", "PH
     save_hdbscan_dendrogram(
         dataset_connectivity_matrix,
         args.out_dir / f"global_hdbscan_dendrogram.png",
+    )
+
+    save_parallel_cat_plot(
+        clustering_dict,
+        args.out_dir / f"parallel_cat_plot.png",
     )
 
     print(clustering_dict)
