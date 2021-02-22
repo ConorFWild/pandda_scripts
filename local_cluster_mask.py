@@ -821,7 +821,7 @@ def main(data_dirs, out_dir, pdb_regex, mtz_regex, structure_factors=("FWT", "PH
 
     # # Summary plots
     save_dendrogram_plot(connectivity_linkaged,
-                         labels=[dtag.dtag for dtag in dtag_list],
+                         labels=[dtag for dtag in dtag_list],
                          dendrogram_plot_file=args.out_dir / f"global_connectivity_dendrogram.png",
                          )
 
