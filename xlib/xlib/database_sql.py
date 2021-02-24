@@ -689,6 +689,8 @@ class Database:
     def populate_autobuilds(self, autobuild_dirs_dir: Path):
 
         for path in autobuild_dirs_dir.glob("*"):
+            if not path.is_dir():
+                continue
             event_dir = path.name
             event_dtag = re.match("[^\_]+", event_dir).group(0)
             event_system = re.match("([^\-]+)-x[0-9]+", event_dtag).group(1)
