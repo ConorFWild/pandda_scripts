@@ -694,7 +694,6 @@ class Database:
             event_system = re.match("([^\-]+)-x[0-9]+", event_dtag).group(1)
             event_idx = re.match("[^\_]+_([0-9]+)", event_dir).group(1)
 
-            build_file = path / "rhofit" / "best.pdb"
 
             system = self.session.query(System).filter(System.system == event_system).first()
             pandda = self.session.query(PanDDA).filter(PanDDA.system_id == system.id).first()
@@ -704,14 +703,18 @@ class Database:
                                                      Event.event_idx == event_idx
                                                      ).first()
 
-            autobuild = Autobuild(path=str(build_file),
-                                  system=system,
-                                  dataset=dataset,
-                                  pandda=pandda,
-                                  event=event,
-                                  )
+            build_file_list = list((path / "rhofit").glob("Hit*.pdb"))
 
-            self.session.add(autobuild)
+            for build_file in build_file_list:
+
+                autobuild = Autobuild(path=str(build_file),
+                                      system=system,
+                                      dataset=dataset,
+                                      pandda=pandda,
+                                      event=event,
+                                      )
+
+                self.session.add(autobuild)
         self.session.commit()
 
     def populate_events(self):
@@ -933,7 +936,6 @@ def update_clusters(database_file: str, cluster_dirs_dir: str):
 
 
 def update_autobuilds(database_file: str, autobuild_dirs_dir: str):
-
     database_file = Path(database_file)
     autobuild_dirs_dir = Path(autobuild_dirs_dir)
     database = Database(database_file)
@@ -947,6 +949,7 @@ def update_autobuilds(database_file: str, autobuild_dirs_dir: str):
         raise Exception(e)
 
     database.populate_autobuilds(autobuild_dirs_dir)
+
 
 # def update_scores(database_file: str, autobuild_dirs_dir: str):
 
