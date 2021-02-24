@@ -83,6 +83,8 @@ def main(database_file: str, out_dir: str):
     database_file = Path(database_file)
     out_dir = Path(out_dir)
 
+    try_make_dir(out_dir)
+
     database = database_sql.Database(database_file)
 
     autobuild_query = database.session.query(database_sql.Autobuild)
