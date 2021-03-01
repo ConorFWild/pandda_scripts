@@ -159,6 +159,40 @@ def get_symmetry_mask(structure, grid, radius):
     return symmetry_mask
 
 
+def partition_protein_atoms(structure, grid):
+    partitioning = {}
+
+    for model in structure:
+        for chain in model:
+            for residue in chain.get_polymer():
+                for atom in residue:
+                    pos = atom.pos
+                    fractional = grid.unit_cell.fractionalize(pos)
+
+                    wrapped_x = fractional.x % 1
+                    wrapped_y = fractional.y % 1
+                    wrapped_z = fractional.z % 1
+
+                    wrapped_fraction = gemmi.Fractional(wrapped_x, wrapped_y, wrapped_z)
+
+                    orthogonal_wrapped_fractional = grid.unit_cell.orthogonalize(wrapped_fraction)
+
+                    x_trans = fractional.x // 1
+                    y_trans = fractional.y // 1
+                    z_trans = fractional.z // 1
+
+                    block = (x_trans, y_trans, z_trans)
+
+                    if block in partitioning:
+                        partitioning[block].append(orthogonal_wrapped_fractional)
+
+                    else:
+                        partitioning[block] = []
+                        partitioning[block].append(orthogonal_wrapped_fractional)
+
+    return partitioning
+
+
 def get_cell_mask(structure, grid, radius: float):
     """
     Partitions protein atoms by the operation to put them into the unit cell, and generates
@@ -168,39 +202,6 @@ def get_cell_mask(structure, grid, radius: float):
     :param radius:
     :return:
     """
-
-    def partition_protein_atoms(structure, grid):
-        partitioning = {}
-
-        for model in structure:
-            for chain in model:
-                for residue in chain.get_polymer():
-                    for atom in residue:
-                        pos = atom.pos
-                        fractional = grid.unit_cell.fractionalize(pos)
-
-                        wrapped_x = fractional.x % 1
-                        wrapped_y = fractional.y % 1
-                        wrapped_z = fractional.z % 1
-
-                        wrapped_fraction = gemmi.Fractional(wrapped_x, wrapped_y, wrapped_z)
-
-                        orthogonal_wrapped_fractional = grid.unit_cell.orthogonalize(wrapped_fraction)
-
-                        x_trans = fractional.x // 1
-                        y_trans = fractional.y // 1
-                        z_trans = fractional.z // 1
-
-                        block = (x_trans, y_trans, z_trans)
-
-                        if block in partitioning:
-                            partitioning[block].append(orthogonal_wrapped_fractional)
-
-                        else:
-                            partitioning[block] = []
-                            partitioning[block].append(orthogonal_wrapped_fractional)
-
-        return partitioning
 
     partitioning = partition_protein_atoms(structure, grid)
 
@@ -246,6 +247,7 @@ def get_protein_mask(structure, grid, radius):
     """
 
     protein_mask = copy_grid(grid)
+    protein_mask.spacegroup = gemmi.find_spacegroup_by_name("P 1")
     for model in structure:
         for chain in model:
             for residue in chain.get_polymer():
@@ -418,6 +420,7 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
         print(
             (
                 f"Writing ed maps to:\n"
+                f"\tProtein mask: {protein_mask_file}\n"
                 f"\tSymmetry mask: {symmetry_mask_file}\n"
                 f"\tCell mask: {cell_mask_file}\n"
                 f"\tContact mask: {contact_mask_file}\n"
