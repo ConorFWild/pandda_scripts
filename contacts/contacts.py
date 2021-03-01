@@ -226,6 +226,11 @@ def get_cell_mask(structure, grid, radius: float):
         grid_size = (grid.nu, grid.nv, grid.nw)
         grid_array[:, :, :] = doubled_grid_array[:grid_size[0], :grid_size[1], :grid_size[2]]
 
+    if Constants.DEBUG:
+        for partitioning_key, partition_grid in partition_grids.items():
+            array = np.array(partition_grid, copy=False)
+            print(f"\tIn partition {partitioning_key}, masked {np.sum(array)} points")
+
     # Combine the grids
     cell_mask = copy_grid(grid)
     cell_mask.spacegroup = gemmi.find_spacegroup_by_name("P 1")
