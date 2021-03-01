@@ -208,23 +208,35 @@ def get_cell_mask(structure, grid, radius: float):
     if Constants.DEBUG:
         print(f"Found {len(partitioning)} partitions, with {[len(values) for key, values in partitioning.items()]} atoms in each")
 
+    # partition_grids = {}
+    # for partitioning_key, partition_atoms in partitioning.items():
+    #
+    #     # Setup grids
+    #     doubled_grid = double_grid(grid)
+    #     partition_grids[partitioning_key] = copy_grid(grid)
+    #
+    #     # Mask in the doubled grid
+    #     for atom_pos in partition_atoms:
+    #         doubled_grid.set_points_around(atom_pos, radius=radius, value=1)
+    #
+    #     # Pull out the unit cell component
+    #     doubled_grid_array = np.array(doubled_grid, copy=False)
+    #     grid_array = np.array(partition_grids[partitioning_key], copy=False)
+    #
+    #     grid_size = (grid.nu, grid.nv, grid.nw)
+    #     grid_array[:, :, :] = doubled_grid_array[:grid_size[0], :grid_size[1], :grid_size[2]]
+
     partition_grids = {}
     for partitioning_key, partition_atoms in partitioning.items():
 
         # Setup grids
-        doubled_grid = double_grid(grid)
         partition_grids[partitioning_key] = copy_grid(grid)
 
         # Mask in the doubled grid
         for atom_pos in partition_atoms:
-            doubled_grid.set_points_around(atom_pos, radius=radius, value=1)
+            partition_grids[partitioning_key].set_points_around(atom_pos, radius=radius, value=1)
 
-        # Pull out the unit cell component
-        doubled_grid_array = np.array(doubled_grid, copy=False)
-        grid_array = np.array(partition_grids[partitioning_key], copy=False)
 
-        grid_size = (grid.nu, grid.nv, grid.nw)
-        grid_array[:, :, :] = doubled_grid_array[:grid_size[0], :grid_size[1], :grid_size[2]]
 
     if Constants.DEBUG:
         for partitioning_key, partition_grid in partition_grids.items():
