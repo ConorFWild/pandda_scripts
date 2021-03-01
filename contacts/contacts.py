@@ -270,7 +270,7 @@ def combine_masks(symmetry_mask, cell_mask, protein_mask):
     # Mask the overlap of points near the protein and protein images from other cells
     combined_array[(protein_array == 1) & (cell_array == 1)] = 1
 
-    combined_mask.symmetrize_max()
+    # combined_mask.symmetrize_max()
 
     return combined_mask
 
@@ -351,7 +351,7 @@ def write_out_file(pdb_path, out_file, selection, radius, overlap_dict):
 
 
 def write_ccp4_mask(grid, file):
-    grid.symmetrize_max()
+    # grid.symmetrize_max()
     ccp4 = gemmi.Ccp4Mask()
     ccp4.grid = grid
     ccp4.update_ccp4_header(0, True)
@@ -388,9 +388,10 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
     symmetry_mask = get_symmetry_mask(structure, grid, radius)
     cell_mask = get_cell_mask(structure, grid, radius)
     protein_mask = get_protein_mask(structure, grid, radius)
-
     contact_mask = combine_masks(symmetry_mask, cell_mask, protein_mask)
+
     if write_maps:
+        protein_mask_file = out_file.with_name("protein_mask.ccp4")
         symmetry_mask_file = out_file.with_name("symmetry_mask.ccp4")
         cell_mask_file = out_file.with_name("cell_mask.ccp4")
         contact_mask_file = out_file.with_name("contact_mask.ccp4")
@@ -402,6 +403,7 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
                 f"\tContact mask: {contact_mask_file}\n"
             )
         )
+        write_ccp4_mask(protein_mask, protein_mask_file)
         write_ccp4_mask(symmetry_mask, symmetry_mask_file)
         write_ccp4_mask(cell_mask, cell_mask_file)
         write_ccp4_mask(contact_mask, contact_mask_file)
