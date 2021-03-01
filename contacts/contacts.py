@@ -213,7 +213,7 @@ def get_cell_mask(structure, grid, radius: float):
         grid_array = np.array(partition_grids[partitioning_key], copy=False)
 
         grid_size = (grid.nu, grid.nv, grid.nw)
-        grid_array[:, :, :] = doubled_grid_array[:grid_size[0] - 1, :grid_size[1] - 1, :grid_size[2] - 1]
+        grid_array[:, :, :] = doubled_grid_array[:grid_size[0] , :grid_size[1] , :grid_size[2] ]
 
     # Combine the grids
     cell_mask = copy_grid(grid)
