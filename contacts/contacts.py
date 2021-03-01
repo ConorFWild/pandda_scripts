@@ -11,6 +11,10 @@ import numpy as np
 import gemmi
 
 
+class Constants:
+    DEBUG = True
+
+
 def get_out_file(out_path, pdb_path):
     """
     If you give a dir return the Path to dir/{protein_name}.json
@@ -308,8 +312,10 @@ def get_overlap_dict(structure, selection, radius):
     :return:
     """
     residues = get_residues(structure, selection)
+    if Constants.DEBUG: print(f"Found {len(residues)} named {selection}")
 
     grid = get_grid(structure)
+    if Constants.DEBUG: print(f"Found a grid for the structure with shape: {(grid.nu, grid.nv, grid.nw)}; spacegroup: {grid.spacegroup}; unit cell {grid.unit_cell}")
 
     contact_mask = get_contact_mask(structure, grid, radius)
 
@@ -356,9 +362,12 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0):
     :return:
     """
     pdb_path = Path(pdb_path)
+    if Constants.DEBUG: print(f"The supplied pdb path is: {pdb_path}")
     out_path = Path(out_path)
+    if Constants.DEBUG: print(f"The supplied output  path is: {out_path}")
 
     out_file = get_out_file(out_path, pdb_path)
+    if Constants.DEBUG: print(f"The json that output will be written to is: {out_file}")
 
     structure = get_structure(pdb_path)
 
