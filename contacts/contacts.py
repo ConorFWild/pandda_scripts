@@ -234,10 +234,10 @@ def get_cell_mask(structure, grid, radius: float):
     # Combine the grids
     cell_mask = copy_grid(grid)
     cell_mask.spacegroup = gemmi.find_spacegroup_by_name("P 1")
-    cell_mask_array = np.array(cell_mask, copy=False)
+    cell_mask_array = np.array(cell_mask, copy=False, dtype=np.int8)
 
     for partitioning_key, partition_grid in partition_grids.items():
-        grid_array = np.array(partition_grid, copy=False)
+        grid_array = np.array(partition_grid, copy=False, dtype=np.int8)
         cell_mask_array = cell_mask_array + grid_array
 
     if Constants.DEBUG:
