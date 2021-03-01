@@ -270,6 +270,8 @@ def combine_masks(symmetry_mask, cell_mask, protein_mask):
     # Mask the overlap of points near the protein and protein images from other cells
     combined_array[(protein_array == 1) & (cell_array == 1)] = 1
 
+    combined_mask.symmetrize_max()
+
     return combined_mask
 
 
