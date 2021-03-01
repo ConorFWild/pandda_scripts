@@ -377,6 +377,9 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
     if Constants.DEBUG: print(f"The json that output will be written to is: {out_file}")
 
     structure = get_structure(pdb_path)
+    if Constants.DEBUG: print(
+        f"Found a structure with spacegroup: {structure.spacegroup_hm}; unit cell {structure.cell}; resolution: {structure.resolution}")
+
 
     residues = get_residues(structure, selection)
     if Constants.DEBUG: print(f"Found {len(residues)} residue named {selection} to check for contacts")
