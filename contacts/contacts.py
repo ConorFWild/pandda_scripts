@@ -422,7 +422,7 @@ def write_ccp4_map(grid, file):
     ccp4.write_ccp4_map(str(file))
 
 
-def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, cutoff=0.0, write_maps=False, debug=False):
+def get_contact_score(pdb_path, out_path=None, selection: str="LIG", radius=3.0, cutoff=0.0, write_maps=False, debug=False):
     """
     Get the score of the selection as a fraction inside of contact regions
 
