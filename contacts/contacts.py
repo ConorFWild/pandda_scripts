@@ -205,6 +205,8 @@ def get_cell_mask(structure, grid, radius: float):
     """
 
     partitioning = partition_protein_atoms(structure, grid)
+    if Constants.DEBUG:
+        print(f"Found {len(partitioning)} partitions, with {[len(values) for key, values in partitioning.items()]} atoms in each")
 
     partition_grids = {}
     for partitioning_key, partition_atoms in partitioning.items():
