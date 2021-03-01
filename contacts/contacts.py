@@ -12,7 +12,7 @@ import gemmi
 
 
 class Constants:
-    DEBUG = True
+    DEBUG = False
 
 
 def get_out_file(out_path, pdb_path):
@@ -422,18 +422,22 @@ def write_ccp4_map(grid, file):
     ccp4.write_ccp4_map(str(file))
 
 
-def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, cutoff=0.0, write_maps=False):
+def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, cutoff=0.0, write_maps=False, debug=False):
     """
     Get the score of the selection as a fraction inside of contact regions
 
-    :param pdb_path:
-    :param out_path:
-    :param selection:
-    :param radius:
+    :param pdb_path: The path to the pdb to check for ligands at contacts
+    :param out_path: Either /path/to/{}.json or /path/to/directory - in the later case the output will be called
+    /path/to/dir/(name of the pdb).json
+    :param selection: Check residues with this name for being at contacts
+    :param radius: The maximum distance to include a point in a crystal contact
     :param cutoff: The value the mask must be at an atom for which todecide it is inside the mask
-    :param write_maps:
+    :param write_maps: Whether to output ccp4 maps (to the same directory as the json would go)
+    :param debug: Whether to output debug messages
     :return:
     """
+
+    Constants.DEBUG = debug
 
     pdb_path = Path(pdb_path)
     if Constants.DEBUG: print(f"The supplied pdb path is: {pdb_path}")
