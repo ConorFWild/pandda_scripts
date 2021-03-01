@@ -206,7 +206,8 @@ def get_cell_mask(structure, grid, radius: float):
 
     partitioning = partition_protein_atoms(structure, grid)
     if Constants.DEBUG:
-        print(f"Found {len(partitioning)} partitions, with {[len(values) for key, values in partitioning.items()]} atoms in each")
+        print(
+            f"Found {len(partitioning)} partitions, with {[len(values) for key, values in partitioning.items()]} atoms in each")
 
     partition_grids = {}
     for partitioning_key, partition_atoms in partitioning.items():
@@ -349,6 +350,9 @@ def get_overlap(residue, contact_mask):
         fractional = contact_mask.unit_cell.fractionalize(pos)
         val = contact_mask.interpolate_value(fractional)
         vals.append(val)
+
+    if Constants.DEBUG:
+        print(f"Vals are: {vals}")
 
     return len([x for x in vals if x > 0]) / len(vals)
 
