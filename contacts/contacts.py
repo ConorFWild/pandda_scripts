@@ -388,16 +388,27 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
     if Constants.DEBUG: print(
         f"Found a grid for the structure with shape: {(grid.nu, grid.nv, grid.nw)}; spacegroup: {grid.spacegroup}; unit cell {grid.unit_cell}")
 
-    symmetry_mask = get_symmetry_mask(structure, grid, radius)
-    cell_mask = get_cell_mask(structure, grid, radius)
     protein_mask = get_protein_mask(structure, grid, radius)
-    contact_mask = combine_masks(symmetry_mask, cell_mask, protein_mask)
-
     if write_maps:
         protein_mask_file = out_file.with_name("protein_mask.ccp4")
+        write_ccp4_mask(protein_mask, protein_mask_file)
+
+    symmetry_mask = get_symmetry_mask(structure, grid, radius)
+    if write_maps:
         symmetry_mask_file = out_file.with_name("symmetry_mask.ccp4")
+        write_ccp4_mask(symmetry_mask, symmetry_mask_file)
+
+    cell_mask = get_cell_mask(structure, grid, radius)
+    if write_maps:
         cell_mask_file = out_file.with_name("cell_mask.ccp4")
+        write_ccp4_mask(cell_mask, cell_mask_file)
+
+    contact_mask = combine_masks(symmetry_mask, cell_mask, protein_mask)
+    if write_maps:
         contact_mask_file = out_file.with_name("contact_mask.ccp4")
+        write_ccp4_mask(contact_mask, contact_mask_file)
+
+    if write_maps:
         print(
             (
                 f"Writing ed maps to:\n"
@@ -406,10 +417,6 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
                 f"\tContact mask: {contact_mask_file}\n"
             )
         )
-        write_ccp4_mask(protein_mask, protein_mask_file)
-        write_ccp4_mask(symmetry_mask, symmetry_mask_file)
-        write_ccp4_mask(cell_mask, cell_mask_file)
-        write_ccp4_mask(contact_mask, contact_mask_file)
 
     overlap_dict = get_overlap_dict(residues, contact_mask)
     if Constants.DEBUG: print(f"Results: {overlap_dict}")
