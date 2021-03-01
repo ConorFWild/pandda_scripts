@@ -71,7 +71,12 @@ def get_grid(structure):
 
     spacegroup = gemmi.find_spacegroup_by_name(structure.spacegroup_hm)
 
-    mtz = gemmi.make_miller_array(cell, spacegroup, res)
+    hkl = gemmi.make_miller_array(cell, spacegroup, res)
+
+    mtz = gemmi.Mtz(with_base=True)
+    mtz.spacegroup = spacegroup
+    mtz.set_unit_cell_for_all(cell)
+    mtz.set_data(hkl)
 
     size = mtz.get_size_for_hkl()
 
