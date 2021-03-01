@@ -349,6 +349,7 @@ def write_out_file(pdb_path, out_file, selection, radius, overlap_dict):
 
 
 def write_ccp4_mask(grid, file):
+    grid.symmetrize_max()
     ccp4 = gemmi.Ccp4Mask()
     ccp4.grid = grid
     ccp4.update_ccp4_header(0, True)
