@@ -136,7 +136,8 @@ def get_symmetry_mask(structure, grid, radius):
     """
     symmetry_mask = copy_grid(grid)
 
-    symmetries = grid.spacegroup.operations()
+    symmetries = list(grid.spacegroup.operations())
+    if Constants.DEBUG: print(f"Found: {len(symmetries)} symmetry operations")
 
     for model in structure:
         for chain in model:
@@ -303,7 +304,7 @@ def get_overlap(residue, contact_mask):
     return sum(vals) / len(vals)
 
 
-def get_overlap_dict(structure, selection, radius):
+def get_overlap_dict(residues, contact_mask):
     """
     Get the dictionary of overlaps of selected residue with contacts
     :param structure:
@@ -311,13 +312,6 @@ def get_overlap_dict(structure, selection, radius):
     :param radius:
     :return:
     """
-    residues = get_residues(structure, selection)
-    if Constants.DEBUG: print(f"Found {len(residues)} named {selection}")
-
-    grid = get_grid(structure)
-    if Constants.DEBUG: print(f"Found a grid for the structure with shape: {(grid.nu, grid.nv, grid.nw)}; spacegroup: {grid.spacegroup}; unit cell {grid.unit_cell}")
-
-    contact_mask = get_contact_mask(structure, grid, radius)
 
     overlaps = {}
     for resid, residue in residues.items():
@@ -352,7 +346,15 @@ def write_out_file(pdb_path, out_file, selection, radius, overlap_dict):
         json.dump(out_dict, f)
 
 
-def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0):
+def write_ccp4_mask(grid, file):
+    ccp4 = gemmi.Ccp4Mask()
+    ccp4.grid = grid
+    ccp4.update_ccp4_header(0, True)
+    ccp4.setup()
+    ccp4.write_ccp4_map(str(file))
+
+
+def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, write_maps=True):
     """
     Get the score of the selection as a fraction inside of contact regions
     :param pdb_path:
@@ -371,7 +373,35 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0):
 
     structure = get_structure(pdb_path)
 
-    overlap_dict = get_overlap_dict(structure, selection, radius)
+    residues = get_residues(structure, selection)
+    if Constants.DEBUG: print(f"Found {len(residues)} residue named {selection} to check for contacts")
+
+    grid = get_grid(structure)
+    if Constants.DEBUG: print(
+        f"Found a grid for the structure with shape: {(grid.nu, grid.nv, grid.nw)}; spacegroup: {grid.spacegroup}; unit cell {grid.unit_cell}")
+
+    symmetry_mask = get_symmetry_mask(structure, grid, radius)
+    cell_mask = get_cell_mask(structure, grid, radius)
+    protein_mask = get_protein_mask(structure, grid, radius)
+
+    contact_mask = combine_masks(symmetry_mask, cell_mask, protein_mask)
+    if write_maps:
+        symmetry_mask_file = out_path.with_name("symmetry_mask.cpp4")
+        cell_mask_file = out_path.with_name("cell_mask.ccp4")
+        contact_mask_file = out_path.with_name("contact_mask.ccp4")
+        print(
+            (
+                f"Writing ed maps to:\n"
+                f"\tSymmetry mask: {symmetry_mask_file}\n"
+                f"\tCell mask: {cell_mask_file}\n"
+                f"\tContact mask: {contact_mask_file}\n"
+            )
+        )
+        write_ccp4_mask(symmetry_mask, symmetry_mask_file)
+        write_ccp4_mask(cell_mask, cell_mask_file)
+        write_ccp4_mask(contact_mask, contact_mask_file)
+
+    overlap_dict = get_overlap_dict(residues, contact_mask)
 
     write_out_file(pdb_path, out_file, selection, radius, overlap_dict)
 
