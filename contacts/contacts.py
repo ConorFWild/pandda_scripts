@@ -249,9 +249,10 @@ def get_cell_mask(structure, grid, radius: float):
 
     cell_mask_new = copy_grid(grid)
     cell_mask.spacegroup = gemmi.find_spacegroup_by_name("P 1")
-    cell_mask_new_array = np.array(cell_mask, copy=False)
 
-    cell_mask_new_array[cell_mask_array > 1] = 1
+    for index, x in np.ndenumerate(cell_mask_array):
+        if x > 1:
+            cell_mask_new.set_value(index[0], index[1], index[2], 1)
 
     return cell_mask_new
 
