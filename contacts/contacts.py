@@ -151,6 +151,8 @@ def get_symmetry_mask(structure, grid, radius):
 
                         fractional_sym_pos = gemmi.Fractional(*sym_pos)
 
+                        orthogonal_sym_pos = grid.unit_cell.orthogonalize(fractional_sym_pos)
+
                         symmetry_mask.set_points_around(fractional_sym_pos, radius=radius, value=1)
 
     return symmetry_mask
