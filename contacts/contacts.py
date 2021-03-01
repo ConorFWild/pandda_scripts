@@ -345,10 +345,11 @@ def get_overlap(residue, contact_mask):
     vals = []
     for atom in residue:
         pos = atom.pos
-        # val = contact_mask.interpolate_value(pos)
-
-        fractional = contact_mask.unit_cell.fractionalize(pos)
-        val = contact_mask.interpolate_value(fractional)
+        val = contact_mask.interpolate_value(pos)
+        nearest_point = contact_mask.get_nearest_point(pos)
+        print(nearest_point)
+        # fractional = contact_mask.unit_cell.fractionalize(pos)
+        # val = contact_mask.interpolate_value(fractional)
         vals.append(val)
 
     if Constants.DEBUG:
@@ -468,7 +469,8 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
         )
 
     overlap_dict = get_overlap_dict(residues, contact_mask)
-    if Constants.DEBUG: print(f"Results: {overlap_dict}")
+    if Constants.DEBUG:
+        print(f"Results: {overlap_dict}")
 
     write_out_file(pdb_path, out_file, selection, radius, overlap_dict)
 
