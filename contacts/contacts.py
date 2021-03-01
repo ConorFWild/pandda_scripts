@@ -81,6 +81,7 @@ def get_grid(structure):
     mtz.spacegroup = spacegroup
     mtz.set_cell_for_all(cell)
     mtz.set_data(hkl)
+    mtz.update_reso()
 
     size = mtz.get_size_for_hkl()
 
@@ -379,7 +380,6 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
     structure = get_structure(pdb_path)
     if Constants.DEBUG: print(
         f"Found a structure with spacegroup: {structure.spacegroup_hm}; unit cell {structure.cell}; resolution: {structure.resolution}")
-
 
     residues = get_residues(structure, selection)
     if Constants.DEBUG: print(f"Found {len(residues)} residue named {selection} to check for contacts")
