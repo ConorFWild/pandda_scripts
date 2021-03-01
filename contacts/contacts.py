@@ -83,7 +83,7 @@ def get_grid(structure):
     mtz.set_data(hkl)
     mtz.update_reso()
 
-    size = mtz.get_size_for_hkl()
+    size = mtz.get_size_for_hkl(sample_rate=3.0)
 
     grid = gemmi.Int8Grid(*size)
 
