@@ -177,7 +177,7 @@ def get_cell_mask(structure, grid, radius: float):
                     for atom in residue:
                         pos = atom.pos
                         fractional = grid.unit_cell.fractionalize(pos)
-                        wrapped_fraction = fractional.wrap()
+                        wrapped_fraction = fractional.wrap_to_unit()
                         orthogonal_wrapped_fractional = grid.unit_cell.orthogonalize(wrapped_fraction)
 
                         x_trans = fractional.x // 1
