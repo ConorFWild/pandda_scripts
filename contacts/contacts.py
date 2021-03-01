@@ -231,12 +231,11 @@ def get_cell_mask(structure, grid, radius: float):
 
         # Setup grids
         partition_grids[partitioning_key] = copy_grid(grid)
+        partition_grids[partitioning_key].spacegroup = gemmi.find_spacegroup_by_name("P 1")
 
         # Mask in the doubled grid
         for atom_pos in partition_atoms:
             partition_grids[partitioning_key].set_points_around(atom_pos, radius=radius, value=1)
-
-
 
     if Constants.DEBUG:
         for partitioning_key, partition_grid in partition_grids.items():
