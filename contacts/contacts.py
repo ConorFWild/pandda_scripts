@@ -349,8 +349,8 @@ def get_overlap(residue, contact_mask):
     for atom in residue:
         pos = atom.pos
         val = contact_mask.interpolate_value(pos)
-        nearest_point = contact_mask.get_nearest_point(pos)
-        print(nearest_point)
+        # nearest_point = contact_mask.get_nearest_point(pos)
+        # print(nearest_point)
         # fractional = contact_mask.unit_cell.fractionalize(pos)
         # val = contact_mask.interpolate_value(fractional)
         vals.append(val)
