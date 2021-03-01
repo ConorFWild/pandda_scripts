@@ -242,7 +242,7 @@ def get_cell_mask(structure, grid, radius: float):
 
     if Constants.DEBUG:
         print(f"Masked a total of {cell_mask_array[cell_mask_array != 0].size} points")
-        print(f"Of these, {cell_mask_array[cell_mask_array > 1]} overlap")
+        print(f"Of these, {cell_mask_array[cell_mask_array > 1].size} overlap")
 
     cell_mask_array[cell_mask_array <= 1] = 0
     cell_mask_array[cell_mask_array != 0] = 1
