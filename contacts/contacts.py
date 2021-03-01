@@ -404,6 +404,8 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
         write_ccp4_mask(contact_mask, contact_mask_file)
 
     overlap_dict = get_overlap_dict(residues, contact_mask)
+    if Constants.DEBUG: print(f"Results: {overlap_dict}")
+
 
     write_out_file(pdb_path, out_file, selection, radius, overlap_dict)
 
