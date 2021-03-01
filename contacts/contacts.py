@@ -85,7 +85,8 @@ def get_grid(structure):
 
     size = mtz.get_size_for_hkl(sample_rate=3.0)
 
-    grid = gemmi.Int8Grid(*size)
+    # grid = gemmi.Int8Grid(*size)
+    grid = gemmi.FloatGrid(*size)
 
     grid.spacegroup = spacegroup
     grid.set_unit_cell(cell)
@@ -99,7 +100,8 @@ def copy_grid(grid):
     :param grid:
     :return:
     """
-    new_grid = gemmi.Int8Grid(grid.nu, grid.nv, grid.nw)
+    # new_grid = gemmi.Int8Grid(grid.nu, grid.nv, grid.nw)
+    new_grid = gemmi.FloatGrid(grid.nu, grid.nv, grid.nw)
 
     new_grid.spacegroup = grid.spacegroup
 
@@ -114,7 +116,8 @@ def double_grid(grid):
     :param grid:
     :return:
     """
-    new_grid = gemmi.Int8Grid(2 * grid.nu, 2 * grid.nv, 2 * grid.nw)
+    # new_grid = gemmi.Int8Grid(2 * grid.nu, 2 * grid.nv, 2 * grid.nw)
+    new_grid = gemmi.FloatGrid(2 * grid.nu, 2 * grid.nv, 2 * grid.nw)
 
     new_grid.spacegroup = grid.spacegroup
 
@@ -246,10 +249,10 @@ def get_cell_mask(structure, grid, radius: float):
     # Combine the grids
     cell_mask = copy_grid(grid)
     cell_mask.spacegroup = gemmi.find_spacegroup_by_name("P 1")
-    cell_mask_array = np.array(cell_mask, copy=False, dtype=np.int8)
+    cell_mask_array = np.array(cell_mask, copy=False)
 
     for partitioning_key, partition_grid in partition_grids.items():
-        grid_array = np.array(partition_grid, copy=False, dtype=np.int8)
+        grid_array = np.array(partition_grid, copy=False)
         cell_mask_array = cell_mask_array + grid_array
 
     if Constants.DEBUG:
@@ -409,6 +412,15 @@ def write_ccp4_mask(grid, file):
     ccp4.write_ccp4_map(str(file))
 
 
+def write_ccp4_map(grid, file):
+    # grid.symmetrize_max()
+    ccp4 = gemmi.Ccp4Map()
+    ccp4.grid = grid
+    ccp4.update_ccp4_header(2, True)
+    ccp4.setup()
+    ccp4.write_ccp4_map(str(file))
+
+
 def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, write_maps=True):
     """
     Get the score of the selection as a fraction inside of contact regions
@@ -440,22 +452,28 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
     protein_mask = get_protein_mask(structure, grid, radius)
     if write_maps:
         protein_mask_file = out_file.with_name("protein_mask.ccp4")
-        write_ccp4_mask(protein_mask, protein_mask_file)
+        # write_ccp4_mask(protein_mask, protein_mask_file)
+        write_ccp4_map(protein_mask, protein_mask_file)
 
     symmetry_mask = get_symmetry_mask(structure, grid, radius)
     if write_maps:
         symmetry_mask_file = out_file.with_name("symmetry_mask.ccp4")
-        write_ccp4_mask(symmetry_mask, symmetry_mask_file)
+        # write_ccp4_mask(symmetry_mask, symmetry_mask_file)
+    write_ccp4_map(symmetry_mask, symmetry_mask_file)
 
     cell_mask = get_cell_mask(structure, grid, radius)
     if write_maps:
         cell_mask_file = out_file.with_name("cell_mask.ccp4")
-        write_ccp4_mask(cell_mask, cell_mask_file)
+        # write_ccp4_mask(cell_mask, cell_mask_file)
+        write_ccp4_map(cell_mask, cell_mask_file)
+
 
     contact_mask = combine_masks(symmetry_mask, cell_mask, protein_mask)
     if write_maps:
         contact_mask_file = out_file.with_name("contact_mask.ccp4")
-        write_ccp4_mask(contact_mask, contact_mask_file)
+        # write_ccp4_mask(contact_mask, contact_mask_file)
+        write_ccp4_map(contact_mask, contact_mask_file)
+
 
     if write_maps:
         print(
