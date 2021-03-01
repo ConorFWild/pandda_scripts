@@ -178,7 +178,13 @@ def get_cell_mask(structure, grid, radius: float):
                     for atom in residue:
                         pos = atom.pos
                         fractional = grid.unit_cell.fractionalize(pos)
-                        wrapped_fraction = fractional.wrap_to_unit()
+
+                        wrapped_x = fractional.x % 1
+                        wrapped_y = fractional.y % 1
+                        wrapped_z = fractional.z % 1
+
+                        wrapped_fraction = gemmi.Fractional(wrapped_x, wrapped_y, wrapped_z)
+
                         orthogonal_wrapped_fractional = grid.unit_cell.orthogonalize(wrapped_fraction)
 
                         x_trans = fractional.x // 1
