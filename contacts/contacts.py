@@ -338,7 +338,7 @@ def get_contact_mask(structure, grid, radius):
     return contact_mask
 
 
-def get_overlap(residue, contact_mask):
+def get_overlap(residue, contact_mask, cutoff):
     """
     Return the fraction of residue atoms inside the contact mask
     :param residue:
@@ -358,21 +358,22 @@ def get_overlap(residue, contact_mask):
     if Constants.DEBUG:
         print(f"Vals are: {vals}")
 
-    return len([x for x in vals if x > 0]) / len(vals)
+    return len([x for x in vals if x > cutoff]) / len(vals)
 
 
-def get_overlap_dict(residues, contact_mask):
+def get_overlap_dict(residues, contact_mask, cutoff):
     """
     Get the dictionary of overlaps of selected residue with contacts
-    :param structure:
-    :param selection:
-    :param radius:
+
+    :param residues:
+    :param contact_mask:
+    :param cutoff:
     :return:
     """
 
     overlaps = {}
     for resid, residue in residues.items():
-        overlap = get_overlap(residue, contact_mask)
+        overlap = get_overlap(residue, contact_mask, cutoff)
         overlaps[resid] = overlap
 
     return overlaps
@@ -421,15 +422,19 @@ def write_ccp4_map(grid, file):
     ccp4.write_ccp4_map(str(file))
 
 
-def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, write_maps=True):
+def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, cutoff=0.0, write_maps=False):
     """
     Get the score of the selection as a fraction inside of contact regions
+
     :param pdb_path:
     :param out_path:
     :param selection:
     :param radius:
+    :param cutoff: The value the mask must be at an atom for which todecide it is inside the mask
+    :param write_maps:
     :return:
     """
+
     pdb_path = Path(pdb_path)
     if Constants.DEBUG: print(f"The supplied pdb path is: {pdb_path}")
     out_path = Path(out_path)
@@ -459,7 +464,7 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
     if write_maps:
         symmetry_mask_file = out_file.with_name("symmetry_mask.ccp4")
         # write_ccp4_mask(symmetry_mask, symmetry_mask_file)
-    write_ccp4_map(symmetry_mask, symmetry_mask_file)
+        write_ccp4_map(symmetry_mask, symmetry_mask_file)
 
     cell_mask = get_cell_mask(structure, grid, radius)
     if write_maps:
@@ -467,13 +472,11 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
         # write_ccp4_mask(cell_mask, cell_mask_file)
         write_ccp4_map(cell_mask, cell_mask_file)
 
-
     contact_mask = combine_masks(symmetry_mask, cell_mask, protein_mask)
     if write_maps:
         contact_mask_file = out_file.with_name("contact_mask.ccp4")
         # write_ccp4_mask(contact_mask, contact_mask_file)
         write_ccp4_map(contact_mask, contact_mask_file)
-
 
     if write_maps:
         print(
@@ -486,7 +489,7 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
             )
         )
 
-    overlap_dict = get_overlap_dict(residues, contact_mask)
+    overlap_dict = get_overlap_dict(residues, contact_mask, cutoff)
     if Constants.DEBUG:
         print(f"Results: {overlap_dict}")
 
