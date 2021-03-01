@@ -388,7 +388,7 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
 
     contact_mask = combine_masks(symmetry_mask, cell_mask, protein_mask)
     if write_maps:
-        symmetry_mask_file = out_file.with_name("symmetry_mask.cpp4")
+        symmetry_mask_file = out_file.with_name("symmetry_mask.ccp4")
         cell_mask_file = out_file.with_name("cell_mask.ccp4")
         contact_mask_file = out_file.with_name("contact_mask.ccp4")
         print(
