@@ -136,6 +136,7 @@ def get_symmetry_mask(structure, grid, radius):
     :return:
     """
     symmetry_mask = copy_grid(grid)
+    symmetry_mask.spacegroup = gemmi.find_spacegroup_by_name("P 1")
 
     symmetries = list(grid.spacegroup.operations())
     if Constants.DEBUG: print(f"Found: {len(symmetries)} symmetry operations")
@@ -225,6 +226,7 @@ def get_cell_mask(structure, grid, radius: float):
 
     # Combine the grids
     cell_mask = copy_grid(grid)
+    cell_mask.spacegroup = gemmi.find_spacegroup_by_name("P 1")
     cell_mask_array = np.array(cell_mask, copy=False)
 
     for partitioning_key, partition_grid in partition_grids.items():
@@ -268,6 +270,8 @@ def combine_masks(symmetry_mask, cell_mask, protein_mask):
     """
 
     combined_mask = copy_grid(protein_mask)
+    combined_mask.spacegroup = gemmi.find_spacegroup_by_name("P 1")
+
     combined_array = np.array(combined_mask, copy=False)
 
     symmetry_array = np.array(symmetry_mask, copy=False)
