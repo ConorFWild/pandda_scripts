@@ -153,7 +153,7 @@ def get_symmetry_mask(structure, grid, radius):
 
                         orthogonal_sym_pos = grid.unit_cell.orthogonalize(fractional_sym_pos)
 
-                        symmetry_mask.set_points_around(fractional_sym_pos, radius=radius, value=1)
+                        symmetry_mask.set_points_around(orthogonal_sym_pos, radius=radius, value=1)
 
     return symmetry_mask
 
