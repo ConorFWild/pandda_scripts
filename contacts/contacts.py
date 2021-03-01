@@ -3,6 +3,7 @@ Dependencies: fire, numpy, gemmi
 
 """
 
+from typing import Optional
 from pathlib import Path
 import json
 
@@ -422,7 +423,8 @@ def write_ccp4_map(grid, file):
     ccp4.write_ccp4_map(str(file))
 
 
-def get_contact_score(pdb_path, out_path=None, selection: str="LIG", radius=3.0, cutoff=0.0, write_maps=False, debug=False):
+def get_contact_score(pdb_path: str, out_path: Optional[str] = None, selection: str = "LIG",
+                      radius: float = 3.0, cutoff: float = 0.0, write_maps: bool = False, debug: bool = False):
     """
     Get the score of the selection as a fraction inside of contact regions
 
