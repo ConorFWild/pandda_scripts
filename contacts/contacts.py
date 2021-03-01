@@ -213,7 +213,7 @@ def get_cell_mask(structure, grid, radius: float):
         grid_array = np.array(partition_grids[partitioning_key], copy=False)
 
         grid_size = (grid.nu, grid.nv, grid.nw)
-        grid_array[:, :, :] = doubled_grid_array[:grid_size[0] , :grid_size[1] , :grid_size[2] ]
+        grid_array[:, :, :] = doubled_grid_array[:grid_size[0], :grid_size[1], :grid_size[2]]
 
     # Combine the grids
     cell_mask = copy_grid(grid)
@@ -303,7 +303,7 @@ def get_overlap(residue, contact_mask):
         val = contact_mask.interpolate_value(pos)
         vals.append(val)
 
-    return sum(vals) / len(vals)
+    return len([x for x in vals if x > 0]) / len(vals)
 
 
 def get_overlap_dict(residues, contact_mask):
@@ -406,7 +406,6 @@ def get_contact_score(pdb_path, out_path=None, selection="LIG", radius=3.0, writ
 
     overlap_dict = get_overlap_dict(residues, contact_mask)
     if Constants.DEBUG: print(f"Results: {overlap_dict}")
-
 
     write_out_file(pdb_path, out_file, selection, radius, overlap_dict)
 
