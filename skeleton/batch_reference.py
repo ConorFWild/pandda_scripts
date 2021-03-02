@@ -133,6 +133,9 @@ def get_scoring_data(database):
     reference_list = reference_query.all()
     event_list = event_query.all()
 
+    if Constants.DEBUG:
+        print(f"Before filtering have {len(reference_list)} references")
+
     # Filter to those references with events
     reference_with_events_list = []
     for reference in reference_list:
@@ -160,6 +163,11 @@ def get_scoring_data(database):
 
         structure = gemmi.read_structure(reference.path)
         ligand_centroid = get_ligand_centroid(structure)
+        if ligand_centroid is None:
+            if Constants.DEBUG:
+                print(f"\tCould not find a ligand in reference!")
+            continue
+
         if Constants.DEBUG:
             print(f"\tFound reference centroid at : {ligand_centroid}")
 
@@ -168,7 +176,7 @@ def get_scoring_data(database):
             event_centroid = (event.x, event.y, event.z)
             dist = distance(event_centroid, ligand_centroid)
             if Constants.DEBUG:
-                print(f"\tFound event centroid at : {event_centroid}; distance: {dist}")
+                print(f"\t\tFound event centroid at : {event_centroid}; distance: {dist}")
 
             if dist < 3.0:
                 reference_with_nearby_events_list.append(reference)
