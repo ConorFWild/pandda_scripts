@@ -140,13 +140,13 @@ def get_scoring_data(database):
 
         if len(reference_events) > 0:
             if Constants.DEBUG:
-                print(f"Found {len(reference_events)} events for reference: {reference}")
+                print(f"\tFound {len(reference_events)} events for reference: {reference}")
 
             reference_with_events_list.append(reference)
 
         else:
             if Constants.DEBUG:
-                print(f"Did not find any events for reference: {reference}")
+                print(f"\tDid not find any events for reference: {reference}")
 
     if Constants.DEBUG:
         print(
@@ -161,18 +161,21 @@ def get_scoring_data(database):
         structure = gemmi.read_structure(reference.path)
         ligand_centroid = get_ligand_centroid(structure)
         if Constants.DEBUG:
-            print(f"Found reference centroid at : {ligand_centroid}")
+            print(f"\tFound reference centroid at : {ligand_centroid}")
 
         for event in reference_events:
 
             event_centroid = (event.x, event.y, event.z)
+            dist = distance(event_centroid, ligand_centroid)
             if Constants.DEBUG:
-                print(f"Found event centroid at : {event_centroid}")
+                print(f"\tFound event centroid at : {event_centroid}; distance: {dist}")
 
-            if distance(event_centroid, ligand_centroid) < 3.0:
+            if dist < 3.0:
                 reference_with_nearby_events_list.append(reference)
                 nearby_event_list.append(event)
                 break
+
+
 
     if Constants.DEBUG:
         print(f"After filtering for neraby events, there are {len(nearby_event_list)} references left to score")
