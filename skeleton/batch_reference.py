@@ -202,10 +202,12 @@ def main(database_file: str, out_dir: str):
     database = database_sql.Database(database_file)
 
     score_data_list: List[ScoreData] = get_scoring_data(database)
-    if Constants.DEBUG: print(f"Found {len(score_data_list)} reference event maps to score")
+    if Constants.DEBUG:
+        print(f"Found {len(score_data_list)} reference event maps to score")
 
     for score_data in score_data_list:
-        if Constants.DEBUG: print(f"Scoring: {score_data.pdb} {score_data.event_map}")
+        if Constants.DEBUG:
+            print(f"Scoring: {score_data.pdb} {score_data.event_map}")
         dispatch(score_data, out_dir)
 
 
