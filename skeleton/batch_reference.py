@@ -140,13 +140,13 @@ def get_scoring_data(database):
 
         if len(reference_events) > 0:
             if Constants.DEBUG:
-                print(f"\tFound {len(reference_events)} events for reference: {reference}")
+                print(f"\tFound {len(reference_events)} events for reference: {reference.dataset.dtag}")
 
             reference_with_events_list.append(reference)
 
         else:
             if Constants.DEBUG:
-                print(f"\tDid not find any events for reference: {reference}")
+                print(f"\tDid not find any events for reference: {reference.dataset.dtag}")
 
     if Constants.DEBUG:
         print(
