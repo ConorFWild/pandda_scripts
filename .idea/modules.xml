@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../local_pandda/.idea/local_pandda.iml" filepath="$PROJECT_DIR$/../local_pandda/.idea/local_pandda.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../pandda_autobuild/.idea/pandda_autobuild.iml" filepath="$PROJECT_DIR$/../pandda_autobuild/.idea/pandda_autobuild.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/pandda_scripts.iml" filepath="$PROJECT_DIR$/.idea/pandda_scripts.iml" />
     </modules>
   </component>
