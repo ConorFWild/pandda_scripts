@@ -284,6 +284,58 @@ def rhofit(truncated_model_path: Path, truncated_xmap_path: Path, mtz_path: Path
 
 
 # #####################
+# Scoring
+# #####################
+
+def score(structure, xmap, contours=[1.5, 2.0, 2.5, 3.0, 3.5]):
+
+    mask_grid = gemmi.FloatGrid(xmap.nu, xmap.nv, xmap.nw)
+
+    for model in structure:
+        for chain in model:
+            for residue in chain:
+                for atom in residue:
+                    if atom.element.name == "H":
+                        continue
+                    pos: gemmi.Position = atom.pos
+                    mask_grid.set_points_around(pos, 0.75, 1.0)
+
+    xmap_array = np.array(xmap)
+
+    scores = []
+    for contour in contours:
+        xmap_mask = xmap_array[xmap > contour]
+        overlap = xmap_mask * mask_grid
+        score = np.sum(overlap) / np.sum(xmap_mask)
+        scores.append(score)
+
+    return max(scores)
+
+
+def score_rhofit_results(out_dir: Path, xmap_path: Path):
+
+    # Load models
+    rhofit_builds_dir = out_dir / ""
+    models = {}
+    for model_path in rhofit_builds_dir.glob(""):
+        models[model_path.name] = get_pdb(model_path)
+
+    # load xmap
+    xmap = get_event_map(xmap_path)
+
+    # For each model, score
+    scores = {}
+    for model_name, model in models.items():
+        scores[model_name] = score(model, xmap)
+
+    return scores
+
+
+def save_score_json(scores, out_dir / "scores.json"):
+
+
+
+# #####################
 # # Autobuild
 # #####################
 
@@ -311,6 +363,11 @@ def autobuild(model: str, xmap: str, mtz: str, smiles: str, x: float, y: float, 
     # Call rhofit
     rhofit(truncated_model_path, truncated_xmap_path, mtz_path, cif_path, out_dir)
 
+    # Score the result
+    scores = score_rhofit_results(out_dir / "rhofit", xmap_path)
+
+    # save scores
+    save_score_json(scores, out_dir / "scores.json")
 
 # #####################
 # # main
