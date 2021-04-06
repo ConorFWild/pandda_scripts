@@ -3,10 +3,10 @@ from __future__ import annotations
 import dataclasses
 import subprocess
 from pathlib import Path
+import json
+
 import fire
-
 import numpy as np
-
 import gemmi
 
 from constants import Constants
@@ -331,8 +331,9 @@ def score_rhofit_results(out_dir: Path, xmap_path: Path):
     return scores
 
 
-def save_score_json(scores, out_dir / "scores.json"):
-
+def save_score_json(scores, out_path):
+    with open(out_path, "w") as f:
+        json.dump(scores, f)
 
 
 # #####################
