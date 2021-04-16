@@ -16,7 +16,7 @@ mtz_regex="*.dimple.mtz"
 
 mkdir $output_dir
 
-echo -e "#!/bin/bash \n/data/share-2/conor/anaconda3/envs/lab/bin/python $local_pandda_cluster_script $data_dirs $output_dir --structure_factors=$structure_factors --pdb_regex=$pdb_regex --mtz_regex=$mtz_regex" > $submit_script
+echo -e "#!/bin/bash \n/data/share-2/conor/anaconda3/envs/lab/bin/python $local_pandda_cluster_script $data_dirs $output_dir --structure_factors=$structure_factors --structure_regex=$pdb_regex --reflections_regex=$mtz_regex" > $submit_script
 echo -e "# Executable script at $submit_script"
 
 chmod 777 $submit_script
