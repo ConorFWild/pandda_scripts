@@ -1,7 +1,7 @@
 #!/bin/bash
 cutoff=$1
 root="/data/share-2/conor/pandda"
-data_dirs="$root/data/pandda_inputs/XX02KALRNA_$cutoff"
+data_dirs="$root/data/pandda_inputs/XX02KALRNA"
 output_dir="$root/output/test_local_cluster_XX02KALRNA_$cutoff"
 submit_script="$output_dir/test_local_cluster_XX02KALRNA_$cutoff.sh"
 job_script="$output_dir/test_local_cluster_XX02KALRNA_$cutoff.job"
