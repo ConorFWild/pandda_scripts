@@ -7,5 +7,7 @@
     <orderEntry type="module" module-name="local_pandda" />
     <orderEntry type="module" module-name="pandda_autobuild" />
     <orderEntry type="module" module-name="pandda_local_cluster" />
+    <orderEntry type="module" module-name="pandda_gemmi" />
+    <orderEntry type="module" module-name="pandda_2_gemmi" />
   </component>
 </module>
